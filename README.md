@@ -12,5 +12,5 @@ You can install the development version of winteR from [GitHub](https://github.c
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("courtiol/batR")
+remotes::install_github("courtiol/winteR")
 ```
