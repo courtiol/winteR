@@ -131,15 +131,45 @@ clean_physio_table <- function(data) {
 
   ## we remove completely observations when sensor is detached
   data <- data[data$Status != "notOnBat", ]
+  data$Include <- TRUE
 
   ## we remove last torpor bout for dead individuals as it could correspond to death
   data_dead <- data[data$Status == "dead", ]
 
-  #data_dead$last_obs <- as.numeric(stats::ave(data_dead$State, data_dead$ID, FUN = function(x) rev(which(x == "normothermy"))[1]))
-  #data_dead$Include <- data_dead$Index <= data_dead$last_obs
-  #data_dead$last_obs <- data_dead$Include <- NULL
+  data_dead |>
+    dplyr::mutate(New_bout = (.data$Index == min(.data$Index)) | ((.data$Index - 1) != dplyr::lag(.data$Index)),
+                  .by = c(.data$ID, .data$State)) |>
+    dplyr::mutate(Bout = cumsum(.data$New_bout)) |>
+    dplyr::mutate(Warm = .data$Tb > 0.9*.data$Tb_max, .by = .data$ID) |>
+    dplyr::summarize(Include = any(.data$Warm),
+                     Index_max = max(.data$Index),
+                     .by = c(.data$ID, .data$Bout)) |>
+    dplyr::summarize(Index_max = max(.data$Index_max[.data$Include]), .by = .data$ID) -> filter_to_apply
+
+  data_dead <- merge(data_dead, filter_to_apply)
+  data_dead$Include <- data_dead$Index <= data_dead$Index_max
+  data_dead$Index_max <- NULL
 
   ## we combine clean data from dead and all data from alive bats
   rbind(data[data$Status == "alive", ], data_dead)
 }
+
+#' Plot the physiological data
+#'
+#' @param data the dataframe produced by [build_physio_table()]
+#' @return a plot
+#' @export
+#'
+#' @examples
+#' files_to_do <- list.files(system.file("extdata/physio", package = "winteR"), full.names = TRUE)
+#' data_physio <- build_physio_table(files_to_do)
+#' plot_physio_table(data_physio)
+#'
+plot_physio_table <- function(data) {
+  ggplot2::ggplot(data) +
+    ggplot2::aes(y = .data$Tb, x = .data$Index,
+                 shape = .data$State, colour = .data$Include) +
+    ggplot2::geom_point() +
+    ggplot2::facet_wrap(~ ID)
+  }
 
