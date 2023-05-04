@@ -17,12 +17,7 @@
 #' @examples
 #'
 #' ## Step 0: check that all R packages required below are installed
-#' pkg_needed <- c("DHARMa", "spaMM", "gridExtra")
-#' for (pkg in pkg_needed) {
-#'   if (!requireNamespace(pkg)) {
-#'     stop(paste("please install the package", pkg))
-#'     }
-#'   }
+#' checkDependencies()
 #'
 #' ## Step 1: predicting normothermy from skin temperature (Tskin)
 #' # Note: it is important _not_ to model temporal autocorrelation
@@ -111,5 +106,47 @@
 #' p2 <- plot_Tskin_fit(fit_normo_logit, rangeTa = c(-35, 35))
 #' p12 <- gridExtra::grid.arrange(p1 + ggplot2::labs(tag = "A"), p2 + ggplot2::labs(tag = "B"))
 #' ggplot2::ggsave(filename = "figures/figS1.pdf", plot = p12, width = 12, height = 20, units = "cm")
+#'
+#'
+#' ## Step 2: fitting thermoregulatory curves
+#'
+#' ### Step 2A: loading the data, see ?build_MR_table
+#' filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
+#' data_MR <- build_MR_datafile(filepath)
+#' head(data_MR)
+#'
+#' ### Step 2B: fitting thermoregulatory curves using the torpor package
+#' # Note: this step is slow, so we stored the fitted model in winteR, but you can refit the model
+#' # by uncommenting the code below
+#' # set.seed(123)
+#' # fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$MR) ## slow
+#' fit_torpor
+#' # $params
+#' #    parameter   mean CI_2.5 median CI_97.5  Rhat
+#' # 1       tau1  0.168  0.145  0.167   0.195 1.000
+#' # 2       tau2  0.417  0.374  0.416   0.465 1.002
+#' # 3       tau3  0.294  0.257  0.291   0.346 1.002
+#' # 4       inte  5.428  4.988  5.425   5.872 1.000
+#' # 5       intc  0.036  0.030  0.035   0.048 1.000
+#' # 6       intr  0.733  0.643  0.733   0.826 1.000
+#' # 7      betat -0.137 -0.151 -0.137  -0.124 1.000
+#' # 8      betac  0.095  0.085  0.096   0.101 1.000
+#' # 9         Tt  4.937  4.216  4.920   5.722 1.000
+#' # 10       TMR  0.057  0.050  0.055   0.072 1.000
+#' # 11        Mr  0.833  0.776  0.839   0.858 1.000
+#' # 12       Tbe 39.547 38.978 39.535  40.198 1.000
+#' # 13       Tbt  5.352  4.610  5.334   6.164 1.000
+#' # 14       Tlc 33.263 31.807 33.279  34.694 1.000
+#' # 15      Mtnz  0.859  0.833  0.878   0.884    NA
+#' #
+#' # $ppo
+#' #   name  ppo
+#' # 1   Mr 11.4
+#' # 2  TMR  4.5
+#'
+#' ### Step 2C: plotting thermoregulatory curves using torpor
+#' suppressWarnings(torpor::tor_plot(fit_torpor))
+#'
+#' ### Step 2D: better plot for thermoregulatory curves
 #'
 NULL

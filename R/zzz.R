@@ -7,3 +7,30 @@
     "\n"
   )
 }
+
+
+#' Check optional dependencies
+#'
+#' This function checks that the dependencies not required to install the package but needed to run
+#' the workflow are all met.
+#'
+#' @return noting
+#' @export
+#'
+#' @examples
+#' checkDependencies()
+#'
+checkDependencies <- function() {
+  pkg_needed <- c("DHARMa", "spaMM", "gridExtra")
+  for (pkg in pkg_needed) {
+    if (!requireNamespace(pkg)) {
+      stop(paste0("please install the package ", pkg, " using: install.packages(", pkg, ")\n then rerun checkDependencies()"))
+      }
+    }
+  if (!requireNamespace("torpor")) {
+    if (!requireNamespace("remotes")) {
+      stop("please install the package torpor using: install.packages('remotes')\n then rerun checkDependencies()")
+    }
+      stop("please install the package torpor using: remotes::install_github('vullioud/torpor', build_vignettes = TRUE)\n then rerun checkDependencies()")
+    }
+}
