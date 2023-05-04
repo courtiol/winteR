@@ -2,7 +2,7 @@
 % Please edit documentation in R/physio.R
 \name{load_physio_datafile}
 \alias{load_physio_datafile}
-\title{Load a file containing the physiological data}
+\title{Load a file containing physiological data}
 \usage{
 load_physio_datafile(filename)
 }
@@ -13,11 +13,15 @@ load_physio_datafile(filename)
 a dataframe
 }
 \description{
-TODO Kseniia: explain logger the structure of the files.
-This function should not be directly called by the user.
-It is called internally when calling \code{\link[=build_physio_table]{build_physio_table()}}.
+This function loads a file containing physiological data that will be used to classify the physiological state of individuals (normothermy vs torpor).
+In our case it is a time series of skin temperature measurements.
+Each file name contain ambient temperature value and ID of individual.
+The file contains output from iButton temperature loggers, which have 5 columns:
+Date, Time, Time Unit (in either AM or PM), Temperature Unit (in degrees Celsius, in our case), and Temperature Value.
 }
 \details{
+This function should not be directly called by the user.
+It is called internally when calling \code{\link[=build_physio_table]{build_physio_table()}}.
 Note: for the function to work, the files must be named following the same structure we used.
 }
 \examples{

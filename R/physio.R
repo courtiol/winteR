@@ -1,11 +1,13 @@
-#' Load a file containing physiological data that could be used to classify the physiological state of individuals (normothermy vs torpor).
-#' In our case it is timeseries of skin temperature measurements.
+#' Load a file containing physiological data
 #'
+#' This function loads a file containing physiological data that will be used to classify the physiological state of individuals (normothermy vs torpor).
+#' In our case it is a time series of skin temperature measurements.
 #' Each file name contain ambient temperature value and ID of individual.
-#' The file contains output from iButton temperature loggers, which have 5 columns: Date, Time, Time Unit (in either AM or PM), Temperature Unit (in degrees Celsius, in our case), and Temperature Value.
+#' The file contains output from iButton temperature loggers, which have 5 columns:
+#' Date, Time, Time Unit (in either AM or PM), Temperature Unit (in degrees Celsius, in our case), and Temperature Value.
+#'
 #' This function should not be directly called by the user.
 #' It is called internally when calling [build_physio_table()].
-#'
 #' Note: for the function to work, the files must be named following the same structure we used.
 #'
 #' @param filename the name of the data to be imported
