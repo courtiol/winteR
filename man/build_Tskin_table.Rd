@@ -19,8 +19,8 @@ This function creates the table of raw physiological data.
 }
 \examples{
 files_to_do <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-data_physio <- build_Tskin_table(files_to_do)
-head(data_physio)
+data_Tskin <- build_Tskin_table(files_to_do)
+head(data_Tskin)
 
 }
 \seealso{

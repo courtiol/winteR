@@ -16,6 +16,14 @@
 #' @keywords package
 #' @examples
 #'
+#' ## Step 0: check that all R packages required below are installed
+#' pkg_needed <- c("DHARMa", "spaMM", "gridExtra")
+#' for (pkg in pkg_needed) {
+#'   if (!requireNamespace(pkg)) {
+#'     stop(paste("please install the package", pkg))
+#'     }
+#'   }
+#'
 #' ## Step 1: predicting normothermy from skin temperature (Tskin)
 #' # Note: it is important _not_ to model temporal autocorrelation
 #' # for accurate predictions in our context

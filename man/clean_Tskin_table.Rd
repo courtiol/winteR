@@ -23,9 +23,9 @@ It is called internally when calling \code{\link[=build_Tskin_table]{build_Tskin
 }
 \examples{
 files_to_do <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-data_physio <- build_Tskin_table(files_to_do, clean = FALSE)
-dim(data_physio)
-data_Tskin_cleaned <- clean_Tskin_table(data_physio)
+data_Tskin <- build_Tskin_table(files_to_do, clean = FALSE)
+dim(data_Tskin)
+data_Tskin_cleaned <- clean_Tskin_table(data_Tskin)
 dim(data_Tskin_cleaned)
 
 }

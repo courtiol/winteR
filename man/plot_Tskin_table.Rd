@@ -13,11 +13,11 @@ plot_Tskin_table(data)
 a plot
 }
 \description{
-Plot the physiological data on skin temperature
+This function plots the data created with \code{\link[=build_Tskin_table]{build_Tskin_table()}}.
 }
 \examples{
 files_to_do <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-data_physio <- build_Tskin_table(files_to_do)
-plot_Tskin_table(data_physio)
+data_Tskin <- build_Tskin_table(files_to_do)
+plot_Tskin_table(data_Tskin)
 
 }

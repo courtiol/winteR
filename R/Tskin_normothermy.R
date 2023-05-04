@@ -1,14 +1,15 @@
 #' Load a file containing physiological data on skin temperature
 #'
-#' This function loads a file containing physiological data that will be used to classify the physiological state of individuals (normothermy vs torpor).
-#' In our case it is a time series of skin temperature measurements.
-#' Each file name contain ambient temperature value and ID of individual.
-#' The file contains output from iButton temperature loggers, which have 5 columns:
-#' Date, Time, Time Unit (in either AM or PM), Temperature Unit (in degrees Celsius, in our case), and Temperature Value.
+#' This function loads a file containing physiological data that will be used to classify the
+#' physiological state of individuals (normothermy vs torpor). In our case it is a time series of
+#' skin temperature measurements. Each file name contain ambient temperature value and ID of
+#' individual. The file contains output from iButton temperature loggers, which have 5 columns:
+#' Date, Time, Time Unit (in either AM or PM), Temperature Unit (in degrees Celsius, in our case),
+#' and Temperature Value.
 #'
-#' This function should not be directly called by the user.
-#' It is called internally when calling [build_Tskin_table()].
-#' Note also that for the function to work, the files must be named following the same structure we used.
+#' This function should not be directly called by the user. It is called internally when calling
+#' [build_Tskin_table()]. Note also that for the function to work, the files must be named following
+#' the same structure we used.
 #'
 #' @param filename the name of the data to be imported
 #' @return a dataframe
@@ -16,8 +17,8 @@
 #' @seealso [classify_Tskin_state()], [build_Tskin_table()], [clean_Tskin_table()]
 #' @examples
 #' filespath <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-#' data_physio <- load_Tskin_datafile(filespath[1])
-#' head(data_physio)
+#' data_Tskin <- load_Tskin_datafile(filespath[1])
+#' head(data_Tskin)
 #'
 load_Tskin_datafile <- function(filename) {
 
@@ -27,7 +28,7 @@ load_Tskin_datafile <- function(filename) {
   ID <- strsplit(name_elements[3], split = "\\.")[[1]][1]
   Status <- ifelse(length(name_elements) > 3, strsplit(name_elements[4], split = "\\.")[[1]][1], "alive")
 
-  ## read physio data
+  ## read Tskin data
   d <- utils::read.table(filename, header = FALSE, sep = " ", dec = ".")
 
   ## format dataframe
@@ -42,9 +43,9 @@ load_Tskin_datafile <- function(filename) {
 
 #' Classify the physiological state of individuals based on skin temperature
 #'
-#' This function classifies the physiological state based on the difference between the skin temperature
-#' and the ambient temperature. If $Tskin > Ta + ((max(Tskin) - Ta) / 2)$ the bat is considered in normothermy,
-#' otherwise, it is considered to be in torpor.
+#' This function classifies the physiological state based on the difference between the skin
+#' temperature and the ambient temperature. If $Tskin > Ta + ((max(Tskin) - Ta) / 2)$ the bat is
+#' considered in normothermy, otherwise, it is considered to be in torpor.
 #'
 #' This function should not be directly called by the user.
 #' It is called internally when calling [build_Tskin_table()].
@@ -55,9 +56,9 @@ load_Tskin_datafile <- function(filename) {
 #' @seealso [load_Tskin_datafile()], [build_Tskin_table()], [clean_Tskin_table()]
 #' @examples
 #' filespath <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-#' data_physio <- load_Tskin_datafile(filespath[1])
-#' data_physio$State <- classify_Tskin_state(data_physio)
-#' head(data_physio)
+#' data_Tskin <- load_Tskin_datafile(filespath[1])
+#' data_Tskin$State <- classify_Tskin_state(data_Tskin)
+#' head(data_Tskin)
 #'
 classify_Tskin_state <- function(data) {
 
@@ -84,8 +85,8 @@ classify_Tskin_state <- function(data) {
 #' @seealso [load_Tskin_datafile()], [classify_Tskin_state()], [clean_Tskin_table()]
 #' @examples
 #' files_to_do <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-#' data_physio <- build_Tskin_table(files_to_do)
-#' head(data_physio)
+#' data_Tskin <- build_Tskin_table(files_to_do)
+#' head(data_Tskin)
 #'
 build_Tskin_table <- function(files, clean = TRUE) {
 
@@ -127,9 +128,9 @@ build_Tskin_table <- function(files, clean = TRUE) {
 #' @seealso [load_Tskin_datafile()], [classify_Tskin_state()], [build_Tskin_table()]
 #' @examples
 #' files_to_do <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-#' data_physio <- build_Tskin_table(files_to_do, clean = FALSE)
-#' dim(data_physio)
-#' data_Tskin_cleaned <- clean_Tskin_table(data_physio)
+#' data_Tskin <- build_Tskin_table(files_to_do, clean = FALSE)
+#' dim(data_Tskin)
+#' data_Tskin_cleaned <- clean_Tskin_table(data_Tskin)
 #' dim(data_Tskin_cleaned)
 #'
 clean_Tskin_table <- function(data) {
@@ -161,14 +162,16 @@ clean_Tskin_table <- function(data) {
 
 #' Plot the physiological data on skin temperature
 #'
+#' This function plots the data created with [build_Tskin_table()].
+#'
 #' @param data the dataframe produced by [build_Tskin_table()]
 #' @return a plot
 #' @export
 #'
 #' @examples
 #' files_to_do <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-#' data_physio <- build_Tskin_table(files_to_do)
-#' plot_Tskin_table(data_physio)
+#' data_Tskin <- build_Tskin_table(files_to_do)
+#' plot_Tskin_table(data_Tskin)
 #'
 plot_Tskin_table <- function(data) {
   ggplot2::ggplot(data) +
@@ -179,7 +182,12 @@ plot_Tskin_table <- function(data) {
   }
 
 
-#' Title
+#' Plot a fitted model between ambient temperature and normothermy
+#'
+#' This function plots the predictions from a model fitting the relationship between ambient
+#' temperature and normothermy. It assumes that the predictions are mirrored around a particular
+#' ambient temperature value (default = 2 degrees C). We use this function to create Fig 1 and Fig
+#' S1 in the paper.
 #'
 #' @param fit a model fitted with [spaMM::fitme()]
 #' @param rangeTa the range of ambient temperature to consider in predictions
@@ -189,7 +197,7 @@ plot_Tskin_table <- function(data) {
 #' @export
 #'
 #' @examples
-#' #TODO
+#' #See ?winteR
 #'
 plot_Tskin_fit <- function(fit, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11) {
 

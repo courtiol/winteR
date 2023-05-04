@@ -13,21 +13,22 @@ load_Tskin_datafile(filename)
 a dataframe
 }
 \description{
-This function loads a file containing physiological data that will be used to classify the physiological state of individuals (normothermy vs torpor).
-In our case it is a time series of skin temperature measurements.
-Each file name contain ambient temperature value and ID of individual.
-The file contains output from iButton temperature loggers, which have 5 columns:
-Date, Time, Time Unit (in either AM or PM), Temperature Unit (in degrees Celsius, in our case), and Temperature Value.
+This function loads a file containing physiological data that will be used to classify the
+physiological state of individuals (normothermy vs torpor). In our case it is a time series of
+skin temperature measurements. Each file name contain ambient temperature value and ID of
+individual. The file contains output from iButton temperature loggers, which have 5 columns:
+Date, Time, Time Unit (in either AM or PM), Temperature Unit (in degrees Celsius, in our case),
+and Temperature Value.
 }
 \details{
-This function should not be directly called by the user.
-It is called internally when calling \code{\link[=build_Tskin_table]{build_Tskin_table()}}.
-Note also that for the function to work, the files must be named following the same structure we used.
+This function should not be directly called by the user. It is called internally when calling
+\code{\link[=build_Tskin_table]{build_Tskin_table()}}. Note also that for the function to work, the files must be named following
+the same structure we used.
 }
 \examples{
 filespath <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-data_physio <- load_Tskin_datafile(filespath[1])
-head(data_physio)
+data_Tskin <- load_Tskin_datafile(filespath[1])
+head(data_Tskin)
 
 }
 \seealso{

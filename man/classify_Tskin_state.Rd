@@ -13,9 +13,9 @@ classify_Tskin_state(data)
 a vector with the physiological state at each time point
 }
 \description{
-This function classifies the physiological state based on the difference between the skin temperature
-and the ambient temperature. If $Tskin > Ta + ((max(Tskin) - Ta) / 2)$ the bat is considered in normothermy,
-otherwise, it is considered to be in torpor.
+This function classifies the physiological state based on the difference between the skin
+temperature and the ambient temperature. If $Tskin > Ta + ((max(Tskin) - Ta) / 2)$ the bat is
+considered in normothermy, otherwise, it is considered to be in torpor.
 }
 \details{
 This function should not be directly called by the user.
@@ -23,9 +23,9 @@ It is called internally when calling \code{\link[=build_Tskin_table]{build_Tskin
 }
 \examples{
 filespath <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-data_physio <- load_Tskin_datafile(filespath[1])
-data_physio$State <- classify_Tskin_state(data_physio)
-head(data_physio)
+data_Tskin <- load_Tskin_datafile(filespath[1])
+data_Tskin$State <- classify_Tskin_state(data_Tskin)
+head(data_Tskin)
 
 }
 \seealso{

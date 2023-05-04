@@ -3,6 +3,7 @@
 export(build_Tskin_table)
 export(classify_Tskin_state)
 export(clean_Tskin_table)
+export(load_MR_datafile)
 export(load_Tskin_datafile)
 export(plot_Tskin_fit)
 export(plot_Tskin_table)

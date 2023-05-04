@@ -2,7 +2,7 @@
 % Please edit documentation in R/Tskin_normothermy.R
 \name{plot_Tskin_fit}
 \alias{plot_Tskin_fit}
-\title{Title}
+\title{Plot a fitted model between ambient temperature and normothermy}
 \usage{
 plot_Tskin_fit(fit, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11)
 }
@@ -19,9 +19,12 @@ plot_Tskin_fit(fit, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11)
 a plot
 }
 \description{
-Title
+This function plots the predictions from a model fitting the relationship between ambient
+temperature and normothermy. It assumes that the predictions are mirrored around a particular
+ambient temperature value (default = 2 degrees C). We use this function to create Fig 1 and Fig
+S1 in the paper.
 }
 \examples{
-#TODO
+#See ?winteR
 
 }
