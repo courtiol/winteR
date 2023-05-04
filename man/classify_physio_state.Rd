@@ -16,6 +16,8 @@ a vector with the physiological state at each time point
 This function classifies the physiological state based on the difference between the body temperature
 and the ambient temperature. If $Tb > Ta + ((max(Tb) - Ta) / 2)$ the bat is considered in normothermy,
 otherwise, it is considered to be in torpor.
+}
+\details{
 This function should not be directly called by the user.
 It is called internally when calling \code{\link[=build_physio_table]{build_physio_table()}}.
 }

@@ -22,7 +22,7 @@ Date, Time, Time Unit (in either AM or PM), Temperature Unit (in degrees Celsius
 \details{
 This function should not be directly called by the user.
 It is called internally when calling \code{\link[=build_physio_table]{build_physio_table()}}.
-Note: for the function to work, the files must be named following the same structure we used.
+Note also that for the function to work, the files must be named following the same structure we used.
 }
 \examples{
 filespath <- list.files(system.file("extdata/physio", package = "winteR"), full.names = TRUE)

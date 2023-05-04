@@ -16,6 +16,8 @@ a dataframe
 This function removes problematic observations of the physiological state; that is, observations
 that seem to have happened after the death of the individual and all observations corresponding
 to the drop of a sensor.
+}
+\details{
 This function should not be directly called by the user.
 It is called internally when calling \code{\link[=build_physio_table]{build_physio_table()}}.
 }

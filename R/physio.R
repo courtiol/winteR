@@ -8,7 +8,7 @@
 #'
 #' This function should not be directly called by the user.
 #' It is called internally when calling [build_physio_table()].
-#' Note: for the function to work, the files must be named following the same structure we used.
+#' Note also that for the function to work, the files must be named following the same structure we used.
 #'
 #' @param filename the name of the data to be imported
 #' @return a dataframe
@@ -45,6 +45,7 @@ load_physio_datafile <- function(filename) {
 #' This function classifies the physiological state based on the difference between the body temperature
 #' and the ambient temperature. If $Tb > Ta + ((max(Tb) - Ta) / 2)$ the bat is considered in normothermy,
 #' otherwise, it is considered to be in torpor.
+#'
 #' This function should not be directly called by the user.
 #' It is called internally when calling [build_physio_table()].
 #'
@@ -115,6 +116,7 @@ build_physio_table <- function(files, clean = TRUE) {
 #' This function removes problematic observations of the physiological state; that is, observations
 #' that seem to have happened after the death of the individual and all observations corresponding
 #' to the drop of a sensor.
+#'
 #' This function should not be directly called by the user.
 #' It is called internally when calling [build_physio_table()].
 #'
@@ -133,7 +135,7 @@ clean_physio_table <- function(data) {
 
   ## we remove completely observations when sensor is detached
   data <- data[data$Status != "notOnBat", ]
-  data$Include <- TRUE
+  data$Included <- TRUE
 
   ## we remove last torpor bout for dead individuals as it could correspond to death
   data_dead <- data[data$Status == "dead", ]
@@ -143,13 +145,13 @@ clean_physio_table <- function(data) {
                   .by = c(.data$ID, .data$State)) |>
     dplyr::mutate(Bout = cumsum(.data$New_bout)) |>
     dplyr::mutate(Warm = .data$Tb > 0.9*.data$Tb_max, .by = .data$ID) |>
-    dplyr::summarize(Include = any(.data$Warm),
+    dplyr::summarize(Included = any(.data$Warm),
                      Index_max = max(.data$Index),
                      .by = c(.data$ID, .data$Bout)) |>
-    dplyr::summarize(Index_max = max(.data$Index_max[.data$Include]), .by = .data$ID) -> filter_to_apply
+    dplyr::summarize(Index_max = max(.data$Index_max[.data$Included]), .by = .data$ID) -> filter_to_apply
 
   data_dead <- merge(data_dead, filter_to_apply)
-  data_dead$Include <- data_dead$Index <= data_dead$Index_max
+  data_dead$Included <- data_dead$Index <= data_dead$Index_max
   data_dead$Index_max <- NULL
 
   ## we combine clean data from dead and all data from alive bats
@@ -170,7 +172,7 @@ clean_physio_table <- function(data) {
 plot_physio_table <- function(data) {
   ggplot2::ggplot(data) +
     ggplot2::aes(y = .data$Tb, x = .data$Index,
-                 shape = .data$State, colour = .data$Include) +
+                 shape = .data$State, colour = .data$Included) +
     ggplot2::geom_point() +
     ggplot2::facet_wrap(~ ID)
   }
