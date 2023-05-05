@@ -27,8 +27,8 @@ a ggplot object
 Plot ambient vs skin temperature
 }
 \examples{
-filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
-data_MR <- build_MR_datafile(filepath)
+Tskin_files <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
+data_Tskin <- build_Tskin_table(Tskin_files)
 plot_TaTskin_data(data_MR)
 
 }

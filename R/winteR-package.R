@@ -118,10 +118,14 @@
 #' head(data_MR)
 #'
 #' ### Step 2B: fitting thermoregulatory curves using the torpor package
-#' # Note: this step is slow, so we stored the fitted model in winteR, but you can refit the model
-#' # by uncommenting the code below
+#' # # Note: this step is slow, so we stored the fitted model in winteR, but you can refit the model
+#' # # by uncommenting the code below
 #' # set.seed(123)
-#' # fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$kj_h) ## slow
+#' # fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$kJ_h) ## slow
+#' # params <- torpor::tor_summarise(fit_torpor)$params[, "parameter"]
+#' # jagsUI::traceplot(fit_torpor$mod_parameter, parameters = params) ## inspect MCMC chains
+#' # jagsUI::densityplot(fit_torpor$mod_parameter, parameters = params) ## inspect posterior distrib
+#'
 #' fit_torpor
 #' #$params
 #' #   parameter   mean CI_2.5 median CI_97.5  Rhat

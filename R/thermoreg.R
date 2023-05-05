@@ -25,11 +25,12 @@ build_MR_datafile <- function(filename) {
                   J_g_h = .data$VCO2_ml_g_h*27.8,
                   fat_g_g = .data$kJ_g_h/37.7,
                   fat_mg_g = .data$J_g_h/37.7,
-                  kj_h = .data$kJ_g_h * 30.78,
+                  kJ_h = .data$kJ_g_h * 30.78,
+                  fat_h = .data$kJ_h/37.7,
                   ID2 = as.factor(.data$ID2)) |>
     dplyr::select("ID" = .data$ID2, .data$Ta, "Tskin" = .data$Tb,
                   .data$VCO2_ml_g_h, .data$VO2_ml_g_h, .data$VCO2_L_g_h, .data$VO2_L_g_h,
-                  .data$kJ_g_h, .data$J_g_h, .data$fat_g_g, .data$fat_mg_g, .data$kj_h)
+                  .data$kJ_g_h, .data$J_g_h, .data$fat_g_g, .data$fat_mg_g, .data$kJ_h)
 }
 
 
@@ -75,7 +76,7 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
   ## code adapted from torpor::tor_plot()
 
   xlab <- "Ambient temperature (\u00B0C)"
-  ylab <- expression(paste("Metabolic rate (kJ ", h^{-1}, ")"))
+  ylab <- expression(paste("Metabolic rate (kJ", h^{-1}, ")"))
 
   da <- torpor::tor_assign(fit)
 
@@ -92,32 +93,32 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
 
   ggplot2::ggplot() +
       ggplot2::ylim(range(c(da_extended$measured_M, pred$upr_95, pred$lwr_95))) +
+      ggplot2::geom_vline(xintercept = Tt, linetype = 2) +
+      ggplot2::geom_line(data = pred[pred$assignment == "Mtnz", ],
+                         ggplot2::aes(x = .data$Ta, y = .data$pred), col = "black",
+                         linetype = 1) +
       ggplot2::geom_line(data = pred[pred$assignment == "Torpor", ],
                          ggplot2::aes(x = .data$Ta, y = .data$pred), col = "darkgrey") +
-      ggplot2::geom_ribbon(data = pred[pred$assignment == "Torpor", ],
-                           ggplot2::aes(x = .data$Ta, ymin = .data$lwr_95, ymax = .data$upr_95), fill =  "darkgrey",
-                           alpha = 0.2, col = NA) +
-      ggplot2::geom_point(data = da_extended[da_extended$assignment == "Torpor", ],
-                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID)) +
       ggplot2::geom_line(data = pred[pred$assignment == "Euthermia" & pred$Ta > min_euther, ],
                          ggplot2::aes(x = .data$Ta, y = .data$pred), col = "black",
                          linetype = 1) +
       ggplot2::geom_line(data = pred[pred$assignment == "Euthermia" & pred$Ta < min_euther, ],
                          ggplot2::aes(x = .data$Ta, y = .data$pred), col = "black",
                          linetype = 3) +
+      ggplot2::geom_ribbon(data = pred[pred$assignment == "Torpor", ],
+                           ggplot2::aes(x = .data$Ta, ymin = .data$lwr_95, ymax = .data$upr_95), fill =  "darkgrey",
+                           alpha = 0.2, col = NA) +
       ggplot2::geom_ribbon(data = pred[pred$assignment == "Euthermia", ],
                            ggplot2::aes(x = .data$Ta, ymin = .data$lwr_95, ymax = .data$upr_95), fill = "black",
                            alpha = 0.2, col = NA) +
+      ggplot2::geom_point(data = da_extended[da_extended$assignment == "Torpor", ],
+                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID)) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Euthermia", ],
                           ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID)) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Mtnz", ],
                           ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID)) +
-      ggplot2::geom_line(data = pred[pred$assignment == "Mtnz", ],
-                         ggplot2::aes(x = .data$Ta, y = .data$pred), col = "black",
-                         linetype = 1) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Undefined", ],
                           ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID), shape = 4) +
-      ggplot2::geom_vline(xintercept = Tt, linetype = 2) +
       ggplot2::scale_x_continuous(breaks = seq(rangeTa[1], rangeTa[2], by = 5), minor_breaks = NULL,
                                   limits = range(c(rangeTa, da_extended$measured_Ta))) +
       ggplot2::scale_y_continuous(breaks = seq(floor(min(c(da_extended$measured_M, pred$upr_95, pred$lwr_95))),
@@ -142,17 +143,24 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
 #' @export
 #'
 #' @examples
-#' filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
-#' data_MR <- build_MR_datafile(filepath)
+#' Tskin_files <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
+#' data_Tskin <- build_Tskin_table(Tskin_files)
 #' plot_TaTskin_data(data_MR)
 #'
 plot_TaTskin_data <- function(data, rangeTa = c(-5, 35), rangeTskin = c(0, 40), base_size = 11) {
+
+  # if (!is.null(data_Tskin)) {
+  #   data_Tskin30plus <- data_Tskin[data_Tskin$Tskin > 30, c("Tskin", "Ta")]
+  #   data_Tskin30plus$ID <- "888"
+  #   data <- rbind(data[, c("Tskin", "Ta", "ID")], data_Tskin30plus)
+  # }
 
   xlab <- "Ambient temperature (\u00B0C)"
   ylab <- "Skin temperature (\u00B0C)"
 
   ggplot2::ggplot(data) +
     ggplot2::aes(y = .data$Tskin, x = .data$Ta, colour = .data$ID, shape = .data$ID) +
+    ggplot2::geom_abline(slope = 1, linetype = 2) +
     ggplot2::geom_point() +
     ggplot2::scale_x_continuous(breaks = seq(rangeTa[1], rangeTa[2], by = 5), minor_breaks = NULL,
                                 limits = range(c(rangeTa, data$Ta))) +
