@@ -148,7 +148,7 @@ summarise_MR_fit(fit_torpor)
 #                                              info parameter   mean CI_2.5 median CI_97.5 Rhat
 #1             temperature at minimal metabolic rate        Tt  4.937  4.216  4.920   5.722    1
 #2                  minimal metabolic rate in torpor       TMR  0.049  0.043  0.047   0.061    1
-#3        body temperature at minimal metabolic rate       Tbt  5.352  4.610  5.334   6.164    1
+#3        skin temperature at minimal metabolic rate       Tbt  5.352  4.610  5.334   6.164    1
 #4 minimum ambient temperature in thermoneutral zone       Tlc 33.263 31.807 33.279  34.694    1
 
 ### Step 2D: plotting thermoregulatory curves and temperature relationship

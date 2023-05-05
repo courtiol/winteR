@@ -47,7 +47,7 @@ summarise_MR_fit <- function(fit) {
   estimates <- torpor::get_parameters(fit)
   estimates <- estimates[estimates$parameter %in% c("Tlc", "Tbt", "Tt", "TMR"), ]
   estimates$info[estimates$parameter == "Tlc"] <- "minimum ambient temperature in thermoneutral zone"
-  estimates$info[estimates$parameter == "Tbt"] <- "body temperature at minimal metabolic rate"
+  estimates$info[estimates$parameter == "Tbt"] <- "skin temperature at minimal metabolic rate"
   estimates$info[estimates$parameter == "Tt"] <- "temperature at minimal metabolic rate"
   estimates$info[estimates$parameter == "TMR"] <- "minimal metabolic rate in torpor"
   estimates <- estimates[, c(ncol(estimates), 1:(ncol(estimates) - 1))]
