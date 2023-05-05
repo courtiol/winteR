@@ -15,6 +15,7 @@
 build_MR_datafile <- function(filename) {
   ## read MR data
   d <- utils::read.table(filename, header = TRUE, sep = " ", dec = ".")
+  rownames(d) <- NULL
   d |>
     dplyr::rename(VCO2_ml_g_h = .data$MR) |>
     dplyr::mutate(VO2_ml_g_h = .data$VCO2_ml_g_h/0.7,
@@ -26,7 +27,7 @@ build_MR_datafile <- function(filename) {
                   fat_mg_g = .data$J_g_h/37.7,
                   kj_h = .data$kJ_g_h * 30.78,
                   ID2 = as.factor(.data$ID2)) |>
-    dplyr::select("ID" = .data$ID2, .data$Ta, .data$Tb,
+    dplyr::select("ID" = .data$ID2, .data$Ta, "Tskin" = .data$Tb,
                   .data$VCO2_ml_g_h, .data$VO2_ml_g_h, .data$VCO2_L_g_h, .data$VO2_L_g_h,
                   .data$kJ_g_h, .data$J_g_h, .data$fat_g_g, .data$fat_mg_g, .data$kj_h)
 }
@@ -151,12 +152,12 @@ plot_TaTskin_data <- function(data, rangeTa = c(-5, 35), rangeTskin = c(0, 40), 
   ylab <- "Skin temperature (\u00B0C)"
 
   ggplot2::ggplot(data) +
-    ggplot2::aes(y = .data$Tb, x = .data$Ta, colour = .data$ID, shape = .data$ID) +
+    ggplot2::aes(y = .data$Tskin, x = .data$Ta, colour = .data$ID, shape = .data$ID) +
     ggplot2::geom_point() +
     ggplot2::scale_x_continuous(breaks = seq(rangeTa[1], rangeTa[2], by = 5), minor_breaks = NULL,
                                 limits = range(c(rangeTa, data$Ta))) +
     ggplot2::scale_y_continuous(breaks = seq(rangeTskin[1], rangeTskin[2], by = 5), minor_breaks = NULL,
-                                limits = range(c(rangeTskin, data$Tb))) +
+                                limits = range(c(rangeTskin, data$Tskin))) +
     ggplot2::scale_shape_manual(values = seq_along(unique(data$ID))) +
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
