@@ -20,6 +20,8 @@ Suggests:
     spaMM,
     torpor,
     gridExtra
+Remotes:
+    vullioud/torpor
 Depends: 
     R (>= 2.10)
 LazyData: true
