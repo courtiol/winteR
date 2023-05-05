@@ -153,7 +153,7 @@
 #' # 4 minimum ambient temperature in thermoneutral zone       Tlc 33.263 31.807 33.279  34.694    1
 #'
 #' ### Step 2D: plotting thermoregulatory curves
-#' plot_MR_fit(fit_torpor)
+#' plot_MR_fit(fit_torpor, data_MR)
 #'
 #'
 NULL

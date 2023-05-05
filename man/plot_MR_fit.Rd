@@ -4,10 +4,12 @@
 \alias{plot_MR_fit}
 \title{Plot thermoregulatory curves}
 \usage{
-plot_MR_fit(fit)
+plot_MR_fit(fit, data)
 }
 \arguments{
 \item{fit}{a model fit produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
+
+\item{data}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_datafile]{build_MR_datafile()}}}
 }
 \value{
 a ggplot object
@@ -16,6 +18,8 @@ a ggplot object
 Plot thermoregulatory curves
 }
 \examples{
-plot_MR_fit(fit_torpor)
+filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
+data_MR <- build_MR_datafile(filepath)
+plot_MR_fit(fit = fit_torpor, data = data_MR)
 
 }
