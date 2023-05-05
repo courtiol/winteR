@@ -29,6 +29,6 @@ Plot ambient vs skin temperature
 \examples{
 Tskin_files <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
 data_Tskin <- build_Tskin_table(Tskin_files)
-plot_TaTskin_data(data_MR)
+plot_TaTskin_data(data_Tskin)
 
 }

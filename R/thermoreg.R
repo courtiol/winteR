@@ -145,7 +145,7 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
 #' @examples
 #' Tskin_files <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
 #' data_Tskin <- build_Tskin_table(Tskin_files)
-#' plot_TaTskin_data(data_MR)
+#' plot_TaTskin_data(data_Tskin)
 #'
 plot_TaTskin_data <- function(data, rangeTa = c(-5, 35), rangeTskin = c(0, 40), base_size = 11) {
 
