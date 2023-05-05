@@ -13,8 +13,9 @@ build_MR_datafile(filename)
 a dataframe
 }
 \description{
-This function loads the file containing physiological data that will be used to fit the thermoregulatory curves.
-It should be structured as follows: TODO Kseniia, please add description XXX .
+This function loads the file containing physiological data that will be used to fit the
+thermoregulatory curves and it converts the metabolic rate in various units. It should be
+structured as follows: TODO Kseniia, please add description XXX .
 }
 \examples{
 filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]

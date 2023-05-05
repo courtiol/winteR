@@ -119,38 +119,38 @@
 #' # Note: this step is slow, so we stored the fitted model in winteR, but you can refit the model
 #' # by uncommenting the code below
 #' # set.seed(123)
-#' # fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$MR) ## slow
+#' # fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$kj_h) ## slow
 #' fit_torpor
-#' # $params
-#' #    parameter   mean CI_2.5 median CI_97.5  Rhat
-#' # 1       tau1  0.168  0.145  0.167   0.195 1.000
-#' # 2       tau2  0.417  0.374  0.416   0.465 1.002
-#' # 3       tau3  0.294  0.257  0.291   0.346 1.002
-#' # 4       inte  5.428  4.988  5.425   5.872 1.000
-#' # 5       intc  0.036  0.030  0.035   0.048 1.000
-#' # 6       intr  0.733  0.643  0.733   0.826 1.000
-#' # 7      betat -0.137 -0.151 -0.137  -0.124 1.000
-#' # 8      betac  0.095  0.085  0.096   0.101 1.000
-#' # 9         Tt  4.937  4.216  4.920   5.722 1.000
-#' # 10       TMR  0.057  0.050  0.055   0.072 1.000
-#' # 11        Mr  0.833  0.776  0.839   0.858 1.000
-#' # 12       Tbe 39.547 38.978 39.535  40.198 1.000
-#' # 13       Tbt  5.352  4.610  5.334   6.164 1.000
-#' # 14       Tlc 33.263 31.807 33.279  34.694 1.000
-#' # 15      Mtnz  0.859  0.833  0.878   0.884    NA
+#' #$params
+#' #   parameter   mean CI_2.5 median CI_97.5  Rhat
+#' #1       tau1  0.143  0.124  0.143   0.167 1.000
+#' #2       tau2  0.357  0.320  0.356   0.398 1.002
+#' #3       tau3  0.294  0.257  0.291   0.346 1.002
+#' #4       inte  4.645  4.268  4.642   5.025 1.000
+#' #5       intc  0.031  0.025  0.030   0.041 1.000
+#' #6       intr  0.627  0.550  0.627   0.707 1.000
+#' #7      betat -0.117 -0.129 -0.117  -0.106 1.000
+#' #8      betac  0.095  0.085  0.096   0.101 1.000
+#' #9         Tt  4.937  4.216  4.920   5.722 1.000
+#' #10       TMR  0.049  0.043  0.047   0.061 1.000
+#' #11        Mr  0.713  0.664  0.718   0.734 1.000
+#' #12       Tbe 39.547 38.978 39.535  40.198 1.000
+#' #13       Tbt  5.352  4.610  5.334   6.164 1.000
+#' #14       Tlc 33.263 31.807 33.279  34.694 1.000
+#' #15      Mtnz  0.735  0.713  0.751   0.756    NA
 #' #
-#' # $ppo
-#' #   name  ppo
-#' # 1   Mr 11.4
-#' # 2  TMR  4.5
+#' #$ppo
+#' #  name  ppo
+#' #1   Mr 11.2
+#' #2  TMR  4.5
 #'
 #' ### Step 2C: extract useful information from the fit
 #' summarise_MR_fit(fit_torpor)
-#' #                                               info parameter   mean CI_2.5 median CI_97.5 Rhat
-#' # 1             temperature at minimal metabolic rate        Tt  4.937  4.216  4.920   5.722    1
-#' # 2                  minimal metabolic rate in torpor       TMR  0.057  0.050  0.055   0.072    1
-#' # 3        body temperature at minimal metabolic rate       Tbt  5.352  4.610  5.334   6.164    1
-#' # 4 minimum ambient temperature in thermoneutral zone       Tlc 33.263 31.807 33.279  34.694    1
+#' #                                              info parameter   mean CI_2.5 median CI_97.5 Rhat
+#' #1             temperature at minimal metabolic rate        Tt  4.937  4.216  4.920   5.722    1
+#' #2                  minimal metabolic rate in torpor       TMR  0.049  0.043  0.047   0.061    1
+#' #3        body temperature at minimal metabolic rate       Tbt  5.352  4.610  5.334   6.164    1
+#' #4 minimum ambient temperature in thermoneutral zone       Tlc 33.263 31.807 33.279  34.694    1
 #'
 #' ### Step 2D: plotting thermoregulatory curves
 #' plot_MR_fit(fit_torpor, data_MR)
