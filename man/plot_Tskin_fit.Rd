@@ -9,7 +9,7 @@ plot_Tskin_fit(fit, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11)
 \arguments{
 \item{fit}{a model fitted with \code{\link[spaMM:fitme]{spaMM::fitme()}}}
 
-\item{rangeTa}{the range of ambient temperature to consider in predictions}
+\item{rangeTa}{the range of ambient temperature to consider in plot}
 
 \item{Tmirror}{the ambient temperature around which predictions are mirrored}
 

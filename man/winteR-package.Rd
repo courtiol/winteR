@@ -99,10 +99,12 @@ if (!dir.exists("figures")) dir.create("figures")
 ggplot2::ggsave(filename = "figures/fig1.pdf", width = 12, height = 12, units = "cm")
 
 ### Step 1H: create fig S1
-p1 <- plot_Tskin_fit(fit_normo_cauchit, rangeTa = c(-35, 35))
-p2 <- plot_Tskin_fit(fit_normo_logit, rangeTa = c(-35, 35))
-p12 <- gridExtra::grid.arrange(p1 + ggplot2::labs(tag = "A"), p2 + ggplot2::labs(tag = "B"))
-ggplot2::ggsave(filename = "figures/figS1.pdf", plot = p12, width = 12, height = 20, units = "cm")
+pS1_1 <- plot_Tskin_fit(fit_normo_cauchit, rangeTa = c(-35, 35))
+pS1_2 <- plot_Tskin_fit(fit_normo_logit, rangeTa = c(-35, 35))
+pS1_12 <- gridExtra::grid.arrange(pS1_1 + ggplot2::labs(tag = "A"),
+                                  pS1_2 + ggplot2::labs(tag = "B"))
+ggplot2::ggsave(filename = "figures/figS1.pdf", plot = pS1_12,
+                width = 12, height = 20, units = "cm")
 
 
 ## Step 2: fitting thermoregulatory curves
@@ -149,9 +151,13 @@ summarise_MR_fit(fit_torpor)
 #3        body temperature at minimal metabolic rate       Tbt  5.352  4.610  5.334   6.164    1
 #4 minimum ambient temperature in thermoneutral zone       Tlc 33.263 31.807 33.279  34.694    1
 
-### Step 2D: plotting thermoregulatory curves
-plot_MR_fit(fit_torpor, data_MR)
-
+### Step 2D: plotting thermoregulatory curves and temperature relationship
+pS2_1 <- plot_MR_fit(fit_torpor, data_MR)
+pS2_2 <- plot_TaTskin_data(data_MR)
+pS2_12 <- gridExtra::grid.arrange(pS2_1 + ggplot2::labs(tag = "A"),
+                                  pS2_2 + ggplot2::labs(tag = "B"))
+ggplot2::ggsave(filename = "figures/fig2.pdf", plot = pS2_12,
+                width = 12, height = 20, units = "cm")
 
 }
 \references{

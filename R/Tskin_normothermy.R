@@ -190,7 +190,7 @@ plot_Tskin_table <- function(data) {
 #' S1 in the paper.
 #'
 #' @param fit a model fitted with [spaMM::fitme()]
-#' @param rangeTa the range of ambient temperature to consider in predictions
+#' @param rangeTa the range of ambient temperature to consider in plot
 #' @param Tmirror the ambient temperature around which predictions are mirrored
 #' @param base_size base font size, given in pts
 #' @return a plot
