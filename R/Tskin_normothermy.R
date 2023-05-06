@@ -222,14 +222,14 @@ plot_Tskin_fit <- function(fit, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11
   ggplot2::ggplot() +
     ggplot2::geom_ribbon(ggplot2::aes(x = .data$Ta, ymin = .data$predVar_0.025, ymax = .data$predVar_0.975),
                          data = predictions, colour = "lightgrey", alpha = 0.2) +
-  ggplot2::geom_line(ggplot2::aes(x = .data$Ta, y = .data$prob), data = predictions, linetype = "dashed") +
-  ggplot2::geom_point(ggplot2::aes(x = .data$Ta, y = .data$prob_normo), data = raw_data, shape = 1) +
-  ggplot2::coord_trans(xlim = rangeTa, y = "log") +
-  ggplot2::scale_x_continuous(breaks = seq(rangeTa[1], rangeTa[2], by = 5), minor_breaks = NULL) +
-  ggplot2::scale_y_continuous(breaks = c(0.01*2^(0:6), 1), minor_breaks = NULL,
-                              sec.axis = ggplot2::sec_axis(~ . * 30 * 2 * 24,
-                                                           name = "Daily time spent in normothermy (min)\n",
-                                                           breaks = c(10*2^(0:6), 60 * 24))) +
-  ggplot2::labs(y = "Probability of normothermy\n", x = "\nAmbient temperature (\u00B0C)") +
-  ggplot2::theme_bw(base_size = base_size)
+    ggplot2::geom_line(ggplot2::aes(x = .data$Ta, y = .data$prob), data = predictions, linetype = "dashed") +
+    ggplot2::geom_point(ggplot2::aes(x = .data$Ta, y = .data$prob_normo), data = raw_data, shape = 1) +
+    ggplot2::coord_trans(xlim = rangeTa, y = "log") +
+    ggplot2::scale_x_continuous(breaks = seq(rangeTa[1], rangeTa[2], by = 5), minor_breaks = NULL) +
+    ggplot2::scale_y_continuous(breaks = c(0.01*2^(0:6), 1), minor_breaks = NULL,
+                                sec.axis = ggplot2::sec_axis(~ . * 30 * 2 * 24,
+                                                             name = "Daily time spent in normothermy (min)\n",
+                                                             breaks = c(10*2^(0:6), 60 * 24))) +
+    ggplot2::labs(y = "Probability of normothermy\n", x = "\nAmbient temperature (\u00B0C)") +
+    ggplot2::theme_bw(base_size = base_size)
 }

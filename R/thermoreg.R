@@ -30,7 +30,7 @@ build_MR_table <- function(filename) {
                   ID2 = as.factor(.data$ID2)) |>
     dplyr::select("ID" = .data$ID2, .data$Ta, "Tskin" = .data$Tb,
                   .data$VCO2_ml_g_h, .data$VO2_ml_g_h, .data$VCO2_L_g_h, .data$VO2_L_g_h,
-                  .data$kJ_g_h, .data$J_g_h, .data$fat_g_g, .data$fat_mg_g, .data$kJ_h)
+                  .data$kJ_g_h, .data$J_g_h, .data$fat_g_g, .data$fat_mg_g, .data$kJ_h, .data$fat_h)
 }
 
 
@@ -75,8 +75,9 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
 
   ## code adapted from torpor::tor_plot()
 
-  xlab <- "Ambient temperature (\u00B0C)"
-  ylab <- expression(paste("Metabolic rate (kJ", h^{-1}, ")"))
+  xlab <- "\nAmbient temperature (\u00B0C)"
+  ylab1 <- expression("Metabolic rate"~(k*J*h^{-1}))
+  ylab2 <- expression("Fat consumed"~(g[fat]*h^{-1}))
 
   da <- torpor::tor_assign(fit)
 
@@ -121,14 +122,15 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
                           ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID), shape = 4) +
       ggplot2::scale_x_continuous(breaks = seq(rangeTa[1], rangeTa[2], by = 5), minor_breaks = NULL,
                                   limits = range(c(rangeTa, da_extended$measured_Ta))) +
-      ggplot2::scale_y_continuous(breaks = seq(floor(min(c(da_extended$measured_M, pred$upr_95, pred$lwr_95))),
+      ggplot2::scale_y_continuous(breaks = seqy <- seq(floor(min(c(da_extended$measured_M, pred$upr_95, pred$lwr_95))),
                                                ceiling(max(c(da_extended$measured_M, pred$upr_95, pred$lwr_95))),
                                                by = 0.5),
-                                  minor_breaks = NULL) +
+                                  minor_breaks = NULL,
+                                  sec.axis = ggplot2::sec_axis(~ . /37.7, breaks = round(seqy/37.7, digits = 3), name = ylab2)) +
       ggplot2::scale_shape_manual(values = seq_along(unique(data$ID))) +
       ggplot2::theme_bw(base_size = base_size) +
       ggplot2::xlab(xlab) +
-      ggplot2::ylab(ylab) +
+      ggplot2::ylab(ylab1) +
       ggplot2::theme(legend.position = "none")
 
 }
@@ -181,6 +183,6 @@ plot_TaTskin_data <- function(fit, data, rangeTa = c(-5, 35), rangeTskin = c(0, 
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
     ggplot2::theme_bw(base_size = base_size) +
-    ggplot2::theme(legend.position = "none")
+    ggplot2::theme(legend.position = "none", plot.margin = ggplot2::margin(l = 0.5, r = 1.85, unit = "cm"))
 }
 
