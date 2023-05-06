@@ -111,7 +111,7 @@ ggplot2::ggsave(filename = "figures/figS1.pdf", plot = pS1_12,
 
 ### Step 2A: loading the data, see ?build_MR_table
 filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
-data_MR <- build_MR_datafile(filepath)
+data_MR <- build_MR_table(filepath)
 head(data_MR)
 
 ### Step 2B: fitting thermoregulatory curves using the torpor package

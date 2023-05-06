@@ -9,7 +9,7 @@ plot_MR_fit(fit, data, rangeTa = c(-5, 35), base_size = 11)
 \arguments{
 \item{fit}{a model fit produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
 
-\item{data}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_datafile]{build_MR_datafile()}}}
+\item{data}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
 
 \item{rangeTa}{the range of ambient temperature to consider in plot}
 
@@ -23,7 +23,7 @@ Plot thermoregulatory curves
 }
 \examples{
 filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
-data_MR <- build_MR_datafile(filepath)
+data_MR <- build_MR_table(filepath)
 plot_MR_fit(fit = fit_torpor, data = data_MR)
 
 }

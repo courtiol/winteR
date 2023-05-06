@@ -9,10 +9,10 @@
 #' @export
 #' @examples
 #' filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
-#' data_MR <- build_MR_datafile(filepath)
+#' data_MR <- build_MR_table(filepath)
 #' head(data_MR)
 #'
-build_MR_datafile <- function(filename) {
+build_MR_table <- function(filename) {
   ## read MR data
   d <- utils::read.table(filename, header = TRUE, sep = " ", dec = ".")
   rownames(d) <- NULL
@@ -61,14 +61,14 @@ summarise_MR_fit <- function(fit) {
 #'
 #' @inheritParams summarise_MR_fit
 #' @inheritParams plot_Tskin_fit
-#' @param data the data used to fit the thermoregulatory curves as produced by [build_MR_datafile()]
+#' @param data the data used to fit the thermoregulatory curves as produced by [build_MR_table()]
 #'
 #' @return a ggplot object
 #' @export
 #'
 #' @examples
 #' filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
-#' data_MR <- build_MR_datafile(filepath)
+#' data_MR <- build_MR_table(filepath)
 #' plot_MR_fit(fit = fit_torpor, data = data_MR)
 #'
 plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
