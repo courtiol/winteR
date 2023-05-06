@@ -160,7 +160,7 @@
 #'
 #' ### Step 2D: plotting thermoregulatory curves and temperature relationship
 #' pS2_1 <- plot_MR_fit(fit_torpor, data_MR)
-#' pS2_2 <- plot_TaTskin_data(data_MR)
+#' pS2_2 <- plot_TaTskin_data(fit_torpor, data_MR)
 #' pS2_12 <- gridExtra::grid.arrange(pS2_1 + ggplot2::labs(tag = "A"),
 #'                                   pS2_2 + ggplot2::labs(tag = "B"))
 #' ggplot2::ggsave(filename = "figures/fig2.pdf", plot = pS2_12,

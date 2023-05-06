@@ -112,11 +112,11 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
                            ggplot2::aes(x = .data$Ta, ymin = .data$lwr_95, ymax = .data$upr_95), fill = "black",
                            alpha = 0.2, col = NA) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Torpor", ],
-                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID)) +
+                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID), size = 1) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Euthermia", ],
-                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID)) +
+                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID), size = 3) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Mtnz", ],
-                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID)) +
+                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID), size = 3) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Undefined", ],
                           ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID), shape = 4) +
       ggplot2::scale_x_continuous(breaks = seq(rangeTa[1], rangeTa[2], by = 5), minor_breaks = NULL,
@@ -143,11 +143,11 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
 #' @export
 #'
 #' @examples
-#' Tskin_files <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
-#' data_Tskin <- build_Tskin_table(Tskin_files)
-#' plot_TaTskin_data(data_Tskin)
+#' MR_file <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
+#' data_MR <- build_MR_table(MR_file)
+#' plot_TaTskin_data(fit = fit_torpor, data = data_MR)
 #'
-plot_TaTskin_data <- function(data, rangeTa = c(-5, 35), rangeTskin = c(0, 40), base_size = 11) {
+plot_TaTskin_data <- function(fit, data, rangeTa = c(-5, 35), rangeTskin = c(0, 40), base_size = 11) {
 
   # if (!is.null(data_Tskin)) {
   #   data_Tskin30plus <- data_Tskin[data_Tskin$Tskin > 30, c("Tskin", "Ta")]
@@ -158,15 +158,26 @@ plot_TaTskin_data <- function(data, rangeTa = c(-5, 35), rangeTskin = c(0, 40), 
   xlab <- "Ambient temperature (\u00B0C)"
   ylab <- "Skin temperature (\u00B0C)"
 
-  ggplot2::ggplot(data) +
-    ggplot2::aes(y = .data$Tskin, x = .data$Ta, colour = .data$ID, shape = .data$ID) +
+  da <- torpor::tor_assign(fit)
+
+  if (!all(data$Ta == da$measured_Ta)) stop("The object data is not consistent with the one used to fit the model")
+  da_extended <- cbind(da, data)
+
+  ggplot2::ggplot() +
     ggplot2::geom_abline(slope = 1, linetype = 2) +
-    ggplot2::geom_point() +
+    ggplot2::geom_point(data = da_extended[da_extended$assignment == "Euthermia", ],
+                        ggplot2::aes(y = .data$Tskin, x = .data$Ta, colour = .data$ID, shape = .data$ID), size = 3) +
+    ggplot2::geom_point(data = da_extended[da_extended$assignment == "Mtnz", ],
+                        ggplot2::aes(y = .data$Tskin, x = .data$Ta, colour = .data$ID, shape = .data$ID), size = 3) +
+    ggplot2::geom_point(data = da_extended[da_extended$assignment == "Torpor", ],
+                        ggplot2::aes(y = .data$Tskin, x = .data$Ta, colour = .data$ID, shape = .data$ID), size = 1) +
+    ggplot2::geom_point(data = da_extended[da_extended$assignment == "Undefined", ],
+                        ggplot2::aes(x = .data$Ta, y = .data$Tskin, colour = .data$ID), shape = 4) +
     ggplot2::scale_x_continuous(breaks = seq(rangeTa[1], rangeTa[2], by = 5), minor_breaks = NULL,
-                                limits = range(c(rangeTa, data$Ta))) +
+                                limits = range(c(rangeTa, da_extended$Ta))) +
     ggplot2::scale_y_continuous(breaks = seq(rangeTskin[1], rangeTskin[2], by = 5), minor_breaks = NULL,
-                                limits = range(c(rangeTskin, data$Tskin))) +
-    ggplot2::scale_shape_manual(values = seq_along(unique(data$ID))) +
+                                limits = range(c(rangeTskin, da_extended$Tskin))) +
+    ggplot2::scale_shape_manual(values = seq_along(unique(da_extended$ID))) +
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
     ggplot2::theme_bw(base_size = base_size) +
