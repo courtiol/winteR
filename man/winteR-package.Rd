@@ -101,8 +101,7 @@ ggplot2::ggsave(filename = "figures/fig1.pdf", width = 12, height = 12, units = 
 ### Step 1H: create fig S1
 pS1_1 <- plot_Tskin_fit(fit_normo_cauchit, rangeTa = c(-35, 35))
 pS1_2 <- plot_Tskin_fit(fit_normo_logit, rangeTa = c(-35, 35))
-pS1_12 <- gridExtra::grid.arrange(pS1_1 + ggplot2::labs(tag = "A"),
-                                  pS1_2 + ggplot2::labs(tag = "B"))
+pS1_12 <- cowplot::plot_grid(pS1_1, pS1_2, nrow = 2, labels= "AUTO", align = "hv")
 ggplot2::ggsave(filename = "figures/figS1.pdf", plot = pS1_12,
                 width = 12, height = 20, units = "cm")
 
@@ -158,8 +157,7 @@ summarise_MR_fit(fit_torpor)
 ### Step 2D: plotting thermoregulatory curves and temperature relationship
 pS2_1 <- plot_MR_fit(fit_torpor, data_MR)
 pS2_2 <- plot_TaTskin_data(fit_torpor, data_MR)
-pS2_12 <- gridExtra::grid.arrange(pS2_1 + ggplot2::labs(tag = "A"),
-                                  pS2_2 + ggplot2::labs(tag = "B"))
+pS2_12 <- cowplot::plot_grid(pS2_1, pS2_2, nrow = 2, labels= "AUTO", align = "hv")
 ggplot2::ggsave(filename = "figures/fig2.pdf", plot = pS2_12,
                 width = 12, height = 20, units = "cm")
 

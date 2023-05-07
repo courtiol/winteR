@@ -16,10 +16,10 @@ Imports:
     ggplot2,
     torpor
 Suggests:
+    cowplot,
     DHARMa,
     remotes,
-    spaMM,
-    gridExtra
+    spaMM
 Remotes:
     vullioud/torpor
 Depends: 

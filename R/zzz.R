@@ -21,7 +21,7 @@
 #' checkDependencies()
 #'
 checkDependencies <- function() {
-  pkg_needed <- c("DHARMa", "spaMM", "gridExtra")
+  pkg_needed <- c("DHARMa", "spaMM", "cowplot")
   for (pkg in pkg_needed) {
     if (!requireNamespace(pkg)) {
       stop(paste0("please install the package ", pkg, " using: install.packages(", pkg, ")\n then rerun checkDependencies()"))

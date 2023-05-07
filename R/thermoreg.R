@@ -183,6 +183,7 @@ plot_TaTskin_data <- function(fit, data, rangeTa = c(-5, 35), rangeTskin = c(0, 
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
     ggplot2::theme_bw(base_size = base_size) +
-    ggplot2::theme(legend.position = "none", plot.margin = ggplot2::margin(l = 0.5, r = 1.85, unit = "cm"))
+    ggplot2::theme(legend.position = "none")
+
 }
 
