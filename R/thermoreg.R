@@ -18,19 +18,14 @@ build_MR_table <- function(filename) {
   rownames(d) <- NULL
   d |>
     dplyr::rename(VCO2_ml_g_h = .data$MR) |>
-    dplyr::mutate(VO2_ml_g_h = .data$VCO2_ml_g_h/0.7,
-                  VCO2_L_g_h = .data$VCO2_ml_g_h/1000,
-                  VO2_L_g_h = .data$VO2_ml_g_h/1000,
+    dplyr::mutate(VCO2_L_g_h = .data$VCO2_ml_g_h/1000,
                   kJ_g_h = .data$VCO2_L_g_h*27.8,
-                  J_g_h = .data$VCO2_ml_g_h*27.8,
-                  fat_g_g = .data$kJ_g_h/37.7,
-                  fat_mg_g = .data$J_g_h/37.7,
                   kJ_h = .data$kJ_g_h * 30.78,
                   fat_h = .data$kJ_h/37.7,
                   ID2 = as.factor(.data$ID2)) |>
     dplyr::select("ID" = .data$ID2, .data$Ta, "Tskin" = .data$Tb,
-                  .data$VCO2_ml_g_h, .data$VO2_ml_g_h, .data$VCO2_L_g_h, .data$VO2_L_g_h,
-                  .data$kJ_g_h, .data$J_g_h, .data$fat_g_g, .data$fat_mg_g, .data$kJ_h, .data$fat_h)
+                  .data$VCO2_ml_g_h, .data$VCO2_L_g_h,
+                  .data$kJ_g_h, .data$kJ_h, .data$fat_h)
 }
 
 
@@ -77,7 +72,7 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
 
   xlab <- "\nAmbient temperature (\u00B0C)"
   ylab1 <- expression(atop("Metabolic rate"~(k*J*h^{-1})), ",")
-  ylab2 <- expression(atop("Fat consumed"~(g[fat]*h^{-1})), ",")
+  ylab2 <- expression(atop("Fat consumption"~(g[fat]*h^{-1})), ",")
 
   da <- torpor::tor_assign(fit)
 

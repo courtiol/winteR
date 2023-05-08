@@ -105,7 +105,9 @@ plot_winter_temp2years <- function(data, base_size = 11, temp_threshold = 7, spl
 
   ## plot
   ggplot2::ggplot(data_plot) +
-    ggplot2::geom_hline(yintercept = temp_threshold, linetype = 2) +
+    ggplot2::geom_hline(yintercept = temp_threshold, linetype = 3) +
+    ggplot2::geom_vline(xintercept = winter$start_winter, linetype = 2, colour = "#0057b7") +
+    ggplot2::geom_vline(xintercept = winter$stop_winter, linetype = 2, colour = "#0057b7") +
     ggplot2::aes(y = .data$Temp, x = .data$Date) +
     ggplot2::geom_line(data = data_plot[data_plot$Date <= winter$start_winter, ], colour = "#ffd700") +
     ggplot2::geom_line(data = data_plot[data_plot$Date >= winter$stop_winter, ], colour = "#ffd700") +
