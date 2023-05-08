@@ -76,8 +76,8 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
   ## code adapted from torpor::tor_plot()
 
   xlab <- "\nAmbient temperature (\u00B0C)"
-  ylab1 <- expression("Metabolic rate"~(k*J*h^{-1}))
-  ylab2 <- expression("Fat consumed"~(g[fat]*h^{-1}))
+  ylab1 <- expression(atop("Metabolic rate"~(k*J*h^{-1})), ",")
+  ylab2 <- expression(atop("Fat consumed"~(g[fat]*h^{-1})), ",")
 
   da <- torpor::tor_assign(fit)
 
@@ -157,8 +157,8 @@ plot_TaTskin_data <- function(fit, data, rangeTa = c(-5, 35), rangeTskin = c(0, 
   #   data <- rbind(data[, c("Tskin", "Ta", "ID")], data_Tskin30plus)
   # }
 
-  xlab <- "Ambient temperature (\u00B0C)"
-  ylab <- "Skin temperature (\u00B0C)"
+  xlab <- "\nAmbient temperature (\u00B0C)"
+  ylab <- "Skin temperature (\u00B0C)\n"
 
   da <- torpor::tor_assign(fit)
 

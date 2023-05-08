@@ -157,9 +157,9 @@ summarise_MR_fit(fit_torpor)
 ### Step 2D: plotting thermoregulatory curves and temperature relationship
 pS2_1 <- plot_MR_fit(fit_torpor, data_MR)
 pS2_2 <- plot_TaTskin_data(fit_torpor, data_MR)
-pS2_12 <- cowplot::plot_grid(pS2_1, pS2_2, nrow = 2, labels= "AUTO", align = "hv")
+pS2_12 <- cowplot::plot_grid(pS2_1, pS2_2, nrow = 2, labels = "AUTO", align = "hv")
 ggplot2::ggsave(filename = "figures/fig2.pdf", plot = pS2_12,
-                width = 12, height = 20, units = "cm")
+                width = 14, height = 20, units = "cm")
 
 
  ## Step 3: illustration of winter and budget for Kharkiv
