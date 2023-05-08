@@ -1,5 +1,5 @@
 
-#' Classify dates within 2 consecutive years as belonging to biological winter or not
+#' Extract summary statistics for a winter
 #'
 #' @param data a dataframe with at least columns `Date` and `Temp`
 #' @param split_summer the day of mid-summer (default = `'07-01'`)
@@ -13,12 +13,12 @@
 #' file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
 #'                        "/Kharkiv_weather_2011_2012.csv")
 #' data_Kharkiv <- build_Kharkiv_table(file_Kharkiv)
-#' find_winter_temp2years(data_Kharkiv)
+#' extract_winter_stats(data_Kharkiv)
 #'
-find_winter_temp2years <- function(data,
-                                   split_summer = "07-01",
-                                   temp_threshold = 7,
-                                   min_days_trigger_winter = 14) {
+extract_winter_stats <- function(data,
+                                 split_summer = "07-01",
+                                 temp_threshold = 7,
+                                 min_days_trigger_winter = 14) {
 
   if (!all(c("Date", "Temp") %in% colnames(data))) {
     stop("The function `classify_winter_temp()` requires at least 2 columns: `Date` and `Temp`")
@@ -57,14 +57,26 @@ find_winter_temp2years <- function(data,
   begin <- max(c(begin, mid_summer1))
   end <- min(c(end, mid_summer2 - 1))
 
+  ## is there any winter?
+  winter <- ifelse(is.na(begin), FALSE, TRUE)
+
+  ## extract winter temperatures
+  temp_winter <- data$Temp[data$Date >= begin & data$Date <= end]
+
   ## return
-  list(begin = begin,
-       end = end,
-       duration = as.numeric(difftime(end, begin, units = "days")),
+  list(start_winter = begin,
+       stop_winter = end,
        year1 = year1,
        year2 = year2,
        mid_summer1 = mid_summer1,
-       mid_summer2 = mid_summer2)
+       mid_summer2 = mid_summer2,
+       duration_winter = ifelse(winter, as.numeric(difftime(end, begin, units = "days")), 0),
+       temp_winter_mean = ifelse(winter, mean(temp_winter), NA),
+       temp_winter_sd = ifelse(winter, stats::sd(temp_winter), NA),
+       temp_winter_median = ifelse(winter, stats::median(temp_winter), NA),
+       temp_winter_min = ifelse(winter, min(temp_winter), NA),
+       temp_winter_max = ifelse(winter, max(temp_winter), NA),
+       temp_winter_autocorr = ifelse(winter, stats::acf(temp_winter, plot = FALSE, lag.max = 1)$acf[[2]], NA))
 }
 
 
@@ -72,7 +84,7 @@ find_winter_temp2years <- function(data,
 #'
 #' @param data a dataframe such as one created by [build_Kharkiv_table()]
 #' @inheritParams plot_Tskin_fit
-#' @inheritParams find_winter_temp2years
+#' @inheritParams extract_winter_stats
 #'
 #' @return a ggplot object
 #' @export
@@ -86,22 +98,22 @@ find_winter_temp2years <- function(data,
 #'
 plot_winter_temp2years <- function(data, base_size = 11, temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14) {
 
-  winter <- find_winter_temp2years(data, temp_threshold = temp_threshold, split_summer = split_summer,
-                                   min_days_trigger_winter = min_days_trigger_winter)
-  data$Winter <- data$Date >= winter$begin & data$Date <= winter$end
+  winter <- extract_winter_stats(data, temp_threshold = temp_threshold, split_summer = split_summer,
+                                 min_days_trigger_winter = min_days_trigger_winter)
+  data$Winter <- data$Date >= winter$start_winter & data$Date <= winter$stop_winter
   data_plot <- data[data$Date >= winter$mid_summer1 & data$Date < winter$mid_summer2, ]
 
   ## plot
   ggplot2::ggplot(data_plot) +
     ggplot2::geom_hline(yintercept = temp_threshold, linetype = 2) +
     ggplot2::aes(y = .data$Temp, x = .data$Date) +
-    ggplot2::geom_line(colour = "grey") +
-    ggplot2::geom_point(ggplot2::aes(colour = .data$Winter, shape = .data$Winter), size = 2) +
+    ggplot2::geom_line(data = data_plot[data_plot$Date <= winter$start_winter, ], colour = "#ffd700") +
+    ggplot2::geom_line(data = data_plot[data_plot$Date >= winter$stop_winter, ], colour = "#ffd700") +
+    ggplot2::geom_line(data = data_plot[data_plot$Date >= winter$start_winter & data_plot$Date <= winter$stop_winter, ], colour = "#0057b7") +
+    ggplot2::geom_point(size = 0.5, shape = 1) +
     ggplot2::scale_y_continuous(breaks = c(temp_threshold, seq(-100, 100, by = 5)), minor_breaks = NULL) +
     ggplot2::scale_x_date(date_breaks = "2 months", date_labels = "%b 1st",
                           minor_breaks = "1 month", limits = c(winter$mid_summer1, winter$mid_summer2)) +
-    ggplot2::scale_colour_manual(values = c("red", "black")) +
-    ggplot2::scale_shape_manual(values = c(2, 6)) +
     ggplot2::labs(y = "Ambient temperature (\u00B0C)\n", x = NULL) +
     ggplot2::coord_cartesian(xlim = c(winter$mid_summer1, winter$mid_summer2)) +
     ggplot2::theme_bw(base_size = base_size) +
