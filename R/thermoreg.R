@@ -100,7 +100,7 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
                          linetype = 1) +
       ggplot2::geom_line(data = pred[pred$assignment == "Euthermia" & pred$Ta < min_euther, ],
                          ggplot2::aes(x = .data$Ta, y = .data$pred), col = "black",
-                         linetype = 3) +
+                         linetype = 4) +
       ggplot2::geom_ribbon(data = pred[pred$assignment == "Torpor", ],
                            ggplot2::aes(x = .data$Ta, ymin = .data$lwr_95, ymax = .data$upr_95), fill =  "darkgrey",
                            alpha = 0.2, col = NA) +

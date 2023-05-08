@@ -29,7 +29,7 @@ Extract summary statistics for a winter
 \examples{
 file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
                        "/Kharkiv_weather_2011_2012.csv")
-data_Kharkiv <- build_Kharkiv_table(file_Kharkiv)
+data_Kharkiv <- build_temp_2years(file_Kharkiv)
 extract_winter_stats(data_Kharkiv)
 
 }

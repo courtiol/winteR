@@ -7,6 +7,7 @@
 plot_nrg_budget(
   data_budget,
   y = "g_fat_per_winter",
+  threshold_mortality = 24,
   base_size = 11,
   temp_threshold = 7,
   split_summer = "07-01",
@@ -18,6 +19,8 @@ plot_nrg_budget(
 
 \item{y}{a string of characters indicating what y-variable to plot:
 "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"}
+
+\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
 
 \item{base_size}{base font size, given in pts}
 
@@ -36,13 +39,12 @@ Plot the energy budget
 \examples{
 filepath <- list.files(system.file("extdata/weather_real", package = "winteR"),
                        full.names = TRUE)[1]
-data_Kharkiv <- build_Kharkiv_table(filepath)
+data_Kharkiv <- build_temp_2years(filepath)
 Tskin_files <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
 data_Tskin <- build_Tskin_table(Tskin_files)
 data_normothermy <- data_Tskin[data_Tskin$Included, ]
 fit_normo_cauchit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
                                  family = binomial(link = "cauchit"))
-data_Kharkiv$Temp[data_Kharkiv$Temp < -5] <- -5
 data_nrg <- compute_nrg_budget(data_Kharkiv, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
 plot_nrg_budget(data_nrg, y = "g_fat_per_state")
 plot_nrg_budget(data_nrg, y = "g_fat_per_day")

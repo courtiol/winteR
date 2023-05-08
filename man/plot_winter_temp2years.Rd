@@ -13,7 +13,7 @@ plot_winter_temp2years(
 )
 }
 \arguments{
-\item{data}{a dataframe such as one created by \code{\link[=build_Kharkiv_table]{build_Kharkiv_table()}}}
+\item{data}{a dataframe such as one created by \code{\link[=build_temp_2years]{build_temp_2years()}}}
 
 \item{base_size}{base font size, given in pts}
 
@@ -32,7 +32,7 @@ Plot temperature and winter data
 \examples{
 file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
                        "/Kharkiv_weather_2011_2012.csv")
-data_Kharkiv <- build_Kharkiv_table(file_Kharkiv)
+data_Kharkiv <- build_temp_2years(file_Kharkiv)
 plot_winter_temp2years(data_Kharkiv)
 
 

@@ -1,3 +1,25 @@
+#' Build table with raw temperature data
+#'
+#' This function loads a file containing date and temperature data for 2 consecutive years-
+#'
+#' @inheritParams load_Tskin_datafile
+#' @return a dataframe
+#' @export
+#' @examples
+#' file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
+#'                        "/Kharkiv_weather_2011_2012.csv")
+#' data_Kharkiv <- build_temp_2years(file_Kharkiv)
+#' head(data_Kharkiv)
+#'
+build_temp_2years <- function(filename) {
+  d <- utils::read.csv(filename, header = TRUE, sep = ",", dec = ".")
+  d$Time <- as.POSIXct(d$Time, format = "%d.%m.%Y %H:%M", tz = "EAT")
+  d <- d[order(d$Time), ]
+  d |>
+    dplyr::mutate(Date = as.Date(.data$Time, origin = "1970-01-01")) |>
+    dplyr::summarise(Temp = mean(.data$Temp), .by = "Date")
+}
+
 
 #' Extract summary statistics for a winter
 #'
@@ -12,7 +34,7 @@
 #' @examples
 #' file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
 #'                        "/Kharkiv_weather_2011_2012.csv")
-#' data_Kharkiv <- build_Kharkiv_table(file_Kharkiv)
+#' data_Kharkiv <- build_temp_2years(file_Kharkiv)
 #' extract_winter_stats(data_Kharkiv)
 #'
 extract_winter_stats <- function(data,
@@ -82,7 +104,7 @@ extract_winter_stats <- function(data,
 
 #' Plot temperature and winter data
 #'
-#' @param data a dataframe such as one created by [build_Kharkiv_table()]
+#' @param data a dataframe such as one created by [build_temp_2years()]
 #' @inheritParams plot_Tskin_fit
 #' @inheritParams extract_winter_stats
 #'
@@ -92,7 +114,7 @@ extract_winter_stats <- function(data,
 #' @examples
 #' file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
 #'                        "/Kharkiv_weather_2011_2012.csv")
-#' data_Kharkiv <- build_Kharkiv_table(file_Kharkiv)
+#' data_Kharkiv <- build_temp_2years(file_Kharkiv)
 #' plot_winter_temp2years(data_Kharkiv)
 #'
 #'
@@ -105,14 +127,14 @@ plot_winter_temp2years <- function(data, base_size = 11, temp_threshold = 7, spl
 
   ## plot
   ggplot2::ggplot(data_plot) +
-    ggplot2::geom_hline(yintercept = temp_threshold, linetype = 3) +
+    ggplot2::geom_hline(yintercept = temp_threshold, linetype = 4, colour = "darkgrey") +
     ggplot2::geom_vline(xintercept = winter$start_winter, linetype = 2, colour = "#0057b7") +
     ggplot2::geom_vline(xintercept = winter$stop_winter, linetype = 2, colour = "#0057b7") +
     ggplot2::aes(y = .data$Temp, x = .data$Date) +
     ggplot2::geom_line(data = data_plot[data_plot$Date <= winter$start_winter, ], colour = "#ffd700") +
     ggplot2::geom_line(data = data_plot[data_plot$Date >= winter$stop_winter, ], colour = "#ffd700") +
     ggplot2::geom_line(data = data_plot[data_plot$Date >= winter$start_winter & data_plot$Date <= winter$stop_winter, ], colour = "#0057b7") +
-    ggplot2::geom_point(size = 0.5, shape = 1) +
+    #ggplot2::geom_point(size = 0.5, shape = 1) +
     ggplot2::scale_y_continuous(breaks = c(temp_threshold, seq(-100, 100, by = 5)), minor_breaks = NULL) +
     ggplot2::scale_x_date(date_breaks = "2 months", date_labels = "%b 1st",
                           minor_breaks = "1 month", limits = c(winter$mid_summer1, winter$mid_summer2)) +

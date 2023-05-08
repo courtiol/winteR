@@ -167,7 +167,7 @@ ggplot2::ggsave(filename = "figures/fig2.pdf", plot = pS2_12,
 ### Step 3A: plotting winter 2011-2012
 file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
                        "/Kharkiv_weather_2011_2012.csv")
-data_Kharkiv <- build_Kharkiv_table(file_Kharkiv)
+data_Kharkiv <- build_temp_2years(file_Kharkiv)
 pS3_1 <- plot_winter_temp2years(data_Kharkiv)
 
 ### Step 3B: computing budget
@@ -177,7 +177,10 @@ data_nrg <- compute_nrg_budget(data_Kharkiv, fit_state = fit_normo_cauchit, fit_
 pS3_2 <- plot_nrg_budget(data_nrg, y = "g_fat_per_state")
 pS3_3 <- plot_nrg_budget(data_nrg, y = "g_fat_per_day")
 pS3_4 <- plot_nrg_budget(data_nrg, y = "g_fat_per_winter")
-cowplot::plot_grid(pS3_1, pS3_2,  pS3_3, pS3_4, nrow = 2, labels = "AUTO", align = "hv")
+pS3_1234 <- cowplot::plot_grid(pS3_1, pS3_2,  pS3_3, pS3_4, nrow = 2, labels = "AUTO", align = "hv")
+pS3_1234
+ggplot2::ggsave(filename = "figures/fig3.pdf", plot = pS3_1234,
+                width = 25, height = 20, units = "cm")
 
 }
 \references{
