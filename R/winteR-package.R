@@ -164,4 +164,14 @@
 #' ggplot2::ggsave(filename = "figures/fig2.pdf", plot = pS2_12,
 #'                 width = 12, height = 20, units = "cm")
 #'
+#'
+#'  ## Step 3: illustration of winter and budget for Kharkiv
+#'
+#'  ### Step 3A: plotting winter 2011-2012
+#' file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
+#'                        "/Kharkiv_weather_2011_2012.csv")
+#' data_Kharkiv <- build_Kharkiv_table(file_Kharkiv)
+#' plot_winter_temp2years(data_Kharkiv)
+#'
+#'
 NULL

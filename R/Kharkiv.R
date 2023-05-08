@@ -20,29 +20,3 @@ build_Kharkiv_table <- function(filename) {
     dplyr::summarise(Temp = mean(.data$Temp), .by = "Date")
 }
 
-
-#' Plot Kharkiv temperature data
-#'
-#' @param data the dataframe created by [build_Kharkiv_table()]
-#' @inheritParams plot_Tskin_fit
-#' @param colour_var (optional) the unquotted name of a variable in `data` that defines the colour in the plot
-#' @inheritParams classify_winter_temp2years
-#'
-#' @return a ggplot object
-#' @export
-#'
-#' @examples
-#' filepath <- list.files(system.file("extdata/weather_real", package = "winteR"),
-#'                        full.names = TRUE)[1]
-#' data_Kharkiv <- build_Kharkiv_table(filepath)
-#' plot_Kharkiv_temp(data_Kharkiv)
-#'
-#'
-plot_Kharkiv_temp <- function(data, base_size = 11, colour_var = NULL, temp_threshold = 7) {
-  ggplot2::ggplot(data) +
-    ggplot2::geom_hline(yintercept = temp_threshold, linetype = 2) +
-    ggplot2::aes(y = .data$Temp, x = .data$Date) +
-    ggplot2::geom_line() +
-    ggplot2::geom_point(ggplot2::aes(colour = {{colour_var}})) +
-    ggplot2::theme_bw(base_size = base_size)
-}

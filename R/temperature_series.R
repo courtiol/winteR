@@ -10,16 +10,15 @@
 #' @export
 #'
 #' @examples
-#' filepath <- list.files(system.file("extdata/weather_real", package = "winteR"),
-#'                        full.names = TRUE)[1]
-#' data_Kharkiv <- build_Kharkiv_table(filepath)
-#' data_Kharkiv$Winter <- classify_winter_temp2years(data_Kharkiv)
-#' plot_Kharkiv_temp(data_Kharkiv, colour_var = Winter)
+#' file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
+#'                        "/Kharkiv_weather_2011_2012.csv")
+#' data_Kharkiv <- build_Kharkiv_table(file_Kharkiv)
+#' find_winter_temp2years(data_Kharkiv)
 #'
-classify_winter_temp2years <- function(data,
-                                       split_summer = "07-01",
-                                       temp_threshold = 7,
-                                       min_days_trigger_winter = 14) {
+find_winter_temp2years <- function(data,
+                                   split_summer = "07-01",
+                                   temp_threshold = 7,
+                                   min_days_trigger_winter = 14) {
 
   if (!all(c("Date", "Temp") %in% colnames(data))) {
     stop("The function `classify_winter_temp()` requires at least 2 columns: `Date` and `Temp`")
@@ -58,7 +57,54 @@ classify_winter_temp2years <- function(data,
   begin <- max(c(begin, mid_summer1))
   end <- min(c(end, mid_summer2 - 1))
 
-  ## winter
-  data$Date >= begin & data$Date <= end
+  ## return
+  list(begin = begin,
+       end = end,
+       duration = as.numeric(difftime(end, begin, units = "days")),
+       year1 = year1,
+       year2 = year2,
+       mid_summer1 = mid_summer1,
+       mid_summer2 = mid_summer2)
+}
+
+
+#' Plot temperature and winter data
+#'
+#' @param data a dataframe such as one created by [build_Kharkiv_table()]
+#' @inheritParams plot_Tskin_fit
+#' @inheritParams find_winter_temp2years
+#'
+#' @return a ggplot object
+#' @export
+#'
+#' @examples
+#' file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
+#'                        "/Kharkiv_weather_2011_2012.csv")
+#' data_Kharkiv <- build_Kharkiv_table(file_Kharkiv)
+#' plot_winter_temp2years(data_Kharkiv)
+#'
+#'
+plot_winter_temp2years <- function(data, base_size = 11, temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14) {
+
+  winter <- find_winter_temp2years(data, temp_threshold = temp_threshold, split_summer = split_summer,
+                                   min_days_trigger_winter = min_days_trigger_winter)
+  data$Winter <- data$Date >= winter$begin & data$Date <= winter$end
+  data_plot <- data[data$Date >= winter$mid_summer1 & data$Date < winter$mid_summer2, ]
+
+  ## plot
+  ggplot2::ggplot(data_plot) +
+    ggplot2::geom_hline(yintercept = temp_threshold, linetype = 2) +
+    ggplot2::aes(y = .data$Temp, x = .data$Date) +
+    ggplot2::geom_line(colour = "grey") +
+    ggplot2::geom_point(ggplot2::aes(colour = .data$Winter, shape = .data$Winter), size = 2) +
+    ggplot2::scale_y_continuous(breaks = c(temp_threshold, seq(-100, 100, by = 5)), minor_breaks = NULL) +
+    ggplot2::scale_x_date(date_breaks = "2 months", date_labels = "%b 1st",
+                          minor_breaks = "1 month", limits = c(winter$mid_summer1, winter$mid_summer2)) +
+    ggplot2::scale_colour_manual(values = c("red", "black")) +
+    ggplot2::scale_shape_manual(values = c(2, 6)) +
+    ggplot2::labs(y = "Ambient temperature (\u00B0C)\n", x = NULL) +
+    ggplot2::coord_cartesian(xlim = c(winter$mid_summer1, winter$mid_summer2)) +
+    ggplot2::theme_bw(base_size = base_size) +
+    ggplot2::theme(legend.position = "none")
 }
 
