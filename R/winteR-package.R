@@ -235,7 +235,7 @@
 #' pS4_1234
 #' showtext::showtext_opts(dpi = 300)
 #' ggplot2::ggsave(filename = "figures/fig3.pdf", plot = pS4_1234,
-#'                 width = 18, height = 13.5, units = "cm")
+#'                 width = 18, height = 12.5, units = "cm")
 #' ggplot2::ggsave(filename = "figures/fig3.png", plot = pS4_1234,
-#'                 width = 18, height = 13.5, units = "cm")
+#'                 width = 18, height = 12.5, units = "cm")
 NULL

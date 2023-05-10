@@ -7,11 +7,8 @@
 plot_nrg_budget(
   data_budget,
   y = "g_fat_per_winter",
-  threshold_mortality = 24,
-  base_size = 11,
-  temp_threshold = 7,
-  split_summer = "07-01",
-  min_days_trigger_winter = 14
+  threshold_mortality = 27,
+  base_size = 11
 )
 }
 \arguments{
@@ -23,12 +20,6 @@ plot_nrg_budget(
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
 
 \item{base_size}{base font size, given in pts}
-
-\item{temp_threshold}{the approximate temperature below which insects do not fly}
-
-\item{split_summer}{the day of mid-summer (default = \code{'07-01'})}
-
-\item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
 }
 \value{
 a ggplot object

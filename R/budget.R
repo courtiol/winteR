@@ -1,6 +1,8 @@
 #' Compute the energy budget associated to given ambient temperatures
 #'
-#' Bugets are computed in grams of fat consumed.
+#' Bugets are computed in KJ per hour and grams of fat consumed. If `data_MR` contains a column
+#' `Date`, the function will also compute the cumulative budget during the hibernation season and
+#' the predicted survival status.
 #'
 #' @inheritParams arguments
 #'
@@ -10,7 +12,9 @@
 #' @examples
 #' #See ?winteR
 #'
-compute_nrg_budget <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa = 5) {
+compute_nrg_budget <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa = 5,
+                               temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
+                               threshold_mortality = 27) {
 
   ## ambient temperature is higher in roost
   data_MR$Ta <- data_MR$Temp + roost_insulation_dTa
@@ -49,6 +53,21 @@ compute_nrg_budget <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa 
   data_MR$Budget_MR <- data_MR$MR_normo * data_MR$Daily_duration_normo + data_MR$MR_torpor * data_MR$Daily_duration_torpor
   data_MR$Budget_fat <- data_MR$Fat_normo * data_MR$Daily_duration_normo + data_MR$Fat_torpor * data_MR$Daily_duration_torpor
 
+  ## if date provided, compute cumulative budget and survival
+  if (!is.null(data_MR$Date)) {
+    ## compute cumulative energy budget
+    winter <- extract_winter_stats(data_MR, temp_threshold = temp_threshold, split_summer = split_summer,
+                                   min_days_trigger_winter = min_days_trigger_winter)
+
+    data_MR$Winter <- data_MR$Date >= winter$start_winter & data_MR$Date <= winter$stop_winter
+    data_MR$Budget_cumul <- cumsum(data_MR$Budget_fat * data_MR$Winter)
+
+    ## compute survival status
+    data_MR$Survival <- TRUE
+    date_mortality <- min(data_MR$Date[data_MR$Budget_cumul > threshold_mortality])
+    data_MR$Survival[data_MR$Date >= date_mortality] <- FALSE
+  }
+
   ## return
   data_MR
 }
@@ -75,20 +94,17 @@ compute_nrg_budget <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa 
 #' plot_nrg_budget(data_nrg, y = "g_fat_per_day")
 #' plot_nrg_budget(data_nrg, y = "g_fat_per_winter")
 #'
-plot_nrg_budget <- function(data_budget, y = "g_fat_per_winter", threshold_mortality = 24,
-                            base_size = 11, temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14) {
+plot_nrg_budget <- function(data_budget, y = "g_fat_per_winter", threshold_mortality = 27, base_size = 11) {
 
-  winter <- extract_winter_stats(data_budget, temp_threshold = temp_threshold, split_summer = split_summer,
-                                 min_days_trigger_winter = min_days_trigger_winter)
+  start_winter <- min(data_budget$Date[data_budget$Winter])
+  stop_winter <- max(data_budget$Date[data_budget$Winter])
 
-  data_budget$Winter <- data_budget$Date >= winter$start_winter & data_budget$Date <= winter$stop_winter
-  data_budget$Budget_cumul <- cumsum(data_budget$Budget_fat * data_budget$Winter)
-  data_plot <- data_budget[data_budget$Date >= winter$start_winter - 14 & data_budget$Date < winter$stop_winter + 14, ]
+  data_plot <- data_budget[data_budget$Date >= start_winter - 14 & data_budget$Date < stop_winter + 14, ]
 
   plot <- ggplot2::ggplot(data_plot) +
-    ggplot2::coord_cartesian(xlim = c(winter$start_winter - 14, winter$stop_winter + 14), ylim = c(0, NA)) +
-    ggplot2::geom_vline(xintercept = winter$start_winter, linetype = 2, colour = "#0057b7") +
-    ggplot2::geom_vline(xintercept = winter$stop_winter, linetype = 2, colour = "#0057b7")
+    ggplot2::coord_cartesian(xlim = c(start_winter - 14, stop_winter + 14), ylim = c(0, NA)) +
+    ggplot2::geom_vline(xintercept = start_winter, linetype = 2, colour = "#0057b7") +
+    ggplot2::geom_vline(xintercept = stop_winter, linetype = 2, colour = "#0057b7")
 
   y <- match.arg(y, c("g_fat_per_state", "g_fat_per_day", "g_fat_per_winter"))
 
@@ -121,7 +137,7 @@ plot_nrg_budget <- function(data_budget, y = "g_fat_per_winter", threshold_morta
 
   plot +
     ggplot2::scale_x_date(date_breaks = "1 months", date_labels = "%b 1st",
-                          minor_breaks = NULL, limits = c(winter$start_winter - 14, winter$stop_winter + 14)) +
+                          minor_breaks = NULL, limits = c(start_winter - 14, stop_winter + 14)) +
     ggplot2::labs(y = ylab, x = NULL) +
     ggplot2::theme_bw(base_size = base_size)
 }

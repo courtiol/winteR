@@ -4,7 +4,16 @@
 \alias{compute_nrg_budget}
 \title{Compute the energy budget associated to given ambient temperatures}
 \usage{
-compute_nrg_budget(data_MR, fit_state, fit_MR, roost_insulation_dTa = 5)
+compute_nrg_budget(
+  data_MR,
+  fit_state,
+  fit_MR,
+  roost_insulation_dTa = 5,
+  temp_threshold = 7,
+  split_summer = "07-01",
+  min_days_trigger_winter = 14,
+  threshold_mortality = 27
+)
 }
 \arguments{
 \item{data_MR}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
@@ -14,12 +23,22 @@ compute_nrg_budget(data_MR, fit_state, fit_MR, roost_insulation_dTa = 5)
 \item{fit_MR}{a fitted model predicting the metabolic rate in KJh^-1 produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
 
 \item{roost_insulation_dTa}{the increase in temperature in the roost, compared to outside (default = 5)}
+
+\item{temp_threshold}{the approximate temperature below which insects do not fly}
+
+\item{split_summer}{the day of mid-summer (default = \code{'07-01'})}
+
+\item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
+
+\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
 }
 \value{
 a dataframe
 }
 \description{
-Bugets are computed in grams of fat consumed.
+Bugets are computed in KJ per hour and grams of fat consumed. If \code{data_MR} contains a column
+\code{Date}, the function will also compute the cumulative budget during the hibernation season and
+the predicted survival status.
 }
 \examples{
 #See ?winteR
