@@ -5,17 +5,17 @@
 \title{Plot ambient vs skin temperature}
 \usage{
 plot_TaTskin_data(
-  fit,
-  data,
+  fit_MR,
+  data_MR,
   rangeTa = c(-5, 35),
   rangeTskin = c(0, 40),
   base_size = 11
 )
 }
 \arguments{
-\item{fit}{a model fit produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
+\item{fit_MR}{a fitted model predicting the metabolic rate in KJh^-1 produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
 
-\item{data}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
+\item{data_MR}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
 
 \item{rangeTa}{the range of ambient temperature to consider in plot}
 
@@ -30,8 +30,9 @@ a ggplot object
 Plot ambient vs skin temperature
 }
 \examples{
-MR_file <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
-data_MR <- build_MR_table(MR_file)
-plot_TaTskin_data(fit = fit_torpor, data = data_MR)
+filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
+                   "/metabolic_rate.txt")
+data_MR <- build_MR_table(filepath)
+plot_TaTskin_data(fit_MR = fit_torpor, data_MR = data_MR)
 
 }

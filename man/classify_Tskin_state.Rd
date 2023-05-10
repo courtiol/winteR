@@ -4,10 +4,10 @@
 \alias{classify_Tskin_state}
 \title{Classify the physiological state of individuals based on skin temperature}
 \usage{
-classify_Tskin_state(data)
+classify_Tskin_state(data_Tskin)
 }
 \arguments{
-\item{data}{a file created with \code{\link[=load_Tskin_datafile]{load_Tskin_datafile()}}}
+\item{data_Tskin}{a file produced by \code{\link[=load_Tskin_datafile]{load_Tskin_datafile()}}}
 }
 \value{
 a vector with the physiological state at each time point

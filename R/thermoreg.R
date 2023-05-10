@@ -4,11 +4,12 @@
 #' thermoregulatory curves and it converts the metabolic rate in various units. It should be
 #' structured as follows: TODO Kseniia, please add description XXX .
 #'
-#' @inheritParams load_Tskin_datafile
+#' @inheritParams arguments
 #' @return a dataframe
 #' @export
 #' @examples
-#' filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
+#' filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
+#'                    "/metabolic_rate.txt")
 #' data_MR <- build_MR_table(filepath)
 #' head(data_MR)
 #'
@@ -31,7 +32,7 @@ build_MR_table <- function(filename) {
 
 #' Extract parameters from model fitted with torpor
 #'
-#' @param fit a model fit produced by [torpor::tor_fit()]
+#' @inheritParams arguments
 #'
 #' @return a dataframe
 #' @export
@@ -39,8 +40,8 @@ build_MR_table <- function(filename) {
 #' @examples
 #' summarise_MR_fit(fit_torpor)
 #'
-summarise_MR_fit <- function(fit) {
-  estimates <- torpor::get_parameters(fit)
+summarise_MR_fit <- function(fit_MR) {
+  estimates <- torpor::get_parameters(fit_MR)
   estimates <- estimates[estimates$parameter %in% c("Tlc", "Tbt", "Tt", "TMR"), ]
   estimates$info[estimates$parameter == "Tlc"] <- "minimum ambient temperature in thermoneutral zone"
   estimates$info[estimates$parameter == "Tbt"] <- "skin temperature at minimal metabolic rate"
@@ -54,37 +55,36 @@ summarise_MR_fit <- function(fit) {
 
 #' Plot thermoregulatory curves
 #'
-#' @inheritParams summarise_MR_fit
-#' @inheritParams plot_Tskin_fit
-#' @param data the data used to fit the thermoregulatory curves as produced by [build_MR_table()]
+#' @inheritParams arguments
 #'
 #' @return a ggplot object
 #' @export
 #'
 #' @examples
-#' filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
+#' filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
+#'                    "/metabolic_rate.txt")
 #' data_MR <- build_MR_table(filepath)
-#' plot_MR_fit(fit = fit_torpor, data = data_MR)
+#' plot_MR_fit(fit_MR = fit_torpor, data_MR = data_MR)
 #'
-plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
+plot_MR_fit <- function(fit_MR, data_MR, rangeTa = c(-5, 35), base_size = 11) {
 
   ## code adapted from torpor::tor_plot()
 
-  xlab <- "\nAmbient temperature (\u00B0C)"
-  ylab1 <- expression(atop("Metabolic rate"~(k*J*h^{-1})), ",")
-  ylab2 <- expression(atop("Fat consumption"~(g[fat]*h^{-1})), ",")
+  xlab <- "Ambient temperature (\u00B0C)"
+  ylab1 <- expression(atop("Metabolic rate"~(k*J*h^{-1})))
+  ylab2 <- expression(atop("Fat consumption"~(g[fat]*h^{-1}))) # , "," to add ace
 
-  da <- torpor::tor_assign(fit)
+  da <- torpor::tor_assign(fit_MR)
 
-  if (!all(data$Ta == da$measured_Ta)) stop("The object data is not consistent with the one used to fit the model")
-  da_extended <- cbind(da, data)
+  if (!all(data_MR$Ta == da$measured_Ta)) stop("The object data_MR is not consistent with the one used to fit the model")
+  da_extended <- cbind(da, data_MR)
 
-  pred <- suppressWarnings(torpor::tor_predict(fit, seq(min(da_extended$measured_Ta),
+  pred <- suppressWarnings(torpor::tor_predict(fit_MR, seq(min(da_extended$measured_Ta),
                                                         max(da_extended$measured_Ta), length = 1000)))
 
   min_euther <- min(da_extended$measured_Ta[da_extended$assignment == "Euthermia"])
 
-  par <- torpor::get_parameters(fit)
+  par <- torpor::get_parameters(fit_MR)
   Tt <- par[par$parameter == "Tt", "mean"]
 
   ggplot2::ggplot() +
@@ -100,7 +100,7 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
                          linetype = 1) +
       ggplot2::geom_line(data = pred[pred$assignment == "Euthermia" & pred$Ta < min_euther, ],
                          ggplot2::aes(x = .data$Ta, y = .data$pred), col = "black",
-                         linetype = 4) +
+                         linetype = 3) +
       ggplot2::geom_ribbon(data = pred[pred$assignment == "Torpor", ],
                            ggplot2::aes(x = .data$Ta, ymin = .data$lwr_95, ymax = .data$upr_95), fill =  "darkgrey",
                            alpha = 0.2, col = NA) +
@@ -122,7 +122,7 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
                                                by = 0.5),
                                   minor_breaks = NULL,
                                   sec.axis = ggplot2::sec_axis(~ . /37.7, breaks = round(seqy/37.7, digits = 3), name = ylab2)) +
-      ggplot2::scale_shape_manual(values = seq_along(unique(data$ID))) +
+      ggplot2::scale_shape_manual(values = seq_along(unique(data_MR$ID))) +
       ggplot2::theme_bw(base_size = base_size) +
       ggplot2::xlab(xlab) +
       ggplot2::ylab(ylab1) +
@@ -133,32 +133,26 @@ plot_MR_fit <- function(fit, data, rangeTa = c(-5, 35), base_size = 11) {
 
 #' Plot ambient vs skin temperature
 #'
-#' @inheritParams plot_MR_fit
-#' @param rangeTskin the range of skin temperature to consider in plot
+#' @inheritParams arguments
 #'
 #' @return a ggplot object
 #' @export
 #'
 #' @examples
-#' MR_file <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
-#' data_MR <- build_MR_table(MR_file)
-#' plot_TaTskin_data(fit = fit_torpor, data = data_MR)
+#' filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
+#'                    "/metabolic_rate.txt")
+#' data_MR <- build_MR_table(filepath)
+#' plot_TaTskin_data(fit_MR = fit_torpor, data_MR = data_MR)
 #'
-plot_TaTskin_data <- function(fit, data, rangeTa = c(-5, 35), rangeTskin = c(0, 40), base_size = 11) {
-
-  # if (!is.null(data_Tskin)) {
-  #   data_Tskin30plus <- data_Tskin[data_Tskin$Tskin > 30, c("Tskin", "Ta")]
-  #   data_Tskin30plus$ID <- "888"
-  #   data <- rbind(data[, c("Tskin", "Ta", "ID")], data_Tskin30plus)
-  # }
+plot_TaTskin_data <- function(fit_MR, data_MR, rangeTa = c(-5, 35), rangeTskin = c(0, 40), base_size = 11) {
 
   xlab <- "\nAmbient temperature (\u00B0C)"
   ylab <- "Skin temperature (\u00B0C)\n"
 
-  da <- torpor::tor_assign(fit)
+  da <- torpor::tor_assign(fit_MR)
 
-  if (!all(data$Ta == da$measured_Ta)) stop("The object data is not consistent with the one used to fit the model")
-  da_extended <- cbind(da, data)
+  if (!all(data_MR$Ta == da$measured_Ta)) stop("The object data_MR is not consistent with the one used to fit the model")
+  da_extended <- cbind(da, data_MR)
 
   ggplot2::ggplot() +
     ggplot2::geom_abline(slope = 1, linetype = 2) +
@@ -182,3 +176,25 @@ plot_TaTskin_data <- function(fit, data, rangeTa = c(-5, 35), rangeTskin = c(0, 
 
 }
 
+
+#' Keep physiological data corresponding to lowest metabolic rate per ambient temperature
+#'
+#' @inheritParams arguments
+#'
+#' @return a dataframe
+#' @export
+#'
+#' @examples
+#' filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
+#'                    "/metabolic_rate.txt")
+#' data_MR <- build_MR_table(filepath)
+#' nrow(data_MR)
+#' data_MR_filtered <- filter_MR_table(data_MR, fit_torpor)
+#' nrow(data_MR_filtered)
+#'
+filter_MR_table <- function(data_MR, fit_MR) {
+  data_MR$State <- torpor::tor_assign(fit_MR)$assignment
+  data_MR |>
+    dplyr::mutate(round_Ta = round(.data$Ta)) |>
+    dplyr::slice_min(.data$kJ_h, by = c("ID", "State", "round_Ta"))
+}

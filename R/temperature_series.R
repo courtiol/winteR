@@ -2,7 +2,8 @@
 #'
 #' This function loads a file containing date and temperature data for 2 consecutive years-
 #'
-#' @inheritParams load_Tskin_datafile
+#' @inheritParams arguments
+#'
 #' @return a dataframe
 #' @export
 #' @examples
@@ -23,10 +24,7 @@ build_temp_2years <- function(filename) {
 
 #' Extract summary statistics for a winter
 #'
-#' @param data a dataframe with at least columns `Date` and `Temp`
-#' @param split_summer the day of mid-summer (default = `'07-01'`)
-#' @param temp_threshold the approximate temperature below which insects do not fly
-#' @param min_days_trigger_winter the minimum number of days for which the temperature should be below `temp_threshold` to enter winter
+#' @inheritParams arguments
 #'
 #' @return a vector of boolean
 #' @export
@@ -37,17 +35,17 @@ build_temp_2years <- function(filename) {
 #' data_Kharkiv <- build_temp_2years(file_Kharkiv)
 #' extract_winter_stats(data_Kharkiv)
 #'
-extract_winter_stats <- function(data,
+extract_winter_stats <- function(data_temp,
                                  split_summer = "07-01",
                                  temp_threshold = 7,
                                  min_days_trigger_winter = 14) {
 
-  if (!all(c("Date", "Temp") %in% colnames(data))) {
+  if (!all(c("Date", "Temp") %in% colnames(data_temp))) {
     stop("The function `classify_winter_temp()` requires at least 2 columns: `Date` and `Temp`")
   }
 
   ## extract years
-  years <- as.numeric(unique(format(data$Date, "%Y")))
+  years <- as.numeric(unique(format(data_temp$Date, "%Y")))
   year1 <- min(years)
   year2 <- max(years)
 
@@ -56,23 +54,23 @@ extract_winter_stats <- function(data,
   mid_summer2 <- as.Date(paste0(year2, "-", split_summer), origin = "1970-01-01")
 
   ## extract year 1
-  data_year1 <- data[years == year1, ]
+  data_year1 <- data_temp[years == year1, ]
 
   ## extract year 2
-  data_year2 <- data[years == year2, ]
+  data_year2 <- data_temp[years == year2, ]
 
   ## detecting temperature below threshold
-  data$daily_cold <- data$Temp <= temp_threshold
+  data_temp$daily_cold <- data_temp$Temp <= temp_threshold
 
   ## detecting winter
-  data$possible_winter <-  dplyr::lag(cumsum(data$daily_cold), min_days_trigger_winter) - cumsum(data$daily_cold) == -min_days_trigger_winter
+  data_temp$possible_winter <-  dplyr::lag(cumsum(data_temp$daily_cold), min_days_trigger_winter) - cumsum(data_temp$daily_cold) == -min_days_trigger_winter
 
   ## detecting begin of winter
-  date_possible_begin <- stats::na.omit(data$Date[data$possible_winter])
+  date_possible_begin <- stats::na.omit(data_temp$Date[data_temp$possible_winter])
   begin <- date_possible_begin[date_possible_begin > mid_summer1][1] - min_days_trigger_winter + 1
 
   ## detecting end of winter
-  date_possible_end <- stats::na.omit(data$Date[data$possible_winter])
+  date_possible_end <- stats::na.omit(data_temp$Date[data_temp$possible_winter])
   end <- rev(date_possible_end[date_possible_end < mid_summer2])[1]
 
   ## special cases for harsh winters
@@ -83,7 +81,7 @@ extract_winter_stats <- function(data,
   winter <- ifelse(is.na(begin), FALSE, TRUE)
 
   ## extract winter temperatures
-  temp_winter <- data$Temp[data$Date >= begin & data$Date <= end]
+  temp_winter <- data_temp$Temp[data_temp$Date >= begin & data_temp$Date <= end]
 
   ## return
   list(start_winter = begin,
@@ -104,9 +102,7 @@ extract_winter_stats <- function(data,
 
 #' Plot temperature and winter data
 #'
-#' @param data a dataframe such as one created by [build_temp_2years()]
-#' @inheritParams plot_Tskin_fit
-#' @inheritParams extract_winter_stats
+#' @inheritParams arguments
 #'
 #' @return a ggplot object
 #' @export
@@ -118,12 +114,13 @@ extract_winter_stats <- function(data,
 #' plot_winter_temp2years(data_Kharkiv)
 #'
 #'
-plot_winter_temp2years <- function(data, base_size = 11, temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14) {
+plot_winter_temp2years <- function(data_temp, base_size = 11, temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
+                                   roost_insulation_dTa = 5) {
 
-  winter <- extract_winter_stats(data, temp_threshold = temp_threshold, split_summer = split_summer,
+  winter <- extract_winter_stats(data_temp, temp_threshold = temp_threshold, split_summer = split_summer,
                                  min_days_trigger_winter = min_days_trigger_winter)
-  data$Winter <- data$Date >= winter$start_winter & data$Date <= winter$stop_winter
-  data_plot <- data[data$Date >= winter$mid_summer1 & data$Date < winter$mid_summer2, ]
+  data_temp$Winter <- data_temp$Date >= winter$start_winter & data_temp$Date <= winter$stop_winter
+  data_plot <- data_temp[data_temp$Date >= winter$mid_summer1 & data_temp$Date < winter$mid_summer2, ]
 
   ## plot
   ggplot2::ggplot(data_plot) +
@@ -135,10 +132,12 @@ plot_winter_temp2years <- function(data, base_size = 11, temp_threshold = 7, spl
     ggplot2::geom_line(data = data_plot[data_plot$Date >= winter$stop_winter, ], colour = "#ffd700") +
     ggplot2::geom_line(data = data_plot[data_plot$Date >= winter$start_winter & data_plot$Date <= winter$stop_winter, ], colour = "#0057b7") +
     #ggplot2::geom_point(size = 0.5, shape = 1) +
-    ggplot2::scale_y_continuous(breaks = c(temp_threshold, seq(-100, 100, by = 5)), minor_breaks = NULL) +
+    ggplot2::scale_y_continuous(breaks = c(temp_threshold, seq(-100, 100, by = 5)), minor_breaks = NULL,
+                                sec.axis = ggplot2::sec_axis(~ . + roost_insulation_dTa, breaks = seq(-100, 100, by = 5),
+                                                             name = "Roost temperature (\u00B0C)")) +
     ggplot2::scale_x_date(date_breaks = "2 months", date_labels = "%b 1st",
                           minor_breaks = "1 month", limits = c(winter$mid_summer1, winter$mid_summer2)) +
-    ggplot2::labs(y = "Ambient temperature (\u00B0C)\n", x = NULL) +
+    ggplot2::labs(y = "Ambient temperature (\u00B0C)", x = NULL) +
     ggplot2::coord_cartesian(xlim = c(winter$mid_summer1, winter$mid_summer2)) +
     ggplot2::theme_bw(base_size = base_size) +
     ggplot2::theme(legend.position = "none")

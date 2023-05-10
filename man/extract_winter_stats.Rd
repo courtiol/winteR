@@ -5,14 +5,14 @@
 \title{Extract summary statistics for a winter}
 \usage{
 extract_winter_stats(
-  data,
+  data_temp,
   split_summer = "07-01",
   temp_threshold = 7,
   min_days_trigger_winter = 14
 )
 }
 \arguments{
-\item{data}{a dataframe with at least columns \code{Date} and \code{Temp}}
+\item{data_temp}{a dataframe with at least columns \code{Date} and \code{Temp}, such as those produced by \code{\link[=build_temp_2years]{build_temp_2years()}}}
 
 \item{split_summer}{the day of mid-summer (default = \code{'07-01'})}
 

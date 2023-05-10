@@ -30,6 +30,16 @@ plot_Tskin_table(data_Tskin)
 ### Step 1B: filtering data to be included, see ?clean_Tskin_table
 data_normothermy <- data_Tskin[data_Tskin$Included, ]
 
+nrow(data_normothermy) # = 22554 (number of usable observations from experiment 1)
+length(unique(data_normothermy$ID)) # = 22 (number of individuals from experiment 1)
+data_normothermy |>
+  dplyr::summarise(N = length(unique(.data$ID)), .by = "Ta") ## individuals per ambient temp
+#   Ta N
+# 1 12 8
+# 2  2 6 ## 2 loggers detached
+# 3  7 8
+
+
 ### Step 1C: fitting the model predicting normothermy from Tskin
 
 fit_normo_logit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
@@ -96,7 +106,9 @@ plot_Tskin_fit(fit_normo_cauchit)
 ### Step 1G: create fig 1
 plot_Tskin_fit(fit_normo_cauchit)
 if (!dir.exists("figures")) dir.create("figures")
+showtext::showtext_opts(dpi = 300)
 ggplot2::ggsave(filename = "figures/fig1.pdf", width = 12, height = 12, units = "cm")
+ggplot2::ggsave(filename = "figures/fig1.png", width = 12, height = 12, units = "cm")
 
 ### Step 1H: create fig S1
 pS1_1 <- plot_Tskin_fit(fit_normo_cauchit, rangeTa = c(-35, 35))
@@ -112,6 +124,9 @@ ggplot2::ggsave(filename = "figures/figS1.pdf", plot = pS1_12,
 filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
 data_MR <- build_MR_table(filepath)
 head(data_MR)
+
+length(unique(data_MR$ID)) # = 12 (number of individuals from experiment 2)
+nrow(data_MR) # = 282 (number of hourly averages of the metabolic rate)
 
 ### Step 2B: fitting thermoregulatory curves using the torpor package
 # # Note: this step is slow, so we stored the fitted model in winteR, but you can refit the model
@@ -154,34 +169,72 @@ summarise_MR_fit(fit_torpor)
 #3        skin temperature at minimal metabolic rate       Tbt  5.352  4.610  5.334   6.164    1
 #4 minimum ambient temperature in thermoneutral zone       Tlc 33.263 31.807 33.279  34.694    1
 
-### Step 2D: plotting thermoregulatory curves and temperature relationship
+
+### Step 2D: extract statistics for main text
+Tt <- summarise_MR_fit(fit_torpor)$mean[summarise_MR_fit(fit_torpor)$parameter == "Tt"]
+MR_at_Tt <- torpor::tor_predict(fit_torpor, Ta = Tt)$pred
+round(100*MR_at_Tt[1] / MR_at_Tt[2], digits = 2) # MR in torpor is 1.38 \% of MR in normothermy
+
+### Step 2E: plotting thermoregulatory curves and temperature relationship
 pS2_1 <- plot_MR_fit(fit_torpor, data_MR)
 pS2_2 <- plot_TaTskin_data(fit_torpor, data_MR)
 pS2_12 <- cowplot::plot_grid(pS2_1, pS2_2, nrow = 2, labels = "AUTO", align = "hv")
+showtext::showtext_opts(dpi = 300)
 ggplot2::ggsave(filename = "figures/fig2.pdf", plot = pS2_12,
                 width = 14, height = 20, units = "cm")
+ggplot2::ggsave(filename = "figures/fig2.png", plot = pS2_12,
+                width = 14, height = 20, units = "cm")
 
+## Step 3: example of budget requirements at 5 degrees in roost
 
-## Step 3: illustration of winter and budget for Kharkiv
+budget_5degrees <- compute_nrg_budget(data.frame(Temp = 0), # note: 0 degree in env = 5 in roost
+                                      fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+budget_5degrees
 
-### Step 3A: plotting winter 2011-2012
+### Step 3A: time spent in each physiological state
+round(budget_5degrees[, c("Daily_duration_normo", "Daily_duration_torpor")], digit = 2)
+#   Daily_duration_normo Daily_duration_torpor
+# 1                 0.51                 23.49
+
+### Step 3B: metabolic rate in each physiological state
+round(budget_5degrees[, c("MR_normo", "MR_torpor")], digit = 3)
+#   MR_normo   MR_torpor
+# 1     4.055      0.055
+
+### Step 3C: daily metabolic rate
+round(budget_5degrees[, c("Budget_MR")], digit = 3)
+# 3.354
+
+### Step 3D: daily fat consumption
+round(budget_5degrees[, c("Budget_fat")], digit = 3)
+# 0.089
+
+## Step 4: illustration of winter and budget for Kharkiv
+
+### Step 4A: plotting winter 2011-2012
 file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
                        "/Kharkiv_weather_2011_2012.csv")
 data_Kharkiv <- build_temp_2years(file_Kharkiv)
-pS3_1 <- plot_winter_temp2years(data_Kharkiv)
+pS4_1 <- plot_winter_temp2years(data_Kharkiv, base_size = 9)
 
-### Step 3B: computing budget
+### Step 4B: computing budget
 data_nrg <- compute_nrg_budget(data_Kharkiv, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
 
 ### Step 3C: plotting temperature and budget
-pS3_2 <- plot_nrg_budget(data_nrg, y = "g_fat_per_state")
-pS3_3 <- plot_nrg_budget(data_nrg, y = "g_fat_per_day")
-pS3_4 <- plot_nrg_budget(data_nrg, y = "g_fat_per_winter")
-pS3_1234 <- cowplot::plot_grid(pS3_1, pS3_2,  pS3_3, pS3_4, nrow = 2, labels = "AUTO", align = "hv")
-pS3_1234
-ggplot2::ggsave(filename = "figures/fig3.pdf", plot = pS3_1234,
-                width = 25, height = 20, units = "cm")
-
+pS4_2 <- plot_nrg_budget(data_nrg, y = "g_fat_per_state", base_size = 9)
+pS4_3 <- plot_nrg_budget(data_nrg, y = "g_fat_per_day", base_size = 9)
+pS4_4 <- plot_nrg_budget(data_nrg, y = "g_fat_per_winter", base_size = 9)
+pS4_1234 <- cowplot::plot_grid(pS4_1, NULL, pS4_2, pS4_3, NULL, pS4_4,
+                               nrow = 2,
+                               labels = c("A", "", "B", "C", "", "D"),
+                               align = "hv",
+                               rel_widths = c(1, 0.1, 1), hjust = 0)
+pS4_1234
+showtext::showtext_opts(dpi = 300)
+ggplot2::ggsave(filename = "figures/fig3.pdf", plot = pS4_1234,
+                width = 18, height = 13.5, units = "cm")
+ggplot2::ggsave(filename = "figures/fig3.png", plot = pS4_1234,
+                width = 18, height = 13.5, units = "cm")
 }
 \references{
 ADD REF PAPER HERE

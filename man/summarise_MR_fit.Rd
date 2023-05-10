@@ -4,10 +4,10 @@
 \alias{summarise_MR_fit}
 \title{Extract parameters from model fitted with torpor}
 \usage{
-summarise_MR_fit(fit)
+summarise_MR_fit(fit_MR)
 }
 \arguments{
-\item{fit}{a model fit produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
+\item{fit_MR}{a fitted model predicting the metabolic rate in KJh^-1 produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
 }
 \value{
 a dataframe

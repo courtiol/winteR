@@ -4,10 +4,10 @@
 \alias{build_Tskin_table}
 \title{Build table with raw physiological data on skin temperature}
 \usage{
-build_Tskin_table(files, clean = TRUE)
+build_Tskin_table(filenames, clean = TRUE)
 }
 \arguments{
-\item{files}{a vector of paths to the files storing the physiological data}
+\item{filenames}{a vector of paths to the files from which the data are to be imported}
 
 \item{clean}{a boolean indicating if the data need to be filter by \code{\link[=clean_Tskin_table]{clean_Tskin_table()}} or not (default = \code{TRUE})}
 }

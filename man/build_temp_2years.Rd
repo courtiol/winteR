@@ -7,7 +7,7 @@
 build_temp_2years(filename)
 }
 \arguments{
-\item{filename}{the name of the data to be imported}
+\item{filename}{the path to the file from which the data are to be imported}
 }
 \value{
 a dataframe

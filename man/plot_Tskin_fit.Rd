@@ -4,10 +4,10 @@
 \alias{plot_Tskin_fit}
 \title{Plot a fitted model between ambient temperature and normothermy}
 \usage{
-plot_Tskin_fit(fit, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11)
+plot_Tskin_fit(fit_state, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11)
 }
 \arguments{
-\item{fit}{a model fitted with \code{\link[spaMM:fitme]{spaMM::fitme()}}}
+\item{fit_state}{a fitted model predicting the probability to be in normothermy}
 
 \item{rangeTa}{the range of ambient temperature to consider in plot}
 

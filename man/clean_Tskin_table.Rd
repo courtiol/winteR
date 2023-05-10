@@ -4,10 +4,10 @@
 \alias{clean_Tskin_table}
 \title{Clean up the physiological data on skin temperature}
 \usage{
-clean_Tskin_table(data)
+clean_Tskin_table(data_Tskin)
 }
 \arguments{
-\item{data}{the dataframe produced by \code{\link[=build_Tskin_table]{build_Tskin_table()}}}
+\item{data_Tskin}{a file produced by \code{\link[=load_Tskin_datafile]{load_Tskin_datafile()}}}
 }
 \value{
 a dataframe

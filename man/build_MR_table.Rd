@@ -7,7 +7,7 @@
 build_MR_table(filename)
 }
 \arguments{
-\item{filename}{the name of the data to be imported}
+\item{filename}{the path to the file from which the data are to be imported}
 }
 \value{
 a dataframe
@@ -18,7 +18,8 @@ thermoregulatory curves and it converts the metabolic rate in various units. It 
 structured as follows: TODO Kseniia, please add description XXX .
 }
 \examples{
-filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
+filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
+                   "/metabolic_rate.txt")
 data_MR <- build_MR_table(filepath)
 head(data_MR)
 

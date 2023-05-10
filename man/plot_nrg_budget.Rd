@@ -15,7 +15,7 @@ plot_nrg_budget(
 )
 }
 \arguments{
-\item{data_budget}{a dataframe created by \code{\link[=compute_nrg_budget]{compute_nrg_budget()}}}
+\item{data_budget}{a dataframe produced by \code{\link[=compute_nrg_budget]{compute_nrg_budget()}}}
 
 \item{y}{a string of characters indicating what y-variable to plot:
 "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"}
@@ -37,9 +37,9 @@ a ggplot object
 Plot the energy budget
 }
 \examples{
-filepath <- list.files(system.file("extdata/weather_real", package = "winteR"),
-                       full.names = TRUE)[1]
-data_Kharkiv <- build_temp_2years(filepath)
+file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
+                       "/Kharkiv_weather_2011_2012.csv")
+data_Kharkiv <- build_temp_2years(file_Kharkiv)
 Tskin_files <- list.files(system.file("extdata/Tskin", package = "winteR"), full.names = TRUE)
 data_Tskin <- build_Tskin_table(Tskin_files)
 data_normothermy <- data_Tskin[data_Tskin$Included, ]

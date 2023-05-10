@@ -4,12 +4,12 @@
 \alias{plot_MR_fit}
 \title{Plot thermoregulatory curves}
 \usage{
-plot_MR_fit(fit, data, rangeTa = c(-5, 35), base_size = 11)
+plot_MR_fit(fit_MR, data_MR, rangeTa = c(-5, 35), base_size = 11)
 }
 \arguments{
-\item{fit}{a model fit produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
+\item{fit_MR}{a fitted model predicting the metabolic rate in KJh^-1 produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
 
-\item{data}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
+\item{data_MR}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
 
 \item{rangeTa}{the range of ambient temperature to consider in plot}
 
@@ -22,8 +22,9 @@ a ggplot object
 Plot thermoregulatory curves
 }
 \examples{
-filepath <- list.files(system.file("extdata/thermoreg", package = "winteR"), full.names = TRUE)[1]
+filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
+                   "/metabolic_rate.txt")
 data_MR <- build_MR_table(filepath)
-plot_MR_fit(fit = fit_torpor, data = data_MR)
+plot_MR_fit(fit_MR = fit_torpor, data_MR = data_MR)
 
 }

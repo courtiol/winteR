@@ -5,15 +5,16 @@
 \title{Plot temperature and winter data}
 \usage{
 plot_winter_temp2years(
-  data,
+  data_temp,
   base_size = 11,
   temp_threshold = 7,
   split_summer = "07-01",
-  min_days_trigger_winter = 14
+  min_days_trigger_winter = 14,
+  roost_insulation_dTa = 5
 )
 }
 \arguments{
-\item{data}{a dataframe such as one created by \code{\link[=build_temp_2years]{build_temp_2years()}}}
+\item{data_temp}{a dataframe with at least columns \code{Date} and \code{Temp}, such as those produced by \code{\link[=build_temp_2years]{build_temp_2years()}}}
 
 \item{base_size}{base font size, given in pts}
 
@@ -22,6 +23,8 @@ plot_winter_temp2years(
 \item{split_summer}{the day of mid-summer (default = \code{'07-01'})}
 
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
+
+\item{roost_insulation_dTa}{the increase in temperature in the roost, compared to outside (default = 5)}
 }
 \value{
 a ggplot object

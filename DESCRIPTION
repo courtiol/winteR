@@ -19,7 +19,8 @@ Suggests:
     cowplot,
     DHARMa,
     remotes,
-    spaMM
+    spaMM,
+    showtext
 Remotes:
     vullioud/torpor
 Depends: 

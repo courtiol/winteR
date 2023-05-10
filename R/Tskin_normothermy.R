@@ -11,7 +11,8 @@
 #' [build_Tskin_table()]. Note also that for the function to work, the files must be named following
 #' the same structure we used.
 #'
-#' @param filename the name of the data to be imported
+#' @inheritParams arguments
+#'
 #' @return a dataframe
 #' @export
 #' @seealso [classify_Tskin_state()], [build_Tskin_table()], [clean_Tskin_table()]
@@ -50,7 +51,8 @@ load_Tskin_datafile <- function(filename) {
 #' This function should not be directly called by the user.
 #' It is called internally when calling [build_Tskin_table()].
 #'
-#' @param data a file created with [load_Tskin_datafile()]
+#' @inheritParams arguments
+#'
 #' @return a vector with the physiological state at each time point
 #' @export
 #' @seealso [load_Tskin_datafile()], [build_Tskin_table()], [clean_Tskin_table()]
@@ -60,17 +62,17 @@ load_Tskin_datafile <- function(filename) {
 #' data_Tskin$State <- classify_Tskin_state(data_Tskin)
 #' head(data_Tskin)
 #'
-classify_Tskin_state <- function(data) {
+classify_Tskin_state <- function(data_Tskin) {
 
   ## compute threshold for normothermy
-  if (length(unique(data$Ta)) > 1) {
+  if (length(unique(data_Tskin$Ta)) > 1) {
     stop("Function can only handle one ambient temperature per file")
   }
 
-  Tskin_threshold <- data$Ta[1] + ((data$Tskin_max[1] - data$Ta[1]) / 2)
+  Tskin_threshold <- data_Tskin$Ta[1] + ((data_Tskin$Tskin_max[1] - data_Tskin$Ta[1]) / 2)
 
   ## apply the threshold to define the physiological state and return it
-  ifelse(data$Tskin >= Tskin_threshold, "normothermy", "torpor")
+  ifelse(data_Tskin$Tskin >= Tskin_threshold, "normothermy", "torpor")
 }
 
 
@@ -78,8 +80,8 @@ classify_Tskin_state <- function(data) {
 #'
 #' This function creates the table of raw physiological data.
 #'
-#' @param files a vector of paths to the files storing the physiological data
-#' @param clean a boolean indicating if the data need to be filter by [clean_Tskin_table()] or not (default = `TRUE`)
+#' @inheritParams arguments
+#'
 #' @return a dataframe
 #' @export
 #' @seealso [load_Tskin_datafile()], [classify_Tskin_state()], [clean_Tskin_table()]
@@ -88,10 +90,10 @@ classify_Tskin_state <- function(data) {
 #' data_Tskin <- build_Tskin_table(files_to_do)
 #' head(data_Tskin)
 #'
-build_Tskin_table <- function(files, clean = TRUE) {
+build_Tskin_table <- function(filenames, clean = TRUE) {
 
   ## call load_Tskin_datafile() on every file
-  all <- sapply(files, function(file) {
+  all <- sapply(filenames, function(file) {
     d <- load_Tskin_datafile(filename = file)
     d$State <- classify_Tskin_state(d)
     d$Normo <- as.numeric(d$State == "normothermy")
@@ -122,7 +124,8 @@ build_Tskin_table <- function(files, clean = TRUE) {
 #' This function should not be directly called by the user.
 #' It is called internally when calling [build_Tskin_table()].
 #'
-#' @param data the dataframe produced by [build_Tskin_table()]
+#' @inheritParams arguments
+#'
 #' @return a dataframe
 #' @export
 #' @seealso [load_Tskin_datafile()], [classify_Tskin_state()], [build_Tskin_table()]
@@ -133,14 +136,14 @@ build_Tskin_table <- function(files, clean = TRUE) {
 #' data_Tskin_cleaned <- clean_Tskin_table(data_Tskin)
 #' dim(data_Tskin_cleaned)
 #'
-clean_Tskin_table <- function(data) {
+clean_Tskin_table <- function(data_Tskin) {
 
   ## we remove completely observations when sensor is detached
-  data <- data[data$Status != "notOnBat", ]
-  data$Included <- TRUE
+  data_Tskin <- data_Tskin[data_Tskin$Status != "notOnBat", ]
+  data_Tskin$Included <- TRUE
 
   ## we remove last torpor bout for dead individuals as it could correspond to death
-  data_dead <- data[data$Status == "dead", ]
+  data_dead <- data_Tskin[data_Tskin$Status == "dead", ]
 
   data_dead |>
     dplyr::mutate(New_bout = (.data$Index == min(.data$Index)) | ((.data$Index - 1) != dplyr::lag(.data$Index)),
@@ -157,14 +160,14 @@ clean_Tskin_table <- function(data) {
   data_dead$Index_max <- NULL
 
   ## we combine clean data from dead and all data from alive bats
-  rbind(data[data$Status == "alive", ], data_dead)
+  rbind(data_Tskin[data_Tskin$Status == "alive", ], data_dead)
 }
 
 #' Plot the physiological data on skin temperature
 #'
 #' This function plots the data created with [build_Tskin_table()].
 #'
-#' @param data the dataframe produced by [build_Tskin_table()]
+#' @inheritParams arguments
 #' @return a plot
 #' @export
 #'
@@ -173,12 +176,13 @@ clean_Tskin_table <- function(data) {
 #' data_Tskin <- build_Tskin_table(files_to_do)
 #' plot_Tskin_table(data_Tskin)
 #'
-plot_Tskin_table <- function(data) {
-  ggplot2::ggplot(data) +
+plot_Tskin_table <- function(data_Tskin) {
+  ggplot2::ggplot(data_Tskin) +
     ggplot2::aes(y = .data$Tskin, x = .data$Index,
                  shape = .data$State, colour = .data$Included) +
     ggplot2::geom_point() +
-    ggplot2::facet_wrap(~ ID)
+    ggplot2::facet_wrap(~ ID) +
+    ggplot2::theme_bw()
   }
 
 
@@ -189,20 +193,18 @@ plot_Tskin_table <- function(data) {
 #' ambient temperature value (default = 2 degrees C). We use this function to create Fig 1 and Fig
 #' S1 in the paper.
 #'
-#' @param fit a model fitted with [spaMM::fitme()]
-#' @param rangeTa the range of ambient temperature to consider in plot
-#' @param Tmirror the ambient temperature around which predictions are mirrored
-#' @param base_size base font size, given in pts
+#' @inheritParams arguments
+
 #' @return a plot
 #' @export
 #'
 #' @examples
 #' #See ?winteR
 #'
-plot_Tskin_fit <- function(fit, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11) {
+plot_Tskin_fit <- function(fit_state, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11) {
 
   ## computing predictions with confidence interval
-  predictions <- stats::predict(fit, newdata = data.frame(Ta = seq(Tmirror, max(abs(rangeTa) + 2*Tmirror), by = 0.1)),
+  predictions <- stats::predict(fit_state, newdata = data.frame(Ta = seq(Tmirror, max(abs(rangeTa) + 2*Tmirror), by = 0.1)),
                          re.form = NA, binding = "prob", intervals = "predVar")
   predictions <- cbind(predictions, attr(predictions, "intervals"))
 
@@ -215,7 +217,7 @@ plot_Tskin_fit <- function(fit, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11
   predictions <- predictions[predictions$Ta >= min(rangeTa) & predictions$Ta <= max(rangeTa), ]
 
   ## raw probability to plot
-  fit$data |>
+  fit_state$data |>
     dplyr::summarise(prob_normo = mean(.data$Normo), .by = c("ID", "Ta")) -> raw_data
 
   ## plot
@@ -230,6 +232,6 @@ plot_Tskin_fit <- function(fit, rangeTa = c(-5, 35), Tmirror = 2, base_size = 11
                                 sec.axis = ggplot2::sec_axis(~ . * 30 * 2 * 24,
                                                              name = "Daily time spent in normothermy (min)\n",
                                                              breaks = c(10*2^(0:6), 60 * 24))) +
-    ggplot2::labs(y = "Probability of normothermy\n", x = "\nAmbient temperature (\u00B0C)") +
+    ggplot2::labs(y = "Probability of normothermy", x = "Ambient temperature (\u00B0C)") +
     ggplot2::theme_bw(base_size = base_size)
 }

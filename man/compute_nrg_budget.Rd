@@ -4,14 +4,14 @@
 \alias{compute_nrg_budget}
 \title{Compute the energy budget associated to given ambient temperatures}
 \usage{
-compute_nrg_budget(data, fit_state, fit_MR, roost_insulation_dTa = 5)
+compute_nrg_budget(data_MR, fit_state, fit_MR, roost_insulation_dTa = 5)
 }
 \arguments{
-\item{data}{a dataframe with at least columns \code{Date} and \code{Temp}}
+\item{data_MR}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
 
 \item{fit_state}{a fitted model predicting the probability to be in normothermy}
 
-\item{fit_MR}{a fitted model predicting the metabolic rate in KJh^-1}
+\item{fit_MR}{a fitted model predicting the metabolic rate in KJh^-1 produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
 
 \item{roost_insulation_dTa}{the increase in temperature in the roost, compared to outside (default = 5)}
 }

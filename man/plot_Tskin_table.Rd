@@ -4,10 +4,10 @@
 \alias{plot_Tskin_table}
 \title{Plot the physiological data on skin temperature}
 \usage{
-plot_Tskin_table(data)
+plot_Tskin_table(data_Tskin)
 }
 \arguments{
-\item{data}{the dataframe produced by \code{\link[=build_Tskin_table]{build_Tskin_table()}}}
+\item{data_Tskin}{a file produced by \code{\link[=load_Tskin_datafile]{load_Tskin_datafile()}}}
 }
 \value{
 a plot
