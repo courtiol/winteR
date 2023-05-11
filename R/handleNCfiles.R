@@ -69,13 +69,13 @@ load_NC_file <- function(filename,
 #' run <- FALSE
 #' if (run) {
 #'   path_NC_dir <- "../NC/ISIMIP_sources/gswp3-w5e5/OBSCLIM/"
-#'   obsclim <- load_NC_files(path_NC_dir)
+#'   obsclim <- load_NC_files(path_NC_dir, downsample = TRUE)
 #'   obsclim
 #'  }
 #'
 load_NC_files <- function(directory_NCfiles,
                           downsample = FALSE, crop = TRUE,
-                          .downsampling_args = c(5, 5, 1),
+                          .downsampling_args = c(5, 5, 0),
                           .crop_args = list(S = 27, N = 72, W = -13, E = 56),
                           nb_cores = 2
                           ) {

@@ -1,4 +1,4 @@
-#' Compute the energy budget associated to given ambient temperatures
+#' Compute the energy budget during a winter
 #'
 #' Bugets are computed in KJ per hour and grams of fat consumed. If `data_MR` contains a column
 #' `Date`, the function will also compute the cumulative budget during the hibernation season and
@@ -12,12 +12,15 @@
 #' @examples
 #' #See ?winteR
 #'
-compute_nrg_budget <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa = 5,
-                               temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
-                               threshold_mortality = 27) {
+compute_budget_df <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa = 5,
+                              temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
+                              threshold_mortality = 27) {
 
   ## ambient temperature is higher in roost
   data_MR$Ta <- data_MR$Temp + roost_insulation_dTa
+
+  # print(data_MR$Ta[1]) ## for debugging only
+  # if (abs(data_MR$Ta[1] -  17.92367) < 1e-6) browser()
 
   ## predict proba to be in normothermy and in torpor
   prob_normo <- stats::predict(fit_state, newdata = data.frame(Ta = data_MR$Ta), re.form = NA)[,1 ]
@@ -31,8 +34,9 @@ compute_nrg_budget <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa 
   pred_MR$upr_95 <- pred_MR$upr_95
   pred_MR$lwr_95 <- pred_MR$lwr_95
 
-  params <- torpor::get_parameters(fit_MR)
-  Tlc <- params[params$parameter == "Tlc", "mean"]
+  # params <- torpor::get_parameters(fit_MR)
+  # Tlc <- params[params$parameter == "Tlc", "median"]
+  Tlc <- fit_MR$mod_parameter$data$Tlc # Note: torpor::get_parameters(fit_MR) not precise enough!
 
   data_MR$MR_normo <- NA
   data_MR$MR_normo[data_MR$Ta < Tlc] <- pred_MR[pred_MR$assignment == "Euthermia", "pred"]
@@ -64,7 +68,7 @@ compute_nrg_budget <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa 
 
     ## compute survival status
     data_MR$Survival <- TRUE
-    date_mortality <- min(data_MR$Date[data_MR$Budget_cumul > threshold_mortality])
+    date_mortality <- min(c(data_MR$Date[data_MR$Budget_cumul > threshold_mortality], Inf))
     data_MR$Survival[data_MR$Date >= date_mortality] <- FALSE
   }
 
@@ -72,6 +76,34 @@ compute_nrg_budget <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa 
   data_MR
 }
 
+
+#' Compute the total energy budget during a winter and other summary statistics
+#'
+#' @inheritParams arguments
+#'
+#' @return a list
+#' @export
+#'
+#' @examples
+#' #TODO
+#'
+compute_budget_summarystats <- function(vec_Temp, vec_Dates,
+                                        fit_state, fit_MR,
+                                        roost_insulation_dTa = 5,
+                                        temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
+                                        threshold_mortality = 27) {
+
+    d <- data.frame(Temp = vec_Temp, Date = vec_Dates)
+
+    budg <- compute_budget_df(data_MR = d,
+                              fit_state = fit_state, fit_MR = fit_MR,
+                              roost_insulation_dTa = roost_insulation_dTa,
+                              temp_threshold = temp_threshold, split_summer = split_summer,
+                              min_days_trigger_winter = min_days_trigger_winter,
+                              threshold_mortality = threshold_mortality)
+
+    data.frame(Budget_winter = max(budg$Budget_cumul), Survive = any(!budg$Survival))
+}
 
 #' Plot the energy budget
 #'
@@ -89,12 +121,12 @@ compute_nrg_budget <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa 
 #' data_normothermy <- data_Tskin[data_Tskin$Included, ]
 #' fit_normo_cauchit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
 #'                                  family = binomial(link = "cauchit"))
-#' data_nrg <- compute_nrg_budget(data_Kharkiv, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
-#' plot_nrg_budget(data_nrg, y = "g_fat_per_state")
-#' plot_nrg_budget(data_nrg, y = "g_fat_per_day")
-#' plot_nrg_budget(data_nrg, y = "g_fat_per_winter")
+#' data_nrg <- compute_budget_df(data_Kharkiv, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+#' plot_budget_panel(data_nrg, y = "g_fat_per_state")
+#' plot_budget_panel(data_nrg, y = "g_fat_per_day")
+#' plot_budget_panel(data_nrg, y = "g_fat_per_winter")
 #'
-plot_nrg_budget <- function(data_budget, y = "g_fat_per_winter", threshold_mortality = 27, base_size = 11) {
+plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mortality = 27, base_size = 11) {
 
   start_winter <- min(data_budget$Date[data_budget$Winter])
   stop_winter <- max(data_budget$Date[data_budget$Winter])

@@ -8,11 +8,13 @@
 
 \item{clean}{a boolean indicating if the data need to be filter by \code{\link[=clean_Tskin_table]{clean_Tskin_table()}} or not (default = \code{TRUE})}
 
+\item{.cluster}{the registered default cluster (set internally)}
+
 \item{crop}{a boolean indicating whether to crop or not (default = \code{TRUE})}
 
 \item{.crop_args}{the list of coordinates to use for cropping (default = \code{list(S = 27, N = 72, W = -13, E = 56)})}
 
-\item{data_budget}{a dataframe produced by \code{\link[=compute_nrg_budget]{compute_nrg_budget()}}}
+\item{data_budget}{a dataframe produced by \code{\link[=compute_budget_df]{compute_budget_df()}}}
 
 \item{data_MR}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
 
@@ -26,7 +28,7 @@
 
 \item{downsample}{a boolean indicating whether to reduce the resolution or not (default = \code{FALSE})}
 
-\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 1)})}
+\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 0)}, i.e. aggregate space but not time)}
 
 \item{filename}{the path to the file from which the data are to be imported}
 
@@ -37,6 +39,10 @@
 \item{fit_state}{a fitted model predicting the probability to be in normothermy}
 
 \item{nb_cores}{the number of CPU cores to use (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
+
+\item{nb_cores_location}{the number of CPU cores to use to parallelize the same task across multiple locations (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
+
+\item{nb_cores_year}{the number of CPU cores to use to parallelize the same task across multiple years (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
 
 \item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themsevles containing the NC files}
 
@@ -50,14 +56,22 @@
 
 \item{split_summer}{the day of mid-summer (default = \code{'07-01'})}
 
+\item{stars_object}{a stars object containing daily temperatures}
+
 \item{temp_threshold}{the approximate temperature below which insects do not fly}
 
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
 
 \item{Tmirror}{the ambient temperature around which predictions are mirrored}
 
+\item{vec_Temp}{a vector of ambient temperatures over 2 consecutive years}
+
+\item{vec_Dates}{a vector of dates over 2 consecutive years}
+
 \item{y}{a string of characters indicating what y-variable to plot:
 "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"}
+
+\item{year_start}{a numeric scalar indicating the first year of the winter to consider}
 }
 \description{
 Here is the list of most function arguments used in the package.

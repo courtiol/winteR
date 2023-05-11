@@ -72,6 +72,7 @@
 #'
 #' fit_normo_cauchit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
 #'                                  family = binomial(link = "cauchit"))
+#' ## rm(list = ls()[ls() != "fit_normo_cauchit"]); usethis::use_data(fit_normo_cauchit, compress = "xz", overwrite = TRUE)
 #' fit_normo_cauchit
 #' # formula: Normo ~ Ta + (1 | ID)
 #' # Estimation of lambda by ML (P_v approximation of logL).
@@ -138,6 +139,7 @@
 #' if (run) {
 #'   set.seed(123)
 #'   fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$kJ_h) ## slow
+#'   ## rm(list = ls()[ls() != "fit_torpor"]); ; usethis::use_data(fit_torpor, compress = "xz", overwrite = TRUE)
 #'   params <- torpor::tor_summarise(fit_torpor)$params[, "parameter"]
 #'   jagsUI::traceplot(fit_torpor$mod_parameter, parameters = params) ## inspect MCMC chains
 #'   jagsUI::densityplot(fit_torpor$mod_parameter, parameters = params) ## inspect posterior distrib
@@ -193,8 +195,8 @@
 #'
 #' ## Step 3: example of budget requirements at 5 degrees in roost
 #'
-#' budget_5degrees <- compute_nrg_budget(data.frame(Temp = 0), # note: 0 degree in env = 5 in roost
-#'                                       fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+#' budget_5degrees <- compute_budget_df(data.frame(Temp = 0), # note: 0 degree in env = 5 in roost
+#'                                      fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
 #' budget_5degrees
 #'
 #' ### Step 3A: time spent in each physiological state
@@ -224,12 +226,12 @@
 #' pS4_1 <- plot_winter_temp2years(data_Kharkiv, base_size = 9)
 #'
 #' ### Step 4B: computing budget
-#' data_nrg <- compute_nrg_budget(data_Kharkiv, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+#' data_nrg <- compute_budget_df(data_Kharkiv, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
 #'
 #' ### Step 3C: plotting temperature and budget
-#' pS4_2 <- plot_nrg_budget(data_nrg, y = "g_fat_per_state", base_size = 9)
-#' pS4_3 <- plot_nrg_budget(data_nrg, y = "g_fat_per_day", base_size = 9)
-#' pS4_4 <- plot_nrg_budget(data_nrg, y = "g_fat_per_winter", base_size = 9)
+#' pS4_2 <- plot_budget_panel(data_nrg, y = "g_fat_per_state", base_size = 9)
+#' pS4_3 <- plot_budget_panel(data_nrg, y = "g_fat_per_day", base_size = 9)
+#' pS4_4 <- plot_budget_panel(data_nrg, y = "g_fat_per_winter", base_size = 9)
 #' pS4_1234 <- cowplot::plot_grid(pS4_1, NULL, pS4_2, pS4_3, NULL, pS4_4,
 #'                                nrow = 2,
 #'                                labels = c("A", "", "B", "C", "", "D"),

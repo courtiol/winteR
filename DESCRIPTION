@@ -16,6 +16,8 @@ Imports:
     ggplot2,
     sf,
     stars,
+    tibble,
+    tidyr,
     torpor,
     units
 Suggests:

@@ -19,7 +19,7 @@ load_NC_file(
 
 \item{crop}{a boolean indicating whether to crop or not (default = \code{TRUE})}
 
-\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 1)})}
+\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 0)}, i.e. aggregate space but not time)}
 
 \item{.crop_args}{the list of coordinates to use for cropping (default = \code{list(S = 27, N = 72, W = -13, E = 56)})}
 }
@@ -35,9 +35,9 @@ still require to be cropped during reading to make sure the boundaries are defin
 \examples{
 run <- FALSE
 if (run) {
-  path_NC <- "../ISIMIP_sources/gswp3-w5e5/OBSCLIM/gswp3-w5e5_obsclim_tas_lat27.0to72.0lon-13.0to56.0_daily_2011_2019.nc"
+  path_NC <- "../NC/ISIMIP_sources/gswp3-w5e5/OBSCLIM/gswp3-w5e5_obsclim_tas_lat27.0to72.0lon-13.0to56.0_daily_2011_2019.nc"
   obsclim_2011_2019 <- load_NC_file(path_NC)
-  plot(obsclim_2011_2019[,,,1]) ## print map for day 1
+  plot(obsclim_2011_2019[,,,1], axes = TRUE) ## print map for day 1
 }
 
 }

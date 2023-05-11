@@ -69,6 +69,7 @@ fit_normo_logit
 
 fit_normo_cauchit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
                                  family = binomial(link = "cauchit"))
+## rm(list = ls()[ls() != "fit_normo_cauchit"]); usethis::use_data(fit_normo_cauchit, compress = "xz", overwrite = TRUE)
 fit_normo_cauchit
 # formula: Normo ~ Ta + (1 | ID)
 # Estimation of lambda by ML (P_v approximation of logL).
@@ -135,6 +136,7 @@ run <- FALSE
 if (run) {
   set.seed(123)
   fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$kJ_h) ## slow
+  ## rm(list = ls()[ls() != "fit_torpor"]); ; usethis::use_data(fit_torpor, compress = "xz", overwrite = TRUE)
   params <- torpor::tor_summarise(fit_torpor)$params[, "parameter"]
   jagsUI::traceplot(fit_torpor$mod_parameter, parameters = params) ## inspect MCMC chains
   jagsUI::densityplot(fit_torpor$mod_parameter, parameters = params) ## inspect posterior distrib
@@ -190,8 +192,8 @@ ggplot2::ggsave(filename = "figures/fig2.png", plot = pS2_12,
 
 ## Step 3: example of budget requirements at 5 degrees in roost
 
-budget_5degrees <- compute_nrg_budget(data.frame(Temp = 0), # note: 0 degree in env = 5 in roost
-                                      fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+budget_5degrees <- compute_budget_df(data.frame(Temp = 0), # note: 0 degree in env = 5 in roost
+                                     fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
 budget_5degrees
 
 ### Step 3A: time spent in each physiological state
@@ -221,12 +223,12 @@ data_Kharkiv <- build_temp_2years(file_Kharkiv)
 pS4_1 <- plot_winter_temp2years(data_Kharkiv, base_size = 9)
 
 ### Step 4B: computing budget
-data_nrg <- compute_nrg_budget(data_Kharkiv, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+data_nrg <- compute_budget_df(data_Kharkiv, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
 
 ### Step 3C: plotting temperature and budget
-pS4_2 <- plot_nrg_budget(data_nrg, y = "g_fat_per_state", base_size = 9)
-pS4_3 <- plot_nrg_budget(data_nrg, y = "g_fat_per_day", base_size = 9)
-pS4_4 <- plot_nrg_budget(data_nrg, y = "g_fat_per_winter", base_size = 9)
+pS4_2 <- plot_budget_panel(data_nrg, y = "g_fat_per_state", base_size = 9)
+pS4_3 <- plot_budget_panel(data_nrg, y = "g_fat_per_day", base_size = 9)
+pS4_4 <- plot_budget_panel(data_nrg, y = "g_fat_per_winter", base_size = 9)
 pS4_1234 <- cowplot::plot_grid(pS4_1, NULL, pS4_2, pS4_3, NULL, pS4_4,
                                nrow = 2,
                                labels = c("A", "", "B", "C", "", "D"),
@@ -253,7 +255,8 @@ list.files(paste0(system.file("extdata/python", package = "winteR")),
 ### Step 5b: create the stars objects and store them as rds files
 # Note: this is not run by default since you need the NC files on your hard drive.
 # It also takes a while and requires a lot of RAM on your computer.
-# The output should be a set of 21 files amounting to a total of 62.2 Gb.
+# The output should be a set of 21 files (1 for historical predictions and 5 models x 4 SSP
+# scenarios = 20 objects for future predictions) amounting to a total of 62.2 Gb.
 # In case of error caused by memory limitation, reduce `nb_cores` and try again.
 # Do also make sure to adjust your path as required
 run <- FALSE

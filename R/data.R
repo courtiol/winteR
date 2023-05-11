@@ -9,3 +9,10 @@
 #'   \item{ppo}{posteriors overlap values}
 #' }
 "fit_torpor"
+
+
+#' Fitted model predicting probability to be in normothermy
+#'
+#' A model fitted with [spaMM::fitme()].
+#'
+"fit_normo_cauchit"

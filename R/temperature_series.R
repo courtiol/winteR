@@ -67,11 +67,11 @@ extract_winter_stats <- function(data_temp,
 
   ## detecting begin of winter
   date_possible_begin <- stats::na.omit(data_temp$Date[data_temp$possible_winter])
-  begin <- date_possible_begin[date_possible_begin > mid_summer1][1] - min_days_trigger_winter + 1
+  begin <- date_possible_begin[date_possible_begin > mid_summer1 & date_possible_begin < mid_summer2][1] - min_days_trigger_winter + 1
 
   ## detecting end of winter
   date_possible_end <- stats::na.omit(data_temp$Date[data_temp$possible_winter])
-  end <- rev(date_possible_end[date_possible_end < mid_summer2])[1]
+  end <- rev(date_possible_end[date_possible_begin > mid_summer1 & date_possible_begin < mid_summer2])[1]
 
   ## special cases for harsh winters
   begin <- max(c(begin, mid_summer1))
