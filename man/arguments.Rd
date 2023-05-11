@@ -8,6 +8,10 @@
 
 \item{clean}{a boolean indicating if the data need to be filter by \code{\link[=clean_Tskin_table]{clean_Tskin_table()}} or not (default = \code{TRUE})}
 
+\item{crop}{a boolean indicating whether to crop or not (default = \code{TRUE})}
+
+\item{.crop_args}{the list of coordinates to use for cropping (default = \code{list(S = 27, N = 72, W = -13, E = 56)})}
+
 \item{data_budget}{a dataframe produced by \code{\link[=compute_nrg_budget]{compute_nrg_budget()}}}
 
 \item{data_MR}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
@@ -16,6 +20,14 @@
 
 \item{data_Tskin}{a file produced by \code{\link[=load_Tskin_datafile]{load_Tskin_datafile()}}}
 
+\item{directory_NCfiles}{the path to a folder containing subfolders with NC files}
+
+\item{directory_stars}{the destination location for the rda files storing the stars object}
+
+\item{downsample}{a boolean indicating whether to reduce the resolution or not (default = \code{FALSE})}
+
+\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 1)})}
+
 \item{filename}{the path to the file from which the data are to be imported}
 
 \item{filenames}{a vector of paths to the files from which the data are to be imported}
@@ -23,6 +35,10 @@
 \item{fit_MR}{a fitted model predicting the metabolic rate in KJh^-1 produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
 
 \item{fit_state}{a fitted model predicting the probability to be in normothermy}
+
+\item{nb_cores}{the number of CPU cores to use (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
+
+\item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themsevles containing the NC files}
 
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
 

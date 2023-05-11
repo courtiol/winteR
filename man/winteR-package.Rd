@@ -13,7 +13,7 @@ For reproducing the results of our paper, just follow the code presented in the 
 }
 \examples{
 
-## Step 0: check that all R packages required below are installed
+## Step 0: check that all R packages used below are installed if you wish to reproduce everything
 checkDependencies()
 
 ## Step 1: predicting normothermy from skin temperature (Tskin)
@@ -129,13 +129,16 @@ length(unique(data_MR$ID)) # = 12 (number of individuals from experiment 2)
 nrow(data_MR) # = 282 (number of hourly averages of the metabolic rate)
 
 ### Step 2B: fitting thermoregulatory curves using the torpor package
-# # Note: this step is slow, so we stored the fitted model in winteR, but you can refit the model
-# # by uncommenting the code below
-# set.seed(123)
-# fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$kJ_h) ## slow
-# params <- torpor::tor_summarise(fit_torpor)$params[, "parameter"]
-# jagsUI::traceplot(fit_torpor$mod_parameter, parameters = params) ## inspect MCMC chains
-# jagsUI::densityplot(fit_torpor$mod_parameter, parameters = params) ## inspect posterior distrib
+# Note: this step is slow, so we stored the fitted model in winteR, but you can refit the model
+# by setting run to TRUE
+run <- FALSE
+if (run) {
+  set.seed(123)
+  fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$kJ_h) ## slow
+  params <- torpor::tor_summarise(fit_torpor)$params[, "parameter"]
+  jagsUI::traceplot(fit_torpor$mod_parameter, parameters = params) ## inspect MCMC chains
+  jagsUI::densityplot(fit_torpor$mod_parameter, parameters = params) ## inspect posterior distrib
+}
 
 fit_torpor
 #$params
@@ -235,6 +238,32 @@ ggplot2::ggsave(filename = "figures/fig3.pdf", plot = pS4_1234,
                 width = 18, height = 12.5, units = "cm")
 ggplot2::ggsave(filename = "figures/fig3.png", plot = pS4_1234,
                 width = 18, height = 12.5, units = "cm")
+
+
+## Step 5: creating stars objects storing daily temperature under different climate models
+
+### Step 5a: download the large NC files from ISIMIP (https://www.isimip.org/)
+# Note: the files are not stored in this packages since it requires to download 42.2 Gb of data
+# distributed across 235 files and 27 sub-folders.
+# Also, this must be done in Python. See the following file for details and
+# check latest guidelines on the ISIMIP website (e.g. you may need to create an account):
+list.files(paste0(system.file("extdata/python", package = "winteR")),
+           pattern = "*.py$", full.names = TRUE)
+
+### Step 5b: create the stars objects and store them as rds files
+# Note: this is not run by default since you need the NC files on your hard drive.
+# It also takes a while and requires a lot of RAM on your computer.
+# The output should be a set of 21 files amounting to a total of 62.2 Gb.
+# In case of error caused by memory limitation, reduce `nb_cores` and try again.
+# Do also make sure to adjust your path as required
+run <- FALSE
+if (run) {
+  build_source_stars(metadirectory_NCfiles = "../NC/ISIMIP_sources/",
+                     directory_stars = "../NC/stars/", nb_cores = 10)
+}
+
+
+
 }
 \references{
 ADD REF PAPER HERE
