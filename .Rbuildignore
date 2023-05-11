@@ -2,4 +2,5 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^figures$
-^python$
+^inst/python/data$
+^inst/python/__pychache__$
