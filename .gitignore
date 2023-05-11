@@ -4,5 +4,5 @@
 .httr-oauth
 .DS_Store
 figures
-inst/data/python/__pycache__
-inst/data/python/data
+inst/extdata/python/__pycache__
+inst/extdata/python/data
