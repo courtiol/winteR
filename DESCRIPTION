@@ -16,8 +16,6 @@ Imports:
     ggplot2,
     sf,
     stars,
-    tibble,
-    tidyr,
     torpor,
     units
 Suggests:
@@ -25,6 +23,7 @@ Suggests:
     cubelyr,
     DHARMa,
     jagsUI,
+    pbmcapply,
     remotes,
     spaMM,
     showtext

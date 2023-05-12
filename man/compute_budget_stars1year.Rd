@@ -13,8 +13,7 @@ compute_budget_stars1year(
   temp_threshold = 7,
   split_summer = "07-01",
   min_days_trigger_winter = 14,
-  threshold_mortality = 27,
-  .cluster = NULL
+  threshold_mortality = 27
 )
 }
 \arguments{
@@ -35,21 +34,19 @@ compute_budget_stars1year(
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
 
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
-
-\item{.cluster}{the registered default cluster (set internally)}
 }
 \value{
 a stars object with energy budget information
 }
 \description{
-Compute budget for one winter from a stars object
+This function should not be called by the user. It is called internally by
+\code{\link[=compute_budget_stars]{compute_budget_stars()}}.
 }
 \examples{
 run <- FALSE
 if (run) {
-  path_NC_dir <- "../NC/ISIMIP_sources/gswp3-w5e5/OBSCLIM/"
-  obsclim <- load_NC_files(path_NC_dir, downsample = TRUE)
-  test <- compute_budget_stars1year(year_start = 1901, obsclim, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+  test_stars <- readRDS("../NC/stars/gfdl-esm4_SSP126.rds")
+  test <- compute_budget_stars1year(year_start = 2020, test_stars, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
  }
 
 }

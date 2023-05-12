@@ -28,7 +28,10 @@ load_NC_file <- function(filename,
   print(paste("loading nc file", filename))
 
   r <- stars::read_stars(filename)
-  data <- stars::st_as_stars(r,  raster = c("lon", "lat", "time"))
+
+  ## turn POSIXct into Date
+  r <- stars::st_set_dimensions(r, which = 3, values = as.Date(stars::st_get_dimension_values(r, 3)))
+  data <- stars::st_as_stars(r, raster = c("lon", "lat", "time")) ## do not rename time to date since prevents c.stars() to work smoothy
   sf::st_crs(data) <- "+proj=longlat +datum=WGS84 +no_defs "
 
   if (crop) {
@@ -69,7 +72,7 @@ load_NC_file <- function(filename,
 #' run <- FALSE
 #' if (run) {
 #'   path_NC_dir <- "../NC/ISIMIP_sources/gswp3-w5e5/OBSCLIM/"
-#'   obsclim <- load_NC_files(path_NC_dir, downsample = TRUE)
+#'   obsclim <- load_NC_files(path_NC_dir, nb_cores = 10)
 #'   obsclim
 #'  }
 #'
@@ -100,8 +103,10 @@ load_NC_files <- function(directory_NCfiles,
                                function(filename) load_NC_file(filename = filename,
                                                                downsample = downsample, crop = crop,
                                                                .downsampling_args =  .downsampling_args, .crop_args = .crop_args))
-    }
+     }
+
     all_data <- do.call("c", all_data_list)
+
   } else {
     all_data <- load_NC_file(filename = filenames,
                              downsample = downsample, crop = crop,
@@ -134,7 +139,7 @@ load_NC_files <- function(directory_NCfiles,
 build_source_stars <- function(metadirectory_NCfiles,
                                directory_stars,
                                downsample = FALSE, crop = TRUE,
-                               .downsampling_args = c(5, 5, 1),
+                               .downsampling_args = c(5, 5, 0),
                                .crop_args = list(S = 27, N = 72, W = -13, E = 56),
                                nb_cores = 2) {
 

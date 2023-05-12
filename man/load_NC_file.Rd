@@ -19,7 +19,7 @@ load_NC_file(
 
 \item{crop}{a boolean indicating whether to crop or not (default = \code{TRUE})}
 
-\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 0)}, i.e. aggregate space but not time)}
+\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 0)}, i.e. aggregate space but not dates)}
 
 \item{.crop_args}{the list of coordinates to use for cropping (default = \code{list(S = 27, N = 72, W = -13, E = 56)})}
 }

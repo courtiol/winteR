@@ -20,11 +20,11 @@ load_NC_files(
 
 \item{crop}{a boolean indicating whether to crop or not (default = \code{TRUE})}
 
-\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 0)}, i.e. aggregate space but not time)}
+\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 0)}, i.e. aggregate space but not dates)}
 
 \item{.crop_args}{the list of coordinates to use for cropping (default = \code{list(S = 27, N = 72, W = -13, E = 56)})}
 
-\item{nb_cores}{the number of CPU cores to use (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
+\item{nb_cores}{the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
 }
 \value{
 a stars object
@@ -41,7 +41,7 @@ This function handles parallel processing but not that this requires a huge amou
 run <- FALSE
 if (run) {
   path_NC_dir <- "../NC/ISIMIP_sources/gswp3-w5e5/OBSCLIM/"
-  obsclim <- load_NC_files(path_NC_dir, downsample = TRUE)
+  obsclim <- load_NC_files(path_NC_dir, nb_cores = 10)
   obsclim
  }
 

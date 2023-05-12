@@ -2,7 +2,7 @@
 % Please edit documentation in R/handleStars.R
 \name{compute_budget_stars}
 \alias{compute_budget_stars}
-\title{Compute budget for all winters from a stars object}
+\title{Compute summary statistics for all winters from a stars object}
 \usage{
 compute_budget_stars(
   stars_object,
@@ -13,8 +13,8 @@ compute_budget_stars(
   split_summer = "07-01",
   min_days_trigger_winter = 14,
   threshold_mortality = 27,
-  nb_cores_location = 1,
-  nb_cores_year = 1
+  nb_cores = 1,
+  lapply_pkg = "pbmcapply"
 )
 }
 \arguments{
@@ -34,23 +34,25 @@ compute_budget_stars(
 
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
 
-\item{nb_cores_location}{the number of CPU cores to use to parallelize the same task across multiple locations (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
+\item{nb_cores}{the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
 
-\item{nb_cores_year}{the number of CPU cores to use to parallelize the same task across multiple years (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
+\item{lapply_pkg}{the R package used to implement a \code{lapply()} kind of function (default = "pbmcapply"; other possibilities are "parallel" and "base")}
 }
 \value{
 a stars object with energy budget information
 }
 \description{
-Compute budget for all winters from a stars object
+This function calls \code{\link[=compute_budget_summarystats]{compute_budget_summarystats()}} on all winters and across all locations
+contained in a stars object. It is an extremelly computationaly intensive step. Note that the
+progress messages are more informative outside RStudio.
 }
 \examples{
 run <- FALSE
 if (run) {
-  path_NC_dir <- "../NC/ISIMIP_sources/gswp3-w5e5/OBSCLIM/"
-  obsclim <- load_NC_files(path_NC_dir, downsample = FALSE, .downsampling_args = c(40, 40, 0))
-  obsclim1901_1904 <- dplyr::filter(obsclim, time < as.Date("1905-01-01"))
-  test <- compute_budget_stars(obsclim1901_1904, fit_state = fit_normo_cauchit, fit_MR = fit_torpor, nb_cores_year = 5)
+ test_stars <- readRDS("../NC/stars/gfdl-esm4_SSP126.rds")
+ test_stars_small <- dplyr::filter(test_stars, time < as.Date("2040-01-01"), x < -10, y > 65)
+ test1 <- compute_budget_stars(test_stars_small, fit_state = fit_normo_cauchit, fit_MR = fit_torpor, nb_cores = 2)
+ test2 <- compute_budget_stars(test_stars, fit_state = fit_normo_cauchit, fit_MR = fit_torpor, nb_cores = 20)
  }
 
 }

@@ -9,7 +9,7 @@ build_source_stars(
   directory_stars,
   downsample = FALSE,
   crop = TRUE,
-  .downsampling_args = c(5, 5, 1),
+  .downsampling_args = c(5, 5, 0),
   .crop_args = list(S = 27, N = 72, W = -13, E = 56),
   nb_cores = 2
 )
@@ -23,11 +23,11 @@ build_source_stars(
 
 \item{crop}{a boolean indicating whether to crop or not (default = \code{TRUE})}
 
-\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 0)}, i.e. aggregate space but not time)}
+\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 0)}, i.e. aggregate space but not dates)}
 
 \item{.crop_args}{the list of coordinates to use for cropping (default = \code{list(S = 27, N = 72, W = -13, E = 56)})}
 
-\item{nb_cores}{the number of CPU cores to use (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
+\item{nb_cores}{the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
 }
 \value{
 nothing (creates files on hard drive)

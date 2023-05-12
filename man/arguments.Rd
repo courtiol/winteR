@@ -28,7 +28,7 @@
 
 \item{downsample}{a boolean indicating whether to reduce the resolution or not (default = \code{FALSE})}
 
-\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 0)}, i.e. aggregate space but not time)}
+\item{.downsampling_args}{arguments for \code{\link[stars:st_downsample]{stars::st_downsample()}} (default = \code{c(5, 5, 0)}, i.e. aggregate space but not dates)}
 
 \item{filename}{the path to the file from which the data are to be imported}
 
@@ -38,11 +38,9 @@
 
 \item{fit_state}{a fitted model predicting the probability to be in normothermy}
 
-\item{nb_cores}{the number of CPU cores to use (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
+\item{lapply_pkg}{the R package used to implement a \code{lapply()} kind of function (default = "pbmcapply"; other possibilities are "parallel" and "base")}
 
-\item{nb_cores_location}{the number of CPU cores to use to parallelize the same task across multiple locations (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
-
-\item{nb_cores_year}{the number of CPU cores to use to parallelize the same task across multiple years (don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
+\item{nb_cores}{the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
 
 \item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themsevles containing the NC files}
 
