@@ -50,9 +50,9 @@ progress messages are more informative outside RStudio.
 run <- FALSE
 if (run) {
  test_stars <- readRDS("../NC/stars/gfdl-esm4_SSP126.rds")
- test_stars_small <- dplyr::filter(test_stars, time < as.Date("2040-01-01"), x < -10, y > 65)
- test1 <- compute_budget_stars(test_stars_small, fit_state = fit_normo_cauchit, fit_MR = fit_torpor, nb_cores = 2)
- test2 <- compute_budget_stars(test_stars, fit_state = fit_normo_cauchit, fit_MR = fit_torpor, nb_cores = 20)
+ test_stars_small <- dplyr::filter(test_stars, time < as.Date("2017-01-01"), x < -10, y > 70)
+ test <- compute_budget_stars(test_stars_small, fit_state = fit_normo_cauchit, fit_MR = fit_torpor, nb_cores = 30)
+ test
  }
 
 }

@@ -93,7 +93,7 @@ compute_budget_summarystats <- function(vec_Temp, vec_Dates,
                                         temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
                                         threshold_mortality = 27) {
 
-    d <- data.frame(Temp = vec_Temp, Date = vec_Dates)
+    d <- data.frame(Temp = vec_Temp)
 
     budg <- compute_budget_df(data_MR = d,
                               fit_state = fit_state, fit_MR = fit_MR,
@@ -102,7 +102,31 @@ compute_budget_summarystats <- function(vec_Temp, vec_Dates,
                               min_days_trigger_winter = min_days_trigger_winter,
                               threshold_mortality = threshold_mortality)
 
-    data.frame(Budget_winter = max(budg$Budget_cumul), Survive = any(!budg$Survival))
+    d2 <- data.frame(Temp = vec_Temp, Date = vec_Dates)
+
+    winter <- extract_winter_stats(d2, temp_threshold = temp_threshold, split_summer = split_summer,
+                                   min_days_trigger_winter = min_days_trigger_winter)
+
+    ## compute cumulative energy budget
+    budg$Winter <- d2$Date >= winter$start_winter & d2$Date <= winter$stop_winter
+    budg$Budget_cumul <- cumsum(budg$Budget_fat * budg$Winter)
+
+    ## compute survival status
+    budg$Survival <- TRUE
+    date_mortality <- min(c(budg$Date[budg$Budget_cumul > threshold_mortality], Inf))
+    budg$Survival[budg$Date >= date_mortality] <- FALSE
+
+    data.frame(Budget_winter = max(budg$Budget_cumul),
+               Survive = any(!budg$Survival),
+               Start_winter = winter$start_winter,
+               Stop_winter = winter$stop_winter,
+               Duration_winter = winter$duration_winter,
+               Temp_winter_mean = winter$temp_winter_mean,
+               Temp_winter_sd = winter$temp_winter_sd,
+               Temp_winter_median = winter$temp_winter_median,
+               Temp_winter_min = winter$temp_winter_min,
+               Temp_winter_max = winter$temp_winter_max,
+               Temp_winter_autocorr = winter$temp_winter_autocorr)
 }
 
 #' Plot the energy budget

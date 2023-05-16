@@ -269,5 +269,22 @@
 #' }
 #'
 #'
+#' ## Step 6: creating stars objects with winter summary statistics for each year
+#'
+#' run <- FALSE
+#' if (!dir.exists("../NC/stars_winter/")) dir.create("../NC/stars_winter/")
+#' if (run) {
+#'   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
+#'   for (rds_index in seq_along(all_rds_to_do)) {
+#'     rds_to_do <- all_rds_to_do[rds_index]
+#'     stars_to_do <- readRDS(file = rds_to_do)
+#'     name_stars <- strsplit(basename(rds_to_do), split = "\\.rds")[[1]]
+#'     print(paste("processing stars", name_stars, "be very patient!"))
+#'     stars_winter <- compute_budget_stars(stars_to_do, fit_state = fit_normo_cauchit, fit_MR = fit_torpor, nb_cores = 90)
+#'     saveRDS(stars_winter, file = paste0("../NC/stars_winter/", name_stars, "_winter.rds"), compress = FALSE)
+#'     rm(list = "stars_to_do"); gc()
+#'   }
+#' }
+#'
 #'
 NULL
