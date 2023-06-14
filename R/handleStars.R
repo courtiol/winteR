@@ -12,7 +12,8 @@
 #' run <- FALSE
 #' if (run) {
 #'   test_stars <- readRDS("../NC/stars/gfdl-esm4_SSP126.rds")
-#'   test <- compute_budget_stars1year(year_start = 2020, test_stars, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+#'   test <- compute_budget_stars1year(year_start = 2020, test_stars,
+#'                                     fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
 #'  }
 #'
 compute_budget_stars1year <- function(year_start,
@@ -71,7 +72,9 @@ compute_budget_stars1year <- function(year_start,
 #' if (run) {
 #'  test_stars <- readRDS("../NC/stars/gfdl-esm4_SSP126.rds")
 #'  test_stars_small <- dplyr::filter(test_stars, time < as.Date("2017-01-01"), x < -10, y > 70)
-#'  test <- compute_budget_stars(test_stars_small, fit_state = fit_normo_cauchit, fit_MR = fit_torpor, nb_cores = 30)
+#'  test <- compute_budget_stars(test_stars_small,
+#'                               fit_state = fit_normo_cauchit, fit_MR = fit_torpor,
+#'                               nb_cores = 30)
 #'  test
 #'  }
 #'
@@ -122,4 +125,151 @@ compute_budget_stars <- function(stars_object,
 
   stars_object_filled_all_years
 }
+
+
+#' Loads, combine and merge winter stars across forcing models
+#'
+#'
+#' @inheritParams arguments
+#'
+#' @return a stars object
+#' @export
+#'
+#' @examples
+#' run <- FALSE
+#' if (run) {
+#'  reshape_stars_across.models(directory_stars = "../NC/stars_winter", SSP = "126")
+#'  }
+#'
+reshape_stars_across.models <- function(directory_stars, SSP, varname = "Budget_winter", flatten = TRUE) {
+  all_rds_to_do <- list.files(path = directory_stars, full.names = TRUE, pattern = SSP)
+  list_stars_winter <- lapply(all_rds_to_do, \(x) readRDS(x)[varname,])
+  stars_winter <- do.call("c", list_stars_winter)
+  stars_winter <- merge(stars_winter, name = "forcing_model")
+  names(stars_winter) <- varname
+  if (flatten) stars_winter <- stars::st_apply(stars_winter, MARGIN = 1:3, FUN = mean, .fname = varname)
+  stars_winter
+}
+
+
+
+#' Extract latitude from a stars object
+#'
+#' This function should not be called by the user. It is called internally by
+#' [summarise_info_winter.stars()].
+#'
+#' @inheritParams arguments
+#'
+#' @return the latitude
+#' @export
+#'
+#' @examples
+#' run <- FALSE
+#' if (run) {
+#'  test_stars <- readRDS("../NC/stars_winter/gfdl-esm4_SSP126_winter.rds")
+#'  test_stars_small <- dplyr::filter(test_stars, year > 2080, x < -10, y > 70)
+#'  extract_stars_latitude(test_stars_small)
+#'  extract_stars_latitude(test_stars_small, fn = "max")
+#'  }
+#'
+extract_stars_latitude <- function(stars_object, year = NULL, name_bool_var = "Survive", mask = NULL, fn = "mean") {
+
+  index_bool_var <- which(names(stars_object) == name_bool_var)
+
+  ## check name_bool_var:
+  if (!is.logical(as.vector(stars_object[[index_bool_var]]))) {
+    stop("The variable set in name_bool_var must point to a boolean (i.e. it should only contain TRUE/FALSE/NA)")
+  }
+
+  possible_years <- as.numeric(stars::st_get_dimension_values(stars_object, "year"))
+
+  ## if year not provided, consider all years:
+  if (is.null(year)) {
+    year <- possible_years
+  }
+
+  ## apply mask, if provided:
+  if (!is.null(mask)) {
+    stars_object <- stars_object[mask, crop = TRUE]
+  }
+
+  d <- as.data.frame(stars_object[index_bool_var, , , which(possible_years == year)])
+  lat <- d[d[, name_bool_var] & !is.na(d[, name_bool_var]), "y"]
+
+  ## apply the summary function:
+  do.call(fn, list(lat))
+}
+
+
+
+#' Summarise winter info
+#'
+#' This function summarises the information contained in a stars object produced with [compute_budget_stars()].
+#'
+#' @inheritParams arguments
+#'
+#' @return a stars object with a single layer
+#' @export
+#'
+#' @examples
+#' run <- FALSE
+#' if (run) {
+#'  test_stars <- readRDS("../NC/stars_winter/gfdl-esm4_SSP126_winter.rds")
+#'  #test_stars_small <- dplyr::filter(test_stars, year > 2080, x < -10, y > 70)
+#'  test <- summarise_info_winter.stars(test_stars, mask = mask_country)
+#'  }
+#'
+summarise_info_winter.stars <- function(stars_object, mask = NULL) {
+
+  ## Apply mask (optional)
+  if (!is.null(mask)) {
+    stars_object_masked <-  stars_object[mask, crop = FALSE]
+  } else {
+    stars_object_masked <-  stars_object
+  }
+
+  suitability <- data.frame(Year = character(),
+                            Suitable_cells = numeric(),
+                            Start_winter = numeric(),
+                            Stop_winter = numeric(),
+                            Duration_winter = numeric(),
+                            Temp_winter_mean = numeric(),
+                            Temp_winter_sd = numeric(),
+                            Temp_winter_median = numeric(),
+                            Temp_winter_min = numeric(),
+                            Temp_winter_max = numeric(),
+                            Temp_winter_autocorr = numeric(),
+                            Budget_winter = numeric())
+
+  ## Count proportion of suitable cells and other metrics (within the mask if applicable)
+  for (i in c(1:(with(stars::st_dimensions(stars_object_masked)$year, to - from + 1)))) {
+
+    #starts_object_suitable <- stars_object_masked["Budget_winter", , , i] > 0 & stars_object_masked["Budget_winter", , , i] < threshold_mortality
+    starts_object_suitable <- stars_object_masked
+    cells_prop <- mean(starts_object_suitable[["Survive"]][, , i], na.rm = TRUE)
+    year <- stars::st_get_dimension_values(stars_object_masked[, , , i], "year")
+    suitability[i, "Year"]                 <- year
+    suitability[i, "Suitable_cells"]       <- as.numeric(cells_prop)
+    suitability[i, "Latitude_mean"]        <- extract_stars_latitude(starts_object_suitable[, , , i], fn = "mean")
+    suitability[i, "Latitude_median"]      <- extract_stars_latitude(starts_object_suitable[, , , i], fn = "median")
+    suitability[i, "Latitude_max"]         <- extract_stars_latitude(starts_object_suitable[, , , i], fn = "max")
+    suitability[i, "Start_winter"]         <- round(mean(as.numeric(stars_object_masked[["Start_winter"]][, , i]), na.rm = TRUE))
+    suitability[i, "Stop_winter"]          <- round(mean(as.numeric(stars_object_masked[["Stop_winter"]][, , i]), na.rm = TRUE))
+    suitability[i, "Duration_winter"]      <- mean(as.numeric(stars_object_masked[["Duration_winter"]][, , i]), na.rm = TRUE)
+    suitability[i, "No_winter"]            <- mean(as.numeric(stars_object_masked[["Duration_winter"]][, , i]) == 0, na.rm = TRUE)
+    suitability[i, "Temp_winter_mean"]     <- mean(as.numeric(stars_object_masked[["Temp_winter_mean"]][, , i]), na.rm = TRUE)
+    suitability[i, "Temp_winter_sd"]       <- mean(as.numeric(stars_object_masked[["Temp_winter_sd"]][, , i]), na.rm = TRUE)
+    suitability[i, "Temp_winter_median"]   <- mean(as.numeric(stars_object_masked[["Temp_winter_median"]][, , i]), na.rm = TRUE)
+    suitability[i, "Temp_winter_min"]      <- mean(as.numeric(stars_object_masked[["Temp_winter_min"]][, , i]), na.rm = TRUE)
+    suitability[i, "Temp_winter_max"]      <- mean(as.numeric(stars_object_masked[["Temp_winter_max"]][, , i]), na.rm = TRUE)
+    suitability[i, "Temp_winter_autocorr"] <- mean(as.numeric(stars_object_masked[["Temp_winter_autocorr"]][, , i]), na.rm = TRUE)
+    suitability[i, "Budget_winter"]                 <- mean(as.numeric(stars_object_masked[["Budget_winter"]][, , i]), na.rm = TRUE)
+  }
+
+  suitability[, "Start_winter"] <- as.Date(suitability[, "Start_winter"], origin = "1970-01-01")
+  suitability[, "Stop_winter"]  <- as.Date(suitability[, "Stop_winter"], origin = "1970-01-01")
+
+  suitability
+}
+
 

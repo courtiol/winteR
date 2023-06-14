@@ -29,16 +29,14 @@ compute_budget_df <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa =
   data_MR$Prob_torpor <- prob_torpor
 
   ## predict metabolic rate in both physiological states
-  pred_MR <- suppressWarnings(torpor::tor_predict(fit_MR, Ta = data_MR$Ta))
-  pred_MR$pred <- pred_MR$pred
-  pred_MR$upr_95 <- pred_MR$upr_95
-  pred_MR$lwr_95 <- pred_MR$lwr_95
+  pred_MR <- suppressWarnings(torpor::tor_predict(fit_MR, Ta = data_MR$Ta, CI = FALSE))
 
   # params <- torpor::get_parameters(fit_MR)
   # Tlc <- params[params$parameter == "Tlc", "median"]
   Tlc <- fit_MR$mod_parameter$data$Tlc # Note: torpor::get_parameters(fit_MR) not precise enough!
 
   data_MR$MR_normo <- NA
+
   data_MR$MR_normo[data_MR$Ta < Tlc] <- pred_MR[pred_MR$assignment == "Euthermia", "pred"]
   data_MR$MR_normo[data_MR$Ta >= Tlc] <- pred_MR[pred_MR$assignment == "Mtnz", "pred"]
 
@@ -108,7 +106,8 @@ compute_budget_summarystats <- function(vec_Temp, vec_Dates,
                                    min_days_trigger_winter = min_days_trigger_winter)
 
     ## compute cumulative energy budget
-    budg$Winter <- d2$Date >= winter$start_winter & d2$Date <= winter$stop_winter
+    budg$Date <- d2$Date
+    budg$Winter <- budg$Date >= winter$start_winter & budg$Date <= winter$stop_winter
     budg$Budget_cumul <- cumsum(budg$Budget_fat * budg$Winter)
 
     ## compute survival status
@@ -117,7 +116,7 @@ compute_budget_summarystats <- function(vec_Temp, vec_Dates,
     budg$Survival[budg$Date >= date_mortality] <- FALSE
 
     data.frame(Budget_winter = max(budg$Budget_cumul),
-               Survive = any(!budg$Survival),
+               Survive = all(budg$Survival),
                Start_winter = winter$start_winter,
                Stop_winter = winter$stop_winter,
                Duration_winter = winter$duration_winter,

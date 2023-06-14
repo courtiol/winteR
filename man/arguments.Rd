@@ -24,7 +24,7 @@
 
 \item{directory_NCfiles}{the path to a folder containing subfolders with NC files}
 
-\item{directory_stars}{the destination location for the rda files storing the stars object}
+\item{directory_stars}{the destination location for the rds files storing the stars object}
 
 \item{downsample}{a boolean indicating whether to reduce the resolution or not (default = \code{FALSE})}
 
@@ -38,9 +38,17 @@
 
 \item{fit_state}{a fitted model predicting the probability to be in normothermy}
 
+\item{flatten}{whether to average the winter stars across forcing models (default = \code{TRUE})}
+
+\item{fn}{a function to be applied}
+
 \item{lapply_pkg}{the R package used to implement a \code{lapply()} kind of function (default = "pbmcapply"; other possibilities are "parallel" and "base")}
 
+\item{name_bool_var}{the quoted name of a boolean variable to use to filter cells in the grid (default is "Survive")}
+
 \item{nb_cores}{the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
+
+\item{mask}{a MULTIPOLYGON object to be used as a mask}
 
 \item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themsevles containing the NC files}
 
@@ -54,13 +62,27 @@
 
 \item{split_summer}{the day of mid-summer (default = \code{'07-01'})}
 
+\item{SSP}{the Shared Socioeconomic Pathways to consider ("126", "245", or "585")}
+
+\item{stars1}{a stars object produced by \code{\link[=compute_budget_stars]{compute_budget_stars()}}}
+
+\item{stars2}{a stars object produced by \code{\link[=compute_budget_stars]{compute_budget_stars()}}}
+
+\item{stars3}{a stars object produced by \code{\link[=compute_budget_stars]{compute_budget_stars()}}}
+
+\item{stars4}{a stars object produced by \code{\link[=compute_budget_stars]{compute_budget_stars()}}}
+
 \item{stars_object}{a stars object containing daily temperatures}
+
+\item{strip_names}{the title to be used on top of each map (default = \verb{= c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)", "SSP5-8.5 (2070-2099)")})}
 
 \item{temp_threshold}{the approximate temperature below which insects do not fly}
 
-\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
+\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
 
 \item{Tmirror}{the ambient temperature around which predictions are mirrored}
+
+\item{varname}{the quotted name of the variable to retain from each winter stars (default = \code{"Budget_winter"})}
 
 \item{vec_Temp}{a vector of ambient temperatures over 2 consecutive years}
 
@@ -68,6 +90,8 @@
 
 \item{y}{a string of characters indicating what y-variable to plot:
 "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"}
+
+\item{year}{a numeric scalar indicating the year of the winter to consider}
 
 \item{year_start}{a numeric scalar indicating the first year of the winter to consider}
 }

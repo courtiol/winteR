@@ -16,3 +16,9 @@
 #' A model fitted with [spaMM::fitme()].
 #'
 "fit_normo_cauchit"
+
+#' A mask with country borders for the world
+"mask_country"
+
+#' A mask with large water bodies the world
+"mask_ocean"

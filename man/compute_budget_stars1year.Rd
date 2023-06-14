@@ -33,7 +33,7 @@ compute_budget_stars1year(
 
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
 
-\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
+\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
 }
 \value{
 a stars object with energy budget information
@@ -46,7 +46,8 @@ This function should not be called by the user. It is called internally by
 run <- FALSE
 if (run) {
   test_stars <- readRDS("../NC/stars/gfdl-esm4_SSP126.rds")
-  test <- compute_budget_stars1year(year_start = 2020, test_stars, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+  test <- compute_budget_stars1year(year_start = 2020, test_stars,
+                                    fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
  }
 
 }

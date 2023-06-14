@@ -17,7 +17,7 @@ plot_budget_panel(
 \item{y}{a string of characters indicating what y-variable to plot:
 "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"}
 
-\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
+\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
 
 \item{base_size}{base font size, given in pts}
 }

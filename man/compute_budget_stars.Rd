@@ -32,7 +32,7 @@ compute_budget_stars(
 
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
 
-\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
+\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
 
 \item{nb_cores}{the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)}
 
@@ -51,7 +51,9 @@ run <- FALSE
 if (run) {
  test_stars <- readRDS("../NC/stars/gfdl-esm4_SSP126.rds")
  test_stars_small <- dplyr::filter(test_stars, time < as.Date("2017-01-01"), x < -10, y > 70)
- test <- compute_budget_stars(test_stars_small, fit_state = fit_normo_cauchit, fit_MR = fit_torpor, nb_cores = 30)
+ test <- compute_budget_stars(test_stars_small,
+                              fit_state = fit_normo_cauchit, fit_MR = fit_torpor,
+                              nb_cores = 30)
  test
  }
 

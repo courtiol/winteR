@@ -30,7 +30,7 @@ compute_budget_df(
 
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
 
-\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 24)}
+\item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
 }
 \value{
 a dataframe

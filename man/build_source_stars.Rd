@@ -17,7 +17,7 @@ build_source_stars(
 \arguments{
 \item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themsevles containing the NC files}
 
-\item{directory_stars}{the destination location for the rda files storing the stars object}
+\item{directory_stars}{the destination location for the rds files storing the stars object}
 
 \item{downsample}{a boolean indicating whether to reduce the resolution or not (default = \code{FALSE})}
 

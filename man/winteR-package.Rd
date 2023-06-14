@@ -9,7 +9,8 @@
 The goal of winteR is to reproduce the results from the paper entitled "XXX" by Kravchenko et al.
 }
 \details{
-For reproducing the results of our paper, just follow the code presented in the section "Examples" below.
+For reproducing the results of our paper, just follow the code presented in the section
+"Examples" below.
 }
 \examples{
 
@@ -69,7 +70,8 @@ fit_normo_logit
 
 fit_normo_cauchit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
                                  family = binomial(link = "cauchit"))
-## rm(list = ls()[ls() != "fit_normo_cauchit"]); usethis::use_data(fit_normo_cauchit, compress = "xz", overwrite = TRUE)
+## rm(list = ls()[ls() != "fit_normo_cauchit"])
+## usethis::use_data(fit_normo_cauchit, compress = "xz", overwrite = TRUE)
 fit_normo_cauchit
 # formula: Normo ~ Ta + (1 | ID)
 # Estimation of lambda by ML (P_v approximation of logL).
@@ -136,7 +138,8 @@ run <- FALSE
 if (run) {
   set.seed(123)
   fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$kJ_h) ## slow
-  ## rm(list = ls()[ls() != "fit_torpor"]); ; usethis::use_data(fit_torpor, compress = "xz", overwrite = TRUE)
+  ## rm(list = ls()[ls() != "fit_torpor"]);
+  ## usethis::use_data(fit_torpor, compress = "xz", overwrite = TRUE)
   params <- torpor::tor_summarise(fit_torpor)$params[, "parameter"]
   jagsUI::traceplot(fit_torpor$mod_parameter, parameters = params) ## inspect MCMC chains
   jagsUI::densityplot(fit_torpor$mod_parameter, parameters = params) ## inspect posterior distrib
@@ -277,12 +280,45 @@ if (run) {
     stars_to_do <- readRDS(file = rds_to_do)
     name_stars <- strsplit(basename(rds_to_do), split = "\\\\.rds")[[1]]
     print(paste("processing stars", name_stars, "be very patient!"))
-    stars_winter <- compute_budget_stars(stars_to_do, fit_state = fit_normo_cauchit, fit_MR = fit_torpor, nb_cores = 90)
-    saveRDS(stars_winter, file = paste0("../NC/stars_winter/", name_stars, "_winter.rds"), compress = FALSE)
+    stars_winter <- compute_budget_stars(stars_to_do,
+                                         fit_state = fit_normo_cauchit,
+                                         fit_MR = fit_torpor, nb_cores = 30)
+    saveRDS(stars_winter, file = paste0("../NC/stars_winter/", name_stars, "_winter.rds"),
+            compress = FALSE)
     rm(list = "stars_to_do"); gc()
   }
 }
 
+## Step 7: plotting the maps
+
+run <- FALSE
+if (run) {
+ library(stars)
+ readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
+  dplyr::select(Budget_winter) |>
+  dplyr::filter(year >= 1901, year <= 1930) -> winter_stars_OBS_1901_1930
+
+ readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
+   dplyr::select(Budget_winter) |>
+   dplyr::filter(year >= 1989, year <= 2018) -> winter_stars_OBS_1989_2018
+
+ reshape_stars_across.models("../NC/stars_winter", SSP = "126") |>
+   dplyr::filter(year >= 2070) -> winter_stars_SSP126_2070_2099
+
+ reshape_stars_across.models("../NC/stars_winter", SSP = "585") |>
+   dplyr::filter(year >= 2070) -> winter_stars_SSP585_2070_2099
+
+ maps <- plot_fat_map(winter_stars_OBS_1901_1930,
+                      winter_stars_OBS_1989_2018,
+                      winter_stars_SSP126_2070_2099,
+                      winter_stars_SSP585_2070_2099)
+ showtext::showtext_opts(dpi = 300)
+
+ ggplot2::ggsave(filename = "figures/fig4.png", plot = maps,
+                 width = 18, height = 18, units = "cm")
+ ggplot2::ggsave(filename = "figures/fig4.pdf", plot = maps,
+                 width = 18, height = 18, units = "cm")
+}
 
 }
 \references{
