@@ -36,6 +36,7 @@ data_Tskin <- build_Tskin_table(Tskin_files)
 data_normothermy <- data_Tskin[data_Tskin$Included, ]
 fit_normo_cauchit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
                                  family = binomial(link = "cauchit"))
+data("fit_torpor", package = "winteR")
 data_nrg <- compute_budget_df(data_Kharkiv, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
 plot_budget_panel(data_nrg, y = "g_fat_per_state")
 plot_budget_panel(data_nrg, y = "g_fat_per_day")

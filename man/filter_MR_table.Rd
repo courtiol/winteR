@@ -22,6 +22,7 @@ filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
                    "/metabolic_rate.txt")
 data_MR <- build_MR_table(filepath)
 nrow(data_MR)
+data("fit_torpor", package = "winteR")
 data_MR_filtered <- filter_MR_table(data_MR, fit_torpor)
 nrow(data_MR_filtered)
 

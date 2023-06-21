@@ -9,6 +9,7 @@
 #' @param base_size base font size, given in pts
 #' @param clean a boolean indicating if the data need to be filter by [clean_Tskin_table()] or not (default = `TRUE`)
 #' @param .cluster the registered default cluster (set internally)
+#' @param .color_values a vector of colors for the `color` variable (default = `c("NA", "blue", "orange")`)
 #' @param crop a boolean indicating whether to crop or not (default = `TRUE`)
 #' @param .crop_args the list of coordinates to use for cropping (default = `list(S = 27, N = 72, W = -13, E = 56)`)
 #' @param data_budget a dataframe produced by [compute_budget_df()]
@@ -21,11 +22,16 @@
 #' @param .downsampling_args arguments for [stars::st_downsample()] (default = `c(5, 5, 0)`, i.e. aggregate space but not dates)
 #' @param filename the path to the file from which the data are to be imported
 #' @param filenames a vector of paths to the files from which the data are to be imported
+#' @param .fill_values a vector of colors for the `fill` variable (default = `c("NA", "blue", "orange")`)
 #' @param fit_MR a fitted model predicting the metabolic rate in KJh^-1 produced by [torpor::tor_fit()]
 #' @param fit_state a fitted model predicting the probability to be in normothermy
 #' @param flatten whether to average the winter stars across forcing models (default = `TRUE`)
 #' @param fn a function to be applied
+#' @param huddling_factor a factor multiplied to the metabolic rate, to account for huddling, when individuals are thermoregulating (default = 0.5)
 #' @param lapply_pkg the R package used to implement a `lapply()` kind of function (default = "pbmcapply"; other possibilities are "parallel" and "base")
+#' @param lat a latitude
+#' @param lat_ref a latitude of reference
+#' @param .legend_position the value for the ggplot argument "legend.position" used in [ggplot2::theme()]
 #' @param name_bool_var the quoted name of a boolean variable to use to filter cells in the grid (default is "Survive")
 #' @param nb_cores the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)
 #' @param mask a MULTIPOLYGON object to be used as a mask
@@ -34,22 +40,28 @@
 #' @param rangeTa the range of ambient temperature to consider in plot
 #' @param rangeTskin the range of skin temperature to consider in plot
 #' @param roost_insulation_dTa the increase in temperature in the roost, compared to outside (default = 5)
+#' @param scenarios a vector of the scenarios to retain (default = `c("OBSCLIM", "SSP126", "SSP585")`)
+#' @param signed whether the output value should be signed or absolute (default = `TRUE`, which implies it is signed)
 #' @param split_summer the day of mid-summer (default = `'07-01'`)
 #' @param SSP the Shared Socioeconomic Pathways to consider ("126", "245", or "585")
 #' @param stars1 a stars object produced by [compute_budget_stars()]
 #' @param stars2 a stars object produced by [compute_budget_stars()]
 #' @param stars3 a stars object produced by [compute_budget_stars()]
 #' @param stars4 a stars object produced by [compute_budget_stars()]
-#' @param stars_object a stars object containing daily temperatures
-#' @param strip_names the title to be used on top of each map (default = `= c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)", "SSP5-8.5 (2070-2099)")`)
+#' @param stars_object a stars object
+#' @param strip_names the title to be used on top of each map (default, if NULL = `= c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)", "SSP5-8.5 (2070-2099)")`)
 #' @param temp_threshold the approximate temperature below which insects do not fly
 #' @param threshold_mortality the maximal amount of fat consumed before mortality occurs (default = 27)
 #' @param Tmirror the ambient temperature around which predictions are mirrored
-#' @param varname the quotted name of the variable to retain from each winter stars (default = `"Budget_winter"`)
+#' @param varname the quotted name of the variable to retain from each winter stars (default depends on the function)
+#' @param vartype the type of information for the y variable: `"latitude"` or `"area"`
 #' @param vec_Temp a vector of ambient temperatures over 2 consecutive years
 #' @param vec_Dates a vector of dates over 2 consecutive years
+#' @param window_length_smoothing the width of the window used for smoothing via [caTools::runmean()]
+#' @param winters_stats_df a dataframe of winter statistics produced by [summarise_info_winter.stars.all()]
 #' @param y a string of characters indicating what y-variable to plot:
 #'   "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"
+#' @param y_title the title for the y axis
 #' @param year  a numeric scalar indicating the year of the winter to consider
 #' @param year_start a numeric scalar indicating the first year of the winter to consider
 #'

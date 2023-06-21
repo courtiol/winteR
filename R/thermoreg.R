@@ -38,6 +38,7 @@ build_MR_table <- function(filename) {
 #' @export
 #'
 #' @examples
+#' data("fit_torpor", package = "winteR")
 #' summarise_MR_fit(fit_torpor)
 #'
 summarise_MR_fit <- function(fit_MR) {
@@ -64,6 +65,7 @@ summarise_MR_fit <- function(fit_MR) {
 #' filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
 #'                    "/metabolic_rate.txt")
 #' data_MR <- build_MR_table(filepath)
+#' data("fit_torpor", package = "winteR")
 #' plot_MR_fit(fit_MR = fit_torpor, data_MR = data_MR)
 #'
 plot_MR_fit <- function(fit_MR, data_MR, rangeTa = c(-5, 35), base_size = 11) {
@@ -142,6 +144,7 @@ plot_MR_fit <- function(fit_MR, data_MR, rangeTa = c(-5, 35), base_size = 11) {
 #' filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
 #'                    "/metabolic_rate.txt")
 #' data_MR <- build_MR_table(filepath)
+#' data("fit_torpor", package = "winteR")
 #' plot_TaTskin_data(fit_MR = fit_torpor, data_MR = data_MR)
 #'
 plot_TaTskin_data <- function(fit_MR, data_MR, rangeTa = c(-5, 35), rangeTskin = c(0, 40), base_size = 11) {
@@ -189,6 +192,7 @@ plot_TaTskin_data <- function(fit_MR, data_MR, rangeTa = c(-5, 35), rangeTskin =
 #'                    "/metabolic_rate.txt")
 #' data_MR <- build_MR_table(filepath)
 #' nrow(data_MR)
+#' data("fit_torpor", package = "winteR")
 #' data_MR_filtered <- filter_MR_table(data_MR, fit_torpor)
 #' nrow(data_MR_filtered)
 #'

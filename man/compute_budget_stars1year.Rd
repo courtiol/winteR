@@ -19,7 +19,7 @@ compute_budget_stars1year(
 \arguments{
 \item{year_start}{a numeric scalar indicating the first year of the winter to consider}
 
-\item{stars_object}{a stars object containing daily temperatures}
+\item{stars_object}{a stars object}
 
 \item{fit_state}{a fitted model predicting the probability to be in normothermy}
 

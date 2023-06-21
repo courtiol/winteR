@@ -4,28 +4,14 @@
 \alias{plot_fat_map}
 \title{Plot maps showing the variation in winter budget through Europe}
 \usage{
-plot_fat_map(
-  stars1,
-  stars2,
-  stars3,
-  stars4,
-  strip_names = c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)",
-    "SSP5-8.5 (2070-2099)"),
-  threshold_mortality = 27
-)
+plot_fat_map(stars_object, threshold_mortality = 27, base_size = 11)
 }
 \arguments{
-\item{stars1}{a stars object produced by \code{\link[=compute_budget_stars]{compute_budget_stars()}}}
-
-\item{stars2}{a stars object produced by \code{\link[=compute_budget_stars]{compute_budget_stars()}}}
-
-\item{stars3}{a stars object produced by \code{\link[=compute_budget_stars]{compute_budget_stars()}}}
-
-\item{stars4}{a stars object produced by \code{\link[=compute_budget_stars]{compute_budget_stars()}}}
-
-\item{strip_names}{the title to be used on top of each map (default = \verb{= c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)", "SSP5-8.5 (2070-2099)")})}
+\item{stars_object}{a stars object}
 
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
+
+\item{base_size}{base font size, given in pts}
 }
 \value{
 a ggplot2 object

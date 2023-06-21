@@ -9,11 +9,11 @@ extract_stars_latitude(
   year = NULL,
   name_bool_var = "Survive",
   mask = NULL,
-  fn = "mean"
+  fn = "median"
 )
 }
 \arguments{
-\item{stars_object}{a stars object containing daily temperatures}
+\item{stars_object}{a stars object}
 
 \item{year}{a numeric scalar indicating the year of the winter to consider}
 

@@ -16,7 +16,7 @@ reshape_stars_across.models(
 
 \item{SSP}{the Shared Socioeconomic Pathways to consider ("126", "245", or "585")}
 
-\item{varname}{the quotted name of the variable to retain from each winter stars (default = \code{"Budget_winter"})}
+\item{varname}{the quotted name of the variable to retain from each winter stars (default depends on the function)}
 
 \item{flatten}{whether to average the winter stars across forcing models (default = \code{TRUE})}
 }

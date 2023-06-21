@@ -135,11 +135,11 @@ plot_winter_temp2years <- function(data_temp, base_size = 11, temp_threshold = 7
     ggplot2::scale_y_continuous(breaks = c(temp_threshold, seq(-100, 100, by = 5)), minor_breaks = NULL,
                                 sec.axis = ggplot2::sec_axis(~ . + roost_insulation_dTa, breaks = seq(-100, 100, by = 5),
                                                              name = "Roost temperature (\u00B0C)")) +
-    ggplot2::scale_x_date(date_breaks = "2 months", date_labels = "%b 1st",
+    ggplot2::scale_x_date(date_breaks = "2 months", date_labels = "%b",
                           minor_breaks = "1 month", limits = c(winter$mid_summer1, winter$mid_summer2)) +
     ggplot2::labs(y = "Ambient temperature (\u00B0C)", x = NULL) +
     ggplot2::coord_cartesian(xlim = c(winter$mid_summer1, winter$mid_summer2)) +
     ggplot2::theme_bw(base_size = base_size) +
-    ggplot2::theme(legend.position = "none")
+    ggplot2::theme(legend.position = "none", axis.text.x = ggplot2::element_text(hjust = 0))
 }
 

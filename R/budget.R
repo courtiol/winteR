@@ -14,7 +14,7 @@
 #'
 compute_budget_df <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa = 5,
                               temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
-                              threshold_mortality = 27) {
+                              threshold_mortality = 27, huddling_factor = 0.5) {
 
   ## ambient temperature is higher in roost
   data_MR$Ta <- data_MR$Temp + roost_insulation_dTa
@@ -34,14 +34,16 @@ compute_budget_df <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa =
   # params <- torpor::get_parameters(fit_MR)
   # Tlc <- params[params$parameter == "Tlc", "median"]
   Tlc <- fit_MR$mod_parameter$data$Tlc # Note: torpor::get_parameters(fit_MR) not precise enough!
+  Tt <- stats::median(fit_MR$mod_parameter$sims.list$Tt) ## approximation of Tt
 
   data_MR$MR_normo <- NA
 
-  data_MR$MR_normo[data_MR$Ta < Tlc] <- pred_MR[pred_MR$assignment == "Euthermia", "pred"]
-  data_MR$MR_normo[data_MR$Ta >= Tlc] <- pred_MR[pred_MR$assignment == "Mtnz", "pred"]
+  data_MR$MR_normo[data_MR$Ta < Tlc] <- pred_MR[pred_MR$Ta < Tlc & pred_MR$assignment == "Euthermia", "pred"] * huddling_factor
+  data_MR$MR_normo[data_MR$Ta >= Tlc] <- pred_MR[pred_MR$Ta >= Tlc & pred_MR$assignment == "Mtnz", "pred"] # no change for huddling needed here
 
   data_MR$MR_torpor <- 0
-  data_MR$MR_torpor[data_MR$Ta < Tlc] <- pred_MR[pred_MR$assignment == "Torpor", "pred"]
+  data_MR$MR_torpor[data_MR$Ta < Tlc & data_MR$Ta >= Tt] <- pred_MR[pred_MR$Ta < Tlc & pred_MR$Ta >= Tt & pred_MR$assignment == "Torpor", "pred"] # no change for huddling needed here
+  data_MR$MR_torpor[data_MR$Ta < Tlc & data_MR$Ta < Tt] <- pred_MR[pred_MR$Ta < Tlc & pred_MR$Ta < Tt & pred_MR$assignment == "Torpor", "pred"] * huddling_factor
 
   data_MR$Prob_normo[data_MR$Ta >= Tlc] <- 1
   data_MR$Prob_torpor[data_MR$Ta >= Tlc] <- 0
@@ -144,6 +146,7 @@ compute_budget_summarystats <- function(vec_Temp, vec_Dates,
 #' data_normothermy <- data_Tskin[data_Tskin$Included, ]
 #' fit_normo_cauchit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
 #'                                  family = binomial(link = "cauchit"))
+#' data("fit_torpor", package = "winteR")
 #' data_nrg <- compute_budget_df(data_Kharkiv, fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
 #' plot_budget_panel(data_nrg, y = "g_fat_per_state")
 #' plot_budget_panel(data_nrg, y = "g_fat_per_day")
@@ -168,13 +171,15 @@ plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mor
     plot <- plot +
         ggplot2::geom_line(ggplot2::aes(x = .data$Date, y = .data$Fat_normo), colour = "red") +
         ggplot2::geom_line(ggplot2::aes(x = .data$Date, y = .data$Fat_torpor), colour = "blue") +
-        ggplot2::scale_y_continuous(breaks = seq(0, 10, by = 0.05), minor_breaks = NULL)
+        ggplot2::scale_y_continuous(breaks = seq(0, 10, by = 0.025), minor_breaks = NULL)
   } else if (y == "g_fat_per_day") {
     ylab <- expression(atop("Daily fat consumption"~"("*g[fat]*day^{-1}*")"))
     plot <- plot +
       ggplot2::geom_line(ggplot2::aes(x = .data$Date, y = .data$Budget_fat)) +
-      ggplot2::scale_y_continuous(breaks = seq(0, 10, by = 0.5), minor_breaks = NULL)
+      ggplot2::scale_y_continuous(breaks = seq(0, 10, by = 0.25), minor_breaks = NULL)
   } else if (y == "g_fat_per_winter") {
+    date_death <- data_plot$Date[which(data_plot$Budget_cumul > threshold_mortality)[1]]
+    print(paste("death date =", date_death))
     ylab <- expression(atop("Cumulative fat consumption"~"("*Sigma*g[fat]*")"))
     plot <- plot +
       ggplot2::geom_hline(yintercept = threshold_mortality, linetype = 4, colour = "darkgrey") +
@@ -183,7 +188,7 @@ plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mor
                          linetype = 3) +
       ggplot2::geom_point(ggplot2::aes(x = .data$x, y = .data$y),
                          data = data.frame(y = threshold_mortality,
-                                           x = data_plot$Date[which(data_plot$Budget_cumul > threshold_mortality)[1]]),
+                                           x = date_death),
                          shape = 4, size = 5) + # skull: "\U2620"
       ggplot2::scale_y_continuous(breaks = c(threshold_mortality, seq(0, 1000, by = 10)), minor_breaks = NULL)
   } else {
@@ -191,10 +196,11 @@ plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mor
   }
 
   plot +
-    ggplot2::scale_x_date(date_breaks = "1 months", date_labels = "%b 1st",
+    ggplot2::scale_x_date(date_breaks = "1 months", date_labels = "%b",
                           minor_breaks = NULL, limits = c(start_winter - 14, stop_winter + 14)) +
     ggplot2::labs(y = ylab, x = NULL) +
-    ggplot2::theme_bw(base_size = base_size)
+    ggplot2::theme_bw(base_size = base_size) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(hjust = 0))
 }
 
 

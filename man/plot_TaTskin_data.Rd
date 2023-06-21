@@ -33,6 +33,7 @@ Plot ambient vs skin temperature
 filepath <- paste0(system.file("extdata/thermoreg", package = "winteR"),
                    "/metabolic_rate.txt")
 data_MR <- build_MR_table(filepath)
+data("fit_torpor", package = "winteR")
 plot_TaTskin_data(fit_MR = fit_torpor, data_MR = data_MR)
 
 }

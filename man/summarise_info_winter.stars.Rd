@@ -2,27 +2,28 @@
 % Please edit documentation in R/handleStars.R
 \name{summarise_info_winter.stars}
 \alias{summarise_info_winter.stars}
-\title{Summarise winter info}
+\title{Summarise winter information}
 \usage{
 summarise_info_winter.stars(stars_object, mask = NULL)
 }
 \arguments{
-\item{stars_object}{a stars object containing daily temperatures}
+\item{stars_object}{a stars object}
 
 \item{mask}{a MULTIPOLYGON object to be used as a mask}
 }
 \value{
-a stars object with a single layer
+a dataframe
 }
 \description{
-This function summarises the information contained in a stars object produced with \code{\link[=compute_budget_stars]{compute_budget_stars()}}.
+This function should not be called by the user. It is internally called by \code{\link[=summarise_info_winter.stars.all]{summarise_info_winter.stars.all()}}.
 }
 \examples{
 run <- FALSE
 if (run) {
  test_stars <- readRDS("../NC/stars_winter/gfdl-esm4_SSP126_winter.rds")
  #test_stars_small <- dplyr::filter(test_stars, year > 2080, x < -10, y > 70)
- test <- summarise_info_winter.stars(test_stars, mask = mask_country)
+ data(lands_polygons, package = "winteR")
+ test <- summarise_info_winter.stars(test_stars, mask = lands_polygons)
  }
 
 }

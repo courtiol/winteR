@@ -10,6 +10,8 @@
 
 \item{.cluster}{the registered default cluster (set internally)}
 
+\item{.color_values}{a vector of colors for the \code{color} variable (default = \code{c("NA", "blue", "orange")})}
+
 \item{crop}{a boolean indicating whether to crop or not (default = \code{TRUE})}
 
 \item{.crop_args}{the list of coordinates to use for cropping (default = \code{list(S = 27, N = 72, W = -13, E = 56)})}
@@ -34,6 +36,8 @@
 
 \item{filenames}{a vector of paths to the files from which the data are to be imported}
 
+\item{.fill_values}{a vector of colors for the \code{fill} variable (default = \code{c("NA", "blue", "orange")})}
+
 \item{fit_MR}{a fitted model predicting the metabolic rate in KJh^-1 produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
 
 \item{fit_state}{a fitted model predicting the probability to be in normothermy}
@@ -42,7 +46,15 @@
 
 \item{fn}{a function to be applied}
 
+\item{huddling_factor}{a factor multiplied to the metabolic rate, to account for huddling, when individuals are thermoregulating (default = 0.5)}
+
 \item{lapply_pkg}{the R package used to implement a \code{lapply()} kind of function (default = "pbmcapply"; other possibilities are "parallel" and "base")}
+
+\item{lat}{a latitude}
+
+\item{lat_ref}{a latitude of reference}
+
+\item{.legend_position}{the value for the ggplot argument "legend.position" used in \code{\link[ggplot2:theme]{ggplot2::theme()}}}
 
 \item{name_bool_var}{the quoted name of a boolean variable to use to filter cells in the grid (default is "Survive")}
 
@@ -60,6 +72,10 @@
 
 \item{roost_insulation_dTa}{the increase in temperature in the roost, compared to outside (default = 5)}
 
+\item{scenarios}{a vector of the scenarios to retain (default = \code{c("OBSCLIM", "SSP126", "SSP585")})}
+
+\item{signed}{whether the output value should be signed or absolute (default = \code{TRUE}, which implies it is signed)}
+
 \item{split_summer}{the day of mid-summer (default = \code{'07-01'})}
 
 \item{SSP}{the Shared Socioeconomic Pathways to consider ("126", "245", or "585")}
@@ -72,9 +88,9 @@
 
 \item{stars4}{a stars object produced by \code{\link[=compute_budget_stars]{compute_budget_stars()}}}
 
-\item{stars_object}{a stars object containing daily temperatures}
+\item{stars_object}{a stars object}
 
-\item{strip_names}{the title to be used on top of each map (default = \verb{= c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)", "SSP5-8.5 (2070-2099)")})}
+\item{strip_names}{the title to be used on top of each map (default, if NULL = \verb{= c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)", "SSP5-8.5 (2070-2099)")})}
 
 \item{temp_threshold}{the approximate temperature below which insects do not fly}
 
@@ -82,14 +98,22 @@
 
 \item{Tmirror}{the ambient temperature around which predictions are mirrored}
 
-\item{varname}{the quotted name of the variable to retain from each winter stars (default = \code{"Budget_winter"})}
+\item{varname}{the quotted name of the variable to retain from each winter stars (default depends on the function)}
+
+\item{vartype}{the type of information for the y variable: \code{"latitude"} or \code{"area"}}
 
 \item{vec_Temp}{a vector of ambient temperatures over 2 consecutive years}
 
 \item{vec_Dates}{a vector of dates over 2 consecutive years}
 
+\item{window_length_smoothing}{the width of the window used for smoothing via \code{\link[caTools:runmean]{caTools::runmean()}}}
+
+\item{winters_stats_df}{a dataframe of winter statistics produced by \code{\link[=summarise_info_winter.stars.all]{summarise_info_winter.stars.all()}}}
+
 \item{y}{a string of characters indicating what y-variable to plot:
 "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"}
+
+\item{y_title}{the title for the y axis}
 
 \item{year}{a numeric scalar indicating the year of the winter to consider}
 

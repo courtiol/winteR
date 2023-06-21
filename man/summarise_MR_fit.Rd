@@ -16,6 +16,7 @@ a dataframe
 Extract parameters from model fitted with torpor
 }
 \examples{
+data("fit_torpor", package = "winteR")
 summarise_MR_fit(fit_torpor)
 
 }

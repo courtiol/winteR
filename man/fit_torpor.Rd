@@ -14,10 +14,6 @@ A list with two elements
 }
 }
 }
-\usage{
-fit_torpor
-}
 \description{
 A model fitted with \code{\link[torpor:tor_fit]{torpor::tor_fit()}}.
 }
-\keyword{datasets}

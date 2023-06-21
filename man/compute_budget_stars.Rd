@@ -18,7 +18,7 @@ compute_budget_stars(
 )
 }
 \arguments{
-\item{stars_object}{a stars object containing daily temperatures}
+\item{stars_object}{a stars object}
 
 \item{fit_state}{a fitted model predicting the probability to be in normothermy}
 

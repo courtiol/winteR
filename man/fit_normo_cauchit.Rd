@@ -4,13 +4,6 @@
 \name{fit_normo_cauchit}
 \alias{fit_normo_cauchit}
 \title{Fitted model predicting probability to be in normothermy}
-\format{
-An object of class \code{HLfit} (inherits from \code{list}) of length 44.
-}
-\usage{
-fit_normo_cauchit
-}
 \description{
 A model fitted with \code{\link[spaMM:fitme]{spaMM::fitme()}}.
 }
-\keyword{datasets}

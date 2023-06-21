@@ -17,8 +17,14 @@
 #' @keywords package
 #' @examples
 #'
-#' ## Step 0: check that all R packages used below are installed if you wish to reproduce everything
+#'
+#' ## Step 0: preparation
+#'
+#' ### Step 0A: check that all R packages used below are installed if you wish to reproduce everything
 #' checkDependencies()
+#'
+#' ### Step 0B: decide to run slow operations from this workflow
+#' run <- FALSE # change to TRUE for running everything (slow)
 #'
 #' ## Step 1: predicting normothermy from skin temperature (Tskin)
 #' # Note: it is important _not_ to model temporal autocorrelation
@@ -137,7 +143,6 @@
 #' ### Step 2B: fitting thermoregulatory curves using the torpor package
 #' # Note: this step is slow, so we stored the fitted model in winteR, but you can refit the model
 #' # by setting run to TRUE
-#' run <- FALSE
 #' if (run) {
 #'   set.seed(123)
 #'   fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$kJ_h) ## slow
@@ -146,6 +151,8 @@
 #'   params <- torpor::tor_summarise(fit_torpor)$params[, "parameter"]
 #'   jagsUI::traceplot(fit_torpor$mod_parameter, parameters = params) ## inspect MCMC chains
 #'   jagsUI::densityplot(fit_torpor$mod_parameter, parameters = params) ## inspect posterior distrib
+#' } else {
+#'   data("fit_torpor", package = "winteR")
 #' }
 #'
 #' fit_torpor
@@ -182,7 +189,7 @@
 #'
 #'
 #' ### Step 2D: extract statistics for main text
-#' Tt <- summarise_MR_fit(fit_torpor)$mean[summarise_MR_fit(fit_torpor)$parameter == "Tt"]
+#' Tt <- summarise_MR_fit(fit_torpor)$mean[summarise_MR_fit(fit_torpor)$parameter == "Tt"] ##TODO, use median as in budget comput?
 #' MR_at_Tt <- torpor::tor_predict(fit_torpor, Ta = Tt)$pred
 #' round(100*MR_at_Tt[1] / MR_at_Tt[2], digits = 2) # MR in torpor is 1.38 % of MR in normothermy
 #'
@@ -265,7 +272,6 @@
 #' # scenarios = 20 objects for future predictions) amounting to a total of 62.2 Gb.
 #' # In case of error caused by memory limitation, reduce `nb_cores` and try again.
 #' # Do also make sure to adjust your path as required
-#' run <- FALSE
 #' if (run) {
 #'   build_source_stars(metadirectory_NCfiles = "../NC/ISIMIP_sources/",
 #'                      directory_stars = "../NC/stars/", nb_cores = 10)
@@ -274,7 +280,6 @@
 #'
 #' ## Step 6: creating stars objects with winter summary statistics for each year
 #'
-#' run <- FALSE
 #' if (!dir.exists("../NC/stars_winter/")) dir.create("../NC/stars_winter/")
 #' if (run) {
 #'   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
@@ -292,35 +297,50 @@
 #'   }
 #' }
 #'
-#' ## Step 7: plotting the maps
+#' ## Step 7: plotting the map of the prediction for the current distribution
 #'
-#' run <- FALSE
+#'
+#' ### Step 7A: preparing IUCN distribution map polygon file
+#' IUCN_polygon_file <- list.files(system.file("extdata/IUCN", package = "winteR"),
+#'                                 pattern = "*.shp", full.names = TRUE)
+#' distrib_IUCN <- sf::read_sf(IUCN_polygon_file)
+#'
+#' ### Step 7B: plotting winter budget over Europe for 2018
 #' if (run) {
-#'  library(stars)
-#'  readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
-#'   dplyr::select(Budget_winter) |>
-#'   dplyr::filter(year >= 1901, year <= 1930) -> winter_stars_OBS_1901_1930
-#'
 #'  readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
 #'    dplyr::select(Budget_winter) |>
-#'    dplyr::filter(year >= 1989, year <= 2018) -> winter_stars_OBS_1989_2018
-#'
-#'  reshape_stars_across.models("../NC/stars_winter", SSP = "126") |>
-#'    dplyr::filter(year >= 2070) -> winter_stars_SSP126_2070_2099
-#'
-#'  reshape_stars_across.models("../NC/stars_winter", SSP = "585") |>
-#'    dplyr::filter(year >= 2070) -> winter_stars_SSP585_2070_2099
-#'
-#'  maps <- plot_fat_map(winter_stars_OBS_1901_1930,
-#'                       winter_stars_OBS_1989_2018,
-#'                       winter_stars_SSP126_2070_2099,
-#'                       winter_stars_SSP585_2070_2099)
+#'    dplyr::filter(year == 2018) |>
+#'    plot_fat_map() +
+#'    ggplot2::geom_sf(data = distrib_IUCN, fill = NA, colour = "darkgreen", linewidth = 1) +
+#'    ggplot2::coord_sf(expand = FALSE)
 #'  showtext::showtext_opts(dpi = 300)
-#'
-#'  ggplot2::ggsave(filename = "figures/fig4.png", plot = maps,
-#'                  width = 18, height = 18, units = "cm")
-#'  ggplot2::ggsave(filename = "figures/fig4.pdf", plot = maps,
-#'                  width = 18, height = 18, units = "cm")
+#'  ggplot2::ggsave(filename = "figures/fig4.png",
+#'                  width = 14, height = 14, units = "cm")
+#'  ggplot2::ggsave(filename = "figures/fig4.pdf",
+#'                  width = 14, height = 14, units = "cm")
 #' }
+#'
+#' ## Step 8: predicting shit in hibernation niche
+#'
+#' ### Step 8A: extracting winter info from all stars
+#' if (run) {
+#'   data("lands_polygons", package = "winteR") # load the mask
+#'   winters_stats <- summarise_info_winter.stars.all("../NC/stars_winter",
+#'                                                    mask = lands_polygons) ## takes a few min
+#'   pS8_1 <- plot_time_trends(winters_stats)
+#'   pS8_2 <- plot_time_trends(winters_stats, varname = "Latitude_min",
+#'                                 y_title = "\n Minimal latitude of suitable hibernation areas")
+#'   pS8_3 <- plot_time_trends(winters_stats, varname = "Latitude_max",
+#'                                 y_title = "\n Maximal latitude of suitable hibernation areas")
+#'   pS8_4 <- plot_time_trends(winters_stats, varname = "Suitable_area_km2", vartype = "area",
+#'                            y_title = "Suitable hibernation surface area\n (x 1,000,000 km²)")
+#'   pS8_1234 <- cowplot::plot_grid(pS8_4, pS8_1, pS8_2, pS8_3,
+#'                                  nrow = 2, labels = c("A", "B", "C", "D"))
+#'   pS8_1234
+#'   showtext::showtext_opts(dpi = 300)
+#'   ggplot2::ggsave(filename = "figures/fig5.png",
+#'                  width = 18, height = 16, units = "cm")
+#' }
+#'
 #'
 NULL
