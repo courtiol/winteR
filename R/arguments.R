@@ -14,6 +14,7 @@
 #' @param .crop_args the list of coordinates to use for cropping (default = `list(S = 27, N = 72, W = -13, E = 56)`)
 #' @param data_budget a dataframe produced by [compute_budget_df()]
 #' @param data_MR the data used to fit the thermoregulatory curves as produced by [build_MR_table()]
+#' @param data_suitability a dataframe with at least columns `Year` and `Suitable_winter`
 #' @param data_temp a dataframe with at least columns `Date` and `Temp`, such as those produced by [build_temp_2years()]
 #' @param data_Tskin a file produced by [load_Tskin_datafile()]
 #' @param directory_NCfiles the path to a folder containing subfolders with NC files
@@ -35,8 +36,9 @@
 #' @param name_bool_var the quoted name of a boolean variable to use to filter cells in the grid (default is "Survive")
 #' @param nb_cores the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)
 #' @param mask a MULTIPOLYGON object to be used as a mask
-#' @param metadirectory_NCfiles a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themsevles containing the NC files
+#' @param metadirectory_NCfiles a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themselves containing the NC files
 #' @param min_days_trigger_winter the minimum number of days for which the temperature should be below `temp_threshold` to enter winter
+#' @param min_years_trigger_suitability the minimum number of suitable winters to trigger the establishment or the disappearance of bats in a region
 #' @param rangeTa the range of ambient temperature to consider in plot
 #' @param rangeTskin the range of skin temperature to consider in plot
 #' @param roost_insulation_dTa the increase in temperature in the roost, compared to outside (default = 5)
@@ -55,8 +57,10 @@
 #' @param Tmirror the ambient temperature around which predictions are mirrored
 #' @param varname the quotted name of the variable to retain from each winter stars (default depends on the function)
 #' @param vartype the type of information for the y variable: `"latitude"` or `"area"`
+#' @param vec_Suitable_winter a vector of boolean indicating if a hibernation season was suitable (`TRUE`) or not (`FALSE`) (nb: `FALSE` includes lack of hibernation season as well as hibernation season where the budget is not sufficient to survive)
 #' @param vec_Temp a vector of ambient temperatures over 2 consecutive years
 #' @param vec_Dates a vector of dates over 2 consecutive years
+#' @param vec_Year a vector of years
 #' @param window_length_smoothing the width of the window used for smoothing via [caTools::runmean()]
 #' @param winters_stats_df a dataframe of winter statistics produced by [summarise_info_winter.stars.all()]
 #' @param y a string of characters indicating what y-variable to plot:

@@ -317,13 +317,16 @@ if (run) {
                  width = 14, height = 14, units = "cm")
 }
 
-## Step 8: predicting shit in hibernation niche
+## Step 8: predicting shift in hibernation niche
+
+if (run) {
 
 ### Step 8A: extracting winter info from all stars
-if (run) {
   data("lands_polygons", package = "winteR") # load the mask
   winters_stats <- summarise_info_winter.stars.all("../NC/stars_winter",
                                                    mask = lands_polygons) ## takes a few min
+
+### Step 8B: plotting time trends about the suitable area
   pS8_1 <- plot_time_trends(winters_stats)
   pS8_2 <- plot_time_trends(winters_stats, varname = "Latitude_min",
                                 y_title = "\n Minimal latitude of suitable hibernation areas")
@@ -337,9 +340,13 @@ if (run) {
   showtext::showtext_opts(dpi = 300)
   ggplot2::ggsave(filename = "figures/fig5.png",
                  width = 18, height = 16, units = "cm")
+
+## Step 9: building suitability maps
+  stars_suitability <- build_suitability_stars("../NC/stars_winter",
+                                               min_years_trigger_suitability = 10)
+
+
 }
-
-
 }
 \references{
 ADD REF PAPER HERE

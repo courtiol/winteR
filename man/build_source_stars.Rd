@@ -15,7 +15,7 @@ build_source_stars(
 )
 }
 \arguments{
-\item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themsevles containing the NC files}
+\item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themselves containing the NC files}
 
 \item{directory_stars}{the destination location for the rds files storing the stars object}
 

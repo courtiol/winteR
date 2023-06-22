@@ -81,7 +81,7 @@ compute_budget_df <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa =
 #'
 #' @inheritParams arguments
 #'
-#' @return a list
+#' @return a data frame
 #' @export
 #'
 #' @examples

@@ -26,7 +26,7 @@ build_temp_2years <- function(filename) {
 #'
 #' @inheritParams arguments
 #'
-#' @return a vector of boolean
+#' @return a list
 #' @export
 #'
 #' @examples
@@ -41,7 +41,7 @@ extract_winter_stats <- function(data_temp,
                                  min_days_trigger_winter = 14) {
 
   if (!all(c("Date", "Temp") %in% colnames(data_temp))) {
-    stop("The function `classify_winter_temp()` requires at least 2 columns: `Date` and `Temp`")
+    stop("The function `extract_winter_stats()` requires at least 2 columns: `Date` and `Temp`")
   }
 
   ## extract years

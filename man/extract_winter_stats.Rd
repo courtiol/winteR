@@ -21,7 +21,7 @@ extract_winter_stats(
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
 }
 \value{
-a vector of boolean
+a list
 }
 \description{
 Extract summary statistics for a winter

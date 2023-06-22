@@ -20,6 +20,8 @@
 
 \item{data_MR}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
 
+\item{data_suitability}{a dataframe with at least columns \code{Year} and \code{Suitable_winter}}
+
 \item{data_temp}{a dataframe with at least columns \code{Date} and \code{Temp}, such as those produced by \code{\link[=build_temp_2years]{build_temp_2years()}}}
 
 \item{data_Tskin}{a file produced by \code{\link[=load_Tskin_datafile]{load_Tskin_datafile()}}}
@@ -62,9 +64,11 @@
 
 \item{mask}{a MULTIPOLYGON object to be used as a mask}
 
-\item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themsevles containing the NC files}
+\item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themselves containing the NC files}
 
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
+
+\item{min_years_trigger_suitability}{the minimum number of suitable winters to trigger the establishment or the disappearance of bats in a region}
 
 \item{rangeTa}{the range of ambient temperature to consider in plot}
 
@@ -102,9 +106,13 @@
 
 \item{vartype}{the type of information for the y variable: \code{"latitude"} or \code{"area"}}
 
+\item{vec_Suitable_winter}{a vector of boolean indicating if a hibernation season was suitable (\code{TRUE}) or not (\code{FALSE}) (nb: \code{FALSE} includes lack of hibernation season as well as hibernation season where the budget is not sufficient to survive)}
+
 \item{vec_Temp}{a vector of ambient temperatures over 2 consecutive years}
 
 \item{vec_Dates}{a vector of dates over 2 consecutive years}
+
+\item{vec_Year}{a vector of years}
 
 \item{window_length_smoothing}{the width of the window used for smoothing via \code{\link[caTools:runmean]{caTools::runmean()}}}
 

@@ -19,7 +19,10 @@ Imports:
     sf,
     stars,
     stringr,
+    tibble,
+    tidyr,
     torpor,
+    purrr,
     units
 Suggests:
     cowplot,

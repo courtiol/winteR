@@ -36,7 +36,7 @@ compute_budget_summarystats(
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
 }
 \value{
-a list
+a data frame
 }
 \description{
 Compute the total energy budget during a winter and other summary statistics

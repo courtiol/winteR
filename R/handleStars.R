@@ -142,7 +142,7 @@ compute_budget_stars <- function(stars_object,
 #'  }
 #'
 reshape_stars_across.models <- function(directory_stars, SSP, varname = "Budget_winter", flatten = TRUE) {
-  browser()
+  ##TODO, check that this function works
   all_rds_to_do <- list.files(path = directory_stars, full.names = TRUE, pattern = SSP)
   list_stars_winter <- lapply(all_rds_to_do, \(x) readRDS(x)[varname,])
   stars_winter <- do.call("c", list_stars_winter)
