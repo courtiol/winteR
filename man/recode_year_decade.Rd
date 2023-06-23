@@ -4,10 +4,14 @@
 \alias{recode_year_decade}
 \title{Helper function to turn years into decades}
 \usage{
-recode_year_decade(vec_Year)
+recode_year_decade(vec_Year, min_Year = 1901, max_Year = 2099)
 }
 \arguments{
 \item{vec_Year}{a vector of years}
+
+\item{min_Year}{the minimum year (in numeric format) to consider in the factor}
+
+\item{max_Year}{the maximum year (in numeric format) to consider in the factor}
 }
 \value{
 a vector
@@ -16,6 +20,6 @@ a vector
 Helper function to turn years into decades
 }
 \examples{
-recode_year_decade(c(1910, 2022, 2099))
+recode_year_decade(c(1909, 1910, 2022, 2099))
 
 }

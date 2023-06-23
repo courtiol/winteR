@@ -4,10 +4,17 @@
 \alias{plot_fat_map}
 \title{Plot maps showing the variation in winter budget through Europe}
 \usage{
-plot_fat_map(stars_object, threshold_mortality = 27, base_size = 11)
+plot_fat_map(
+  stars_object,
+  IUCN_polygon = NULL,
+  threshold_mortality = 27,
+  base_size = 11
+)
 }
 \arguments{
 \item{stars_object}{a stars object}
+
+\item{IUCN_polygon}{a sf (MULTI)POLYGON object representing the IUCN distribution of the specoes}
 
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
 

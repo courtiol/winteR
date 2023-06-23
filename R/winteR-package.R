@@ -303,16 +303,14 @@
 #' ### Step 7A: preparing IUCN distribution map polygon file
 #' IUCN_polygon_file <- list.files(system.file("extdata/IUCN", package = "winteR"),
 #'                                 pattern = "*.shp", full.names = TRUE)
-#' distrib_IUCN <- sf::read_sf(IUCN_polygon_file)
+#' IUCN <- sf::read_sf(IUCN_polygon_file)
 #'
 #' ### Step 7B: plotting winter budget over Europe for 2018
 #' if (run) {
 #'  readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
 #'    dplyr::select(Budget_winter) |>
 #'    dplyr::filter(year == 2018) |>
-#'    plot_fat_map() +
-#'    ggplot2::geom_sf(data = distrib_IUCN, fill = NA, colour = "darkgreen", linewidth = 1) +
-#'    ggplot2::coord_sf(expand = FALSE)
+#'    plot_fat_map(IUCN_polygon = IUCN)
 #'  showtext::showtext_opts(dpi = 300)
 #'  ggplot2::ggsave(filename = "figures/fig4.png",
 #'                  width = 14, height = 14, units = "cm")
@@ -355,24 +353,37 @@
 #'                                 scenario = "SSP126",
 #'                                 starsname = "stars_with_OBSCLIM_avg",
 #'                                 varname = "decade_establishment",
-#'                                 base_size = 9)
+#'                                 IUCN_polygon = IUCN,
+#'                                 base_size = 9, legend_position = "left")
 #'   pS9_2 <- plot_suitability_map(stars_tbl = stars_suitability,
 #'                                 scenario = "SSP585",
 #'                                 starsname = "stars_with_OBSCLIM_avg",
 #'                                 varname = "decade_establishment",
-#'                                 base_size = 9)
+#'                                 IUCN_polygon = IUCN,
+#'                                 base_size = 9, legend_position = "none")
 #'   pS9_3 <- plot_suitability_map(stars_tbl = stars_suitability,
 #'                                 scenario = "SSP126",
 #'                                 starsname = "stars_avg",
-#'                                 varname = "freq_suitability",
+#'                                 varname = "freq_suitability_pct",
+#'                                 IUCN_polygon = IUCN,
 #'                                 base_size = 9)
 #'   pS9_4 <- plot_suitability_map(stars_tbl = stars_suitability,
 #'                                 scenario = "SSP585",
 #'                                 starsname = "stars_avg",
-#'                                 varname = "freq_suitability",
-#'                                 base_size = 9)
-#'  pS9_1234 <- cowplot::plot_grid(pS9_1, pS9_3, pS9_2, pS9_4,
-#'                                 nrow = 2, labels = c("A", "B", "C", "D"))
-#'  pS9_1234
+#'                                 varname = "freq_suitability_pct",
+#'                                 IUCN_polygon = IUCN,
+#'                                 base_size = 9, legend_position = "none")
+#'   pS9_legend1 <- cowplot::get_legend(pS9_1)
+#'   pS9_legend2 <- cowplot::get_legend(pS9_3)
+#'   pS9_1234 <- cowplot::plot_grid(pS9_legend1,
+#'                                  pS9_1 + ggplot2::theme(legend.position="none"), pS9_2,
+#'                                  pS9_legend2,
+#'                                  pS9_3 + ggplot2::theme(legend.position="none"), pS9_4,
+#'                                  nrow = 2, labels = c("", "A", "B", "", "C", "D"),
+#'                                  rel_widths = c(0.15, 0.425, 0.425))
+#'   showtext::showtext_opts(dpi = 300)
+#'   pS9_1234
+#'   ggplot2::ggsave(filename = "figures/fig6.png",
+#'                   width = 18, height = 16, units = "cm")
 #' }
 NULL

@@ -100,6 +100,7 @@ plot_fat_map.panel <- function(stars1, stars2, stars3, stars4,
 #' # see ?winterR
 #'
 plot_fat_map <- function(stars_object,
+                         IUCN_polygon = NULL,
                          threshold_mortality = 27,
                          base_size = 11) {
 
@@ -124,10 +125,11 @@ plot_fat_map <- function(stars_object,
     stars::geom_stars(data = data_plot, ggplot2::aes(fill = .data$Survive), sf = TRUE) + ## sf mode for degrees in axes
     ggplot2::geom_sf(data = lands_polygons, fill = NA, colour = "lightgrey", size = 0.1) +
     ggplot2::geom_sf(data = oceans_polygons, fill = "white", colour = NA) +
+    {if (!is.null(IUCN_polygon)) ggplot2::geom_sf(data = IUCN_polygon, fill = NA, colour = "darkgreen", linewidth = 1) } +
+    ggplot2::coord_sf(expand = FALSE) +
     ggplot2::lims(x = range(stars::st_get_dimension_values(data_plot, "x")),
                   y = range(stars::st_get_dimension_values(data_plot, "y"))) +
     ggplot2::scale_fill_manual(values = c(grDevices::rgb(233, 224, 131, maxColorValue = 255), "#EF8D32", "#CC561E", "black"), drop = FALSE, na.value = "grey") +
-    ggplot2::coord_sf(expand = FALSE) +
     ggplot2::labs(x = "", y = "", fill = "") +
     ggplot2::theme_bw(base_size = base_size) +
     ggplot2::theme(legend.key.size = ggplot2::unit(0.5, "cm"), legend.key.width = ggplot2::unit(1.5, "cm"),
@@ -147,7 +149,9 @@ plot_fat_map <- function(stars_object,
 #' @examples
 #' # see ?winterR
 #'
-plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "stars_avg", varname = "freq_suitability", base_size = 9) {
+plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "stars_avg", varname = "freq_suitability_pct",
+                                 IUCN_polygon = NULL,
+                                 base_size = 9, legend_position = "left") {
 
   utils::data("lands_polygons", package = "winteR")
   utils::data("oceans_polygons", package = "winteR")
@@ -158,21 +162,28 @@ plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "st
 
   stars_object_list[[1]][lands_polygons, crop = FALSE] |>
    dplyr::mutate(decade_establishment = recode_year_decade(.data$year_establishment),
-                 decade_disappearance = recode_year_decade(.data$year_disappearance)) -> stars_obj
+                 decade_disappearance = recode_year_decade(.data$year_disappearance),
+                 freq_suitability_pct = recode_freq_pct(.data$freq_suitability)) -> stars_obj
+
+  palette <- ifelse(varname == "freq_suitability_pct", "Inferno", "Plasma") # see https://blog.r-project.org/2019/04/01/hcl-based-color-palettes-in-grdevices/ for palette choices
+  na_value <- "lightgrey"
 
   ggplot2::ggplot() +
     stars::geom_stars(mapping = ggplot2::aes(fill = .data[[varname]]), data = stars_obj) +
-    {if (varname == "freq_suitability") ggplot2::scale_fill_binned(type = "viridis", na.value = NA, n.breaks = 11) } +
-    {if (varname == "decade_establishment") ggplot2::scale_fill_manual(values = grDevices::rainbow(length(unique(c(stars_obj[[varname]]))))) } +
-    ggplot2::geom_sf(data = lands_polygons, fill = NA, colour = "lightgrey", size = 0.1) +
+    ggplot2::scale_fill_manual(values = grDevices::hcl.colors(n = length(levels(c(stars_obj[[varname]]))), palette = palette), drop = FALSE, na.value = na_value) +
+    ggplot2::geom_sf(data = lands_polygons, fill = NA, colour = "grey", size = 0.1) +
     ggplot2::geom_sf(data = oceans_polygons, fill = "white", colour = NA) +
+    {if (!is.null(IUCN_polygon)) ggplot2::geom_sf(data = IUCN_polygon, fill = NA, colour = "darkgreen", linewidth = 1) } +
     ggplot2::lims(x = range(stars::st_get_dimension_values(stars_obj, "x")),
                   y = range(stars::st_get_dimension_values(stars_obj, "y"))) +
-   ggplot2::coord_sf(expand = FALSE) +
-    ggplot2::labs(x = "", y = "", fill = "") +
+    ggplot2::coord_sf(expand = FALSE) +
+    ggplot2::labs(x = NULL, y = NULL, fill = NULL) +
     ggplot2::theme_bw(base_size = base_size) +
-    ggplot2::theme(legend.key.size = ggplot2::unit(0.5, "cm"), legend.key.width = ggplot2::unit(2.5, "cm"),
-                   legend.position = "top", strip.background = ggplot2::element_rect(fill = NA, colour = NA),
+    ggplot2::guides(fill = ggplot2::guide_legend(ncol = 1)) +
+    ggplot2::theme(legend.key.size = ggplot2::unit(0.35, "cm"),
+                   legend.text = ggplot2::element_text(size = base_size*0.5),
+                   legend.position = legend_position,
+                   strip.background = ggplot2::element_rect(fill = NA, colour = NA),
                    strip.text = ggtext::element_markdown(hjust = 0))
 
 }

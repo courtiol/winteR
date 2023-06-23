@@ -112,13 +112,41 @@ add_suitability_stars <- function(stars_object, min_years_trigger_suitability = 
 #' @export
 #'
 #' @examples
-#' recode_year_decade(c(1910, 2022, 2099))
+#' recode_year_decade(c(1909, 1910, 2022, 2099))
 #'
-recode_year_decade <- function(vec_Year) {
+recode_year_decade <- function(vec_Year, min_Year = 1901, max_Year = 2099) {
   decades <- 10*floor(vec_Year/10)
-  min_decade <- ifelse(!all(is.na(vec_Year)), min(decades, na.rm = TRUE), NA)
-  dplyr::case_when(decades == min_decade ~ paste0("<", decades + 10),
-                   decades > min_decade ~ paste0(as.character(decades), "-", as.character(decades + 9)))
+  min_decade <- 10*floor(min_Year/10)
+  max_decade <- 10*floor(max_Year/10)
+  start_possible_decades <- as.character(seq(min_decade, max_decade, by = 10))
+  end_possible_decades <- as.character(seq(min_decade + 9, max_decade + 9, by = 10))
+  possible_decades <- paste0(start_possible_decades, "-", end_possible_decades)
+  possible_decades[1] <- paste0("<", min_decade + 10)
+  decades <- dplyr::case_when(decades == min_decade ~ paste0("<", decades + 10),
+                              decades > min_decade ~ paste0(as.character(decades), "-", as.character(decades + 9)))
+  factor(decades, levels = possible_decades)
+}
+
+
+#' Helper function to turn proportion into categories of percentages
+#'
+#' @inheritParams arguments
+#'
+#' @return a vector
+#' @export
+#'
+#' @examples
+#' recode_freq_pct(seq(0, 1, 0.01))
+#'
+recode_freq_pct <- function(vec_Proportion) {
+  simple_seq <- paste0(as.character(seq(10, 90, 10)), "-", as.character(seq(10, 90, 10) + 9), "%")
+  possible_pct <- c("0%", "<1%", "1-9%", simple_seq, ">99%")
+  vec_Proportion2 <- dplyr::case_when(vec_Proportion == 0 ~ "0%",
+                                      100*vec_Proportion < 1 ~ "<1%",
+                                      100*vec_Proportion < 10 ~ "1-9%",
+                                      100*vec_Proportion <= 99 ~ paste0(as.character(floor(10*vec_Proportion)*10), "-", as.character(floor(10*vec_Proportion)*10 + 9), "%"),
+                                      100*vec_Proportion > 99 ~ ">99%")
+  factor(vec_Proportion2, levels = possible_pct)
 }
 
 

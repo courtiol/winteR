@@ -50,6 +50,8 @@
 
 \item{huddling_factor}{a factor multiplied to the metabolic rate, to account for huddling, when individuals are thermoregulating (default = 0.5)}
 
+\item{IUCN_polygon}{a sf (MULTI)POLYGON object representing the IUCN distribution of the specoes}
+
 \item{lapply_pkg}{the R package used to implement a \code{lapply()} kind of function (default = "pbmcapply"; other possibilities are "parallel" and "base")}
 
 \item{lat}{a latitude}
@@ -64,9 +66,13 @@
 
 \item{mask}{a MULTIPOLYGON object to be used as a mask}
 
+\item{max_Year}{the maximum year (in numeric format) to consider in the factor}
+
 \item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themselves containing the NC files}
 
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
+
+\item{min_Year}{the minimum year (in numeric format) to consider in the factor}
 
 \item{min_years_trigger_suitability}{the minimum number of suitable winters to trigger the establishment or the disappearance of bats in a region}
 
@@ -112,11 +118,13 @@
 
 \item{vartype}{the type of information for the y variable: \code{"latitude"} or \code{"area"}}
 
+\item{vec_Dates}{a vector of dates over 2 consecutive years}
+
+\item{vec_Proportion}{a vector of proportion}
+
 \item{vec_Suitable_winter}{a vector of boolean indicating if a hibernation season was suitable (\code{TRUE}) or not (\code{FALSE}) (nb: \code{FALSE} includes lack of hibernation season as well as hibernation season where the budget is not sufficient to survive)}
 
 \item{vec_Temp}{a vector of ambient temperatures over 2 consecutive years}
-
-\item{vec_Dates}{a vector of dates over 2 consecutive years}
 
 \item{vec_Year}{a vector of years}
 

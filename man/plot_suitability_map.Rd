@@ -8,8 +8,10 @@ plot_suitability_map(
   stars_tbl,
   scenario = "SSP126",
   starsname = "stars_avg",
-  varname = "freq_suitability",
-  base_size = 9
+  varname = "freq_suitability_pct",
+  IUCN_polygon = NULL,
+  base_size = 9,
+  legend_position = "left"
 )
 }
 \arguments{
@@ -21,7 +23,11 @@ plot_suitability_map(
 
 \item{varname}{the quoted name of the variable to retain from each stars object (default depends on the function)}
 
+\item{IUCN_polygon}{a sf (MULTI)POLYGON object representing the IUCN distribution of the specoes}
+
 \item{base_size}{base font size, given in pts}
+
+\item{legend_position}{the value for the ggplot argument "legend.position" used in \code{\link[ggplot2:theme]{ggplot2::theme()}}}
 }
 \value{
 a ggplot2 object

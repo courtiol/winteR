@@ -29,6 +29,7 @@
 #' @param flatten whether to average the winter stars across forcing models (default = `TRUE`)
 #' @param fn a function to be applied
 #' @param huddling_factor a factor multiplied to the metabolic rate, to account for huddling, when individuals are thermoregulating (default = 0.5)
+#' @param IUCN_polygon a sf (MULTI)POLYGON object representing the IUCN distribution of the specoes
 #' @param lapply_pkg the R package used to implement a `lapply()` kind of function (default = "pbmcapply"; other possibilities are "parallel" and "base")
 #' @param lat a latitude
 #' @param lat_ref a latitude of reference
@@ -36,8 +37,10 @@
 #' @param name_bool_var the quoted name of a boolean variable to use to filter cells in the grid (default is "Survive")
 #' @param nb_cores the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)
 #' @param mask a MULTIPOLYGON object to be used as a mask
+#' @param max_Year the maximum year (in numeric format) to consider in the factor
 #' @param metadirectory_NCfiles a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themselves containing the NC files
 #' @param min_days_trigger_winter the minimum number of days for which the temperature should be below `temp_threshold` to enter winter
+#' @param min_Year the minimum year (in numeric format) to consider in the factor
 #' @param min_years_trigger_suitability the minimum number of suitable winters to trigger the establishment or the disappearance of bats in a region
 #' @param rangeTa the range of ambient temperature to consider in plot
 #' @param rangeTskin the range of skin temperature to consider in plot
@@ -60,9 +63,10 @@
 #' @param Tmirror the ambient temperature around which predictions are mirrored
 #' @param varname the quoted name of the variable to retain from each stars object (default depends on the function)
 #' @param vartype the type of information for the y variable: `"latitude"` or `"area"`
+#' @param vec_Dates a vector of dates over 2 consecutive years
+#' @param vec_Proportion a vector of proportion
 #' @param vec_Suitable_winter a vector of boolean indicating if a hibernation season was suitable (`TRUE`) or not (`FALSE`) (nb: `FALSE` includes lack of hibernation season as well as hibernation season where the budget is not sufficient to survive)
 #' @param vec_Temp a vector of ambient temperatures over 2 consecutive years
-#' @param vec_Dates a vector of dates over 2 consecutive years
 #' @param vec_Year a vector of years
 #' @param window_length_smoothing the width of the window used for smoothing via [caTools::runmean()]
 #' @param winters_stats_df a dataframe of winter statistics produced by [summarise_info_winter.stars.all()]
