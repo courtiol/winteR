@@ -42,6 +42,7 @@
 #' @param rangeTa the range of ambient temperature to consider in plot
 #' @param rangeTskin the range of skin temperature to consider in plot
 #' @param roost_insulation_dTa the increase in temperature in the roost, compared to outside (default = 5)
+#' @param scenario the scenario to be selected (`"SSP126"`, `"SSP245"`, `"SSP370"` or `"SP585"`)
 #' @param scenarios a vector of the scenarios to retain (default = `c("OBSCLIM", "SSP126", "SSP585")`)
 #' @param signed whether the output value should be signed or absolute (default = `TRUE`, which implies it is signed)
 #' @param split_summer the day of mid-summer (default = `'07-01'`)
@@ -51,11 +52,13 @@
 #' @param stars3 a stars object produced by [compute_budget_stars()]
 #' @param stars4 a stars object produced by [compute_budget_stars()]
 #' @param stars_object a stars object
+#' @param stars_tbl a tibble of stars objects produced by [build_suitability_stars()]
+#' @param starsname the name of the column containing the stars objects to be used (in the tibble produced by [build_suitability_stars()])
 #' @param strip_names the title to be used on top of each map (default, if NULL = `= c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)", "SSP5-8.5 (2070-2099)")`)
 #' @param temp_threshold the approximate temperature below which insects do not fly
 #' @param threshold_mortality the maximal amount of fat consumed before mortality occurs (default = 27)
 #' @param Tmirror the ambient temperature around which predictions are mirrored
-#' @param varname the quotted name of the variable to retain from each winter stars (default depends on the function)
+#' @param varname the quoted name of the variable to retain from each stars object (default depends on the function)
 #' @param vartype the type of information for the y variable: `"latitude"` or `"area"`
 #' @param vec_Suitable_winter a vector of boolean indicating if a hibernation season was suitable (`TRUE`) or not (`FALSE`) (nb: `FALSE` includes lack of hibernation season as well as hibernation season where the budget is not sufficient to survive)
 #' @param vec_Temp a vector of ambient temperatures over 2 consecutive years

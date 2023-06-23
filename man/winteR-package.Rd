@@ -341,11 +341,36 @@ if (run) {
   ggplot2::ggsave(filename = "figures/fig5.png",
                  width = 18, height = 16, units = "cm")
 
-## Step 9: building suitability maps
+## Step 9: plotting change in suitability maps
+
+### Step 9A: building suitability maps
   stars_suitability <- build_suitability_stars("../NC/stars_winter",
                                                min_years_trigger_suitability = 10)
 
-
+### Step 9B: plotting hibernation suitability other Europe
+  pS9_1 <- plot_suitability_map(stars_tbl = stars_suitability,
+                                scenario = "SSP126",
+                                starsname = "stars_with_OBSCLIM_avg",
+                                varname = "decade_establishment",
+                                base_size = 9)
+  pS9_2 <- plot_suitability_map(stars_tbl = stars_suitability,
+                                scenario = "SSP585",
+                                starsname = "stars_with_OBSCLIM_avg",
+                                varname = "decade_establishment",
+                                base_size = 9)
+  pS9_3 <- plot_suitability_map(stars_tbl = stars_suitability,
+                                scenario = "SSP126",
+                                starsname = "stars_avg",
+                                varname = "freq_suitability",
+                                base_size = 9)
+  pS9_4 <- plot_suitability_map(stars_tbl = stars_suitability,
+                                scenario = "SSP585",
+                                starsname = "stars_avg",
+                                varname = "freq_suitability",
+                                base_size = 9)
+ pS9_1234 <- cowplot::plot_grid(pS9_1, pS9_3, pS9_2, pS9_4,
+                                nrow = 2, labels = c("A", "B", "C", "D"))
+ pS9_1234
 }
 }
 \references{

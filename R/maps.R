@@ -135,3 +135,45 @@ plot_fat_map <- function(stars_object,
                    strip.text = ggtext::element_markdown(hjust = 0))
 }
 
+#' Plot maps showing the variation in hibernation suitability budget through Europe
+#'
+#' This function produces the figure 6.
+#'
+#' @inheritParams arguments
+#'
+#' @return a ggplot2 object
+#' @export
+#'
+#' @examples
+#' # see ?winterR
+#'
+plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "stars_avg", varname = "freq_suitability", base_size = 9) {
+
+  utils::data("lands_polygons", package = "winteR")
+  utils::data("oceans_polygons", package = "winteR")
+
+  stars_tbl |>
+   dplyr::filter(.data$Scenario == scenario) |>
+   dplyr::pull(.data[[starsname]]) -> stars_object_list
+
+  stars_object_list[[1]][lands_polygons, crop = FALSE] |>
+   dplyr::mutate(decade_establishment = recode_year_decade(.data$year_establishment),
+                 decade_disappearance = recode_year_decade(.data$year_disappearance)) -> stars_obj
+
+  ggplot2::ggplot() +
+    stars::geom_stars(mapping = ggplot2::aes(fill = .data[[varname]]), data = stars_obj) +
+    {if (varname == "freq_suitability") ggplot2::scale_fill_binned(type = "viridis", na.value = NA, n.breaks = 11) } +
+    {if (varname == "decade_establishment") ggplot2::scale_fill_manual(values = grDevices::rainbow(length(unique(c(stars_obj[[varname]]))))) } +
+    ggplot2::geom_sf(data = lands_polygons, fill = NA, colour = "lightgrey", size = 0.1) +
+    ggplot2::geom_sf(data = oceans_polygons, fill = "white", colour = NA) +
+    ggplot2::lims(x = range(stars::st_get_dimension_values(stars_obj, "x")),
+                  y = range(stars::st_get_dimension_values(stars_obj, "y"))) +
+   ggplot2::coord_sf(expand = FALSE) +
+    ggplot2::labs(x = "", y = "", fill = "") +
+    ggplot2::theme_bw(base_size = base_size) +
+    ggplot2::theme(legend.key.size = ggplot2::unit(0.5, "cm"), legend.key.width = ggplot2::unit(2.5, "cm"),
+                   legend.position = "top", strip.background = ggplot2::element_rect(fill = NA, colour = NA),
+                   strip.text = ggtext::element_markdown(hjust = 0))
+
+}
+

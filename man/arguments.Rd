@@ -76,6 +76,8 @@
 
 \item{roost_insulation_dTa}{the increase in temperature in the roost, compared to outside (default = 5)}
 
+\item{scenario}{the scenario to be selected (\code{"SSP126"}, \code{"SSP245"}, \code{"SSP370"} or \code{"SP585"})}
+
 \item{scenarios}{a vector of the scenarios to retain (default = \code{c("OBSCLIM", "SSP126", "SSP585")})}
 
 \item{signed}{whether the output value should be signed or absolute (default = \code{TRUE}, which implies it is signed)}
@@ -94,6 +96,10 @@
 
 \item{stars_object}{a stars object}
 
+\item{stars_tbl}{a tibble of stars objects produced by \code{\link[=build_suitability_stars]{build_suitability_stars()}}}
+
+\item{starsname}{the name of the column containing the stars objects to be used (in the tibble produced by \code{\link[=build_suitability_stars]{build_suitability_stars()}})}
+
 \item{strip_names}{the title to be used on top of each map (default, if NULL = \verb{= c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)", "SSP5-8.5 (2070-2099)")})}
 
 \item{temp_threshold}{the approximate temperature below which insects do not fly}
@@ -102,7 +108,7 @@
 
 \item{Tmirror}{the ambient temperature around which predictions are mirrored}
 
-\item{varname}{the quotted name of the variable to retain from each winter stars (default depends on the function)}
+\item{varname}{the quoted name of the variable to retain from each stars object (default depends on the function)}
 
 \item{vartype}{the type of information for the y variable: \code{"latitude"} or \code{"area"}}
 

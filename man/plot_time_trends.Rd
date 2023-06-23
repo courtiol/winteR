@@ -22,7 +22,7 @@ plot_time_trends(
 
 \item{window_length_smoothing}{the width of the window used for smoothing via \code{\link[caTools:runmean]{caTools::runmean()}}}
 
-\item{varname}{the quotted name of the variable to retain from each winter stars (default depends on the function)}
+\item{varname}{the quoted name of the variable to retain from each stars object (default depends on the function)}
 
 \item{vartype}{the type of information for the y variable: \code{"latitude"} or \code{"area"}}
 
