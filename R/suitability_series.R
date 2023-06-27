@@ -75,7 +75,7 @@ compute_suitability_summarystats <- function(vec_Suitable_winter, vec_Year, min_
 #' data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
 #' add_suitability_stars(data_OBSCLIM)
 #'
-add_suitability_stars <- function(stars_object, min_years_trigger_suitability = 10) {
+add_suitability_stars <- function(stars_object, min_years_trigger_suitability = 10, add_winter.stats = TRUE) {
 
   years <- as.numeric(stars::st_get_dimension_values(stars_object, "year"))
 
@@ -90,6 +90,7 @@ add_suitability_stars <- function(stars_object, min_years_trigger_suitability = 
                                vec_Year = years,
                                min_years_trigger_suitability = min_years_trigger_suitability)
 
+    ## reformat output (see also https://github.com/r-spatial/stars/issues/635)
     data <- do.call("rbind", stars_obj$compute_suitability_summarystats)
     stars_obj$compute_suitability_summarystats <- NULL
 
@@ -98,6 +99,10 @@ add_suitability_stars <- function(stars_object, min_years_trigger_suitability = 
     }
 
   sf::st_crs(stars_obj) <- "+proj=longlat +datum=WGS84 +no_defs"
+
+  if (add_winter.stats) {
+    stars_obj <- c(stars_obj, build_stars_winter.stats(stars_object))
+  }
 
   stars_obj
 

@@ -12,6 +12,7 @@
 #' @param .color_values a vector of colors for the `color` variable (default = `c("NA", "blue", "orange")`)
 #' @param crop a boolean indicating whether to crop or not (default = `TRUE`)
 #' @param .crop_args the list of coordinates to use for cropping (default = `list(S = 27, N = 72, W = -13, E = 56)`)
+#' @param add_winter.stats a boolean indicating whether or not to compute winter summary statistics (default = `TRUE`)
 #' @param data_budget a dataframe produced by [compute_budget_df()]
 #' @param data_MR the data used to fit the thermoregulatory curves as produced by [build_MR_table()]
 #' @param data_suitability a dataframe with at least columns `Year` and `Suitable_winter`
@@ -70,6 +71,7 @@
 #' @param vec_Year a vector of years
 #' @param window_length_smoothing the width of the window used for smoothing via [caTools::runmean()]
 #' @param winters_stats_df a dataframe of winter statistics produced by [summarise_info_winter.stars.all()]
+#' @param x a vector
 #' @param y a string of characters indicating what y-variable to plot:
 #'   "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"
 #' @param y_title the title for the y axis

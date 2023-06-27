@@ -4,12 +4,18 @@
 \alias{add_suitability_stars}
 \title{Estimate suitability across space and add it to a stars object}
 \usage{
-add_suitability_stars(stars_object, min_years_trigger_suitability = 10)
+add_suitability_stars(
+  stars_object,
+  min_years_trigger_suitability = 10,
+  add_winter.stats = TRUE
+)
 }
 \arguments{
 \item{stars_object}{a stars object}
 
 \item{min_years_trigger_suitability}{the minimum number of suitable winters to trigger the establishment or the disappearance of bats in a region}
+
+\item{add_winter.stats}{a boolean indicating whether or not to compute winter summary statistics (default = \code{TRUE})}
 }
 \value{
 a stars object

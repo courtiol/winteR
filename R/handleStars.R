@@ -43,7 +43,7 @@ compute_budget_stars1year <- function(year_start,
                                threshold_mortality = threshold_mortality,
                                PROGRESS = TRUE)
 
-  ## reshape output
+  ## reformat output (see also https://github.com/r-spatial/stars/issues/635)
   data <- do.call("rbind", stars_obj$compute_budget_summarystats)
   stars_obj$compute_budget_summarystats <- NULL
   for (layer in colnames(data)) {
@@ -59,7 +59,7 @@ compute_budget_stars1year <- function(year_start,
 #' Compute summary statistics for all winters from a stars object
 #'
 #' This function calls [compute_budget_summarystats()] on all winters and across all locations
-#' contained in a stars object. It is an extremelly computationaly intensive step. Note that the
+#' contained in a stars object. It is an extremely computationally intensive step. Note that the
 #' progress messages are more informative outside RStudio.
 #'
 #' @inheritParams arguments
@@ -316,3 +316,58 @@ summarise_info_winter.stars.all <- function(directory_stars, mask = NULL) {
 
   do.call("rbind", list_info_all_winter_stars)
 }
+
+
+
+#' Build a stars object with summary statistics aggregated across years
+#'
+#' @inheritParams arguments
+#'
+#' @return a stars object
+#' @export
+#'
+#' @examples
+#' data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+#' build_stars_winter.stats(data_OBSCLIM)
+#'
+build_stars_winter.stats <- function(stars_object) {
+
+  ## keep only numerical variables (we don't need the others and it would prevent compute_winter_summarystats to work properly)
+  stars_object |>
+    dplyr::select(dplyr::where(is.numeric)) -> stars_object2
+
+  ## extract summary stats for each metric
+  stars_obj <- stars::st_apply(stars_object2,
+                               MARGIN = c("x", "y"),
+                               FUN = compute_winter_summarystats)
+
+  ## reformat output (see also https://github.com/r-spatial/stars/issues/635)
+  metrics <- stars::st_get_dimension_values(stars_obj, "compute_winter_summarystats")
+
+  list_stars <- lapply(metrics, function(metric) {
+      stars_metric <- stars_obj[, metric, , drop = TRUE]
+      names(stars_metric) <- paste0(names(stars_metric), "_", metric)
+      stars_metric
+    })
+
+  do.call("c", list_stars)
+
+}
+
+#' Extract summary statistics about winter characteristics
+#'
+#' @inheritParams arguments
+#'
+#' @return a data frame
+#' @export
+#'
+#' @examples
+#' data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+#' stars::st_apply(data_OBSCLIM[c("Duration_winter", "Temp_winter_mean")],
+#'                 MARGIN = c("x", "y"),
+#'                 FUN = compute_winter_summarystats)
+#'
+compute_winter_summarystats <- function(x) {
+  c(mean = mean(x, na.rm = TRUE), median = stats::median(x, na.rm = TRUE))
+}
+

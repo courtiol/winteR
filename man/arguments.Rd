@@ -16,6 +16,8 @@
 
 \item{.crop_args}{the list of coordinates to use for cropping (default = \code{list(S = 27, N = 72, W = -13, E = 56)})}
 
+\item{add_winter.stats}{a boolean indicating whether or not to compute winter summary statistics (default = \code{TRUE})}
+
 \item{data_budget}{a dataframe produced by \code{\link[=compute_budget_df]{compute_budget_df()}}}
 
 \item{data_MR}{the data used to fit the thermoregulatory curves as produced by \code{\link[=build_MR_table]{build_MR_table()}}}
@@ -131,6 +133,8 @@
 \item{window_length_smoothing}{the width of the window used for smoothing via \code{\link[caTools:runmean]{caTools::runmean()}}}
 
 \item{winters_stats_df}{a dataframe of winter statistics produced by \code{\link[=summarise_info_winter.stars.all]{summarise_info_winter.stars.all()}}}
+
+\item{x}{a vector}
 
 \item{y}{a string of characters indicating what y-variable to plot:
 "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"}

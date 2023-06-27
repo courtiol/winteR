@@ -43,7 +43,7 @@ a stars object with energy budget information
 }
 \description{
 This function calls \code{\link[=compute_budget_summarystats]{compute_budget_summarystats()}} on all winters and across all locations
-contained in a stars object. It is an extremelly computationaly intensive step. Note that the
+contained in a stars object. It is an extremely computationally intensive step. Note that the
 progress messages are more informative outside RStudio.
 }
 \examples{
