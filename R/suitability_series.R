@@ -174,7 +174,7 @@ build_suitability_stars <- function(directory_stars, min_years_trigger_suitabili
   OBSCLIM_file <- list.files(path = directory_stars, full.names = TRUE, pattern =  "OBSCLIM")
 
   list_winter.stars_files <- list.files(path = directory_stars, full.names = TRUE, pattern =  ".rds")
-  list_winter.stars_files <- list_winter.stars_files[list_winter.stars_files != OBSCLIM_file]
+  #list_winter.stars_files <- list_winter.stars_files[list_winter.stars_files != OBSCLIM_file]
 
   ## Handle OBSCLIM stars
   OBSCLIM_stars <- readRDS(file = OBSCLIM_file)
