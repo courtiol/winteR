@@ -8,7 +8,8 @@ plot_budget_panel(
   data_budget,
   y = "g_fat_per_winter",
   threshold_mortality = 27,
-  base_size = 11
+  base_size = 11,
+  y_max = NA
 )
 }
 \arguments{
@@ -20,6 +21,8 @@ plot_budget_panel(
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
 
 \item{base_size}{base font size, given in pts}
+
+\item{y_max}{the maximum value for the y axis}
 }
 \value{
 a ggplot object

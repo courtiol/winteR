@@ -106,6 +106,8 @@
 
 \item{stars_tbl}{a tibble of stars objects produced by \code{\link[=build_suitability_stars]{build_suitability_stars()}}}
 
+\item{stars_list}{a list of stars objects initially produced by \code{\link[=build_suitability_stars]{build_suitability_stars()}}}
+
 \item{starsname}{the name of the column containing the stars objects to be used (in the tibble produced by \code{\link[=build_suitability_stars]{build_suitability_stars()}})}
 
 \item{strip_names}{the title to be used on top of each map (default, if NULL = \verb{= c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)", "SSP5-8.5 (2070-2099)")})}
@@ -138,6 +140,8 @@
 
 \item{y}{a string of characters indicating what y-variable to plot:
 "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"}
+
+\item{y_max}{the maximum value for the y axis}
 
 \item{y_title}{the title for the y axis}
 

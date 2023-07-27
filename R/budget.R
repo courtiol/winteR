@@ -90,6 +90,7 @@ compute_budget_df <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa =
 compute_budget_summarystats <- function(vec_Temp, vec_Dates,
                                         fit_state, fit_MR,
                                         roost_insulation_dTa = 5,
+                                        huddling_factor = 0.5,
                                         temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
                                         threshold_mortality = 27) {
 
@@ -98,6 +99,7 @@ compute_budget_summarystats <- function(vec_Temp, vec_Dates,
     budg <- compute_budget_df(data_MR = d,
                               fit_state = fit_state, fit_MR = fit_MR,
                               roost_insulation_dTa = roost_insulation_dTa,
+                              huddling_factor = huddling_factor,
                               temp_threshold = temp_threshold, split_summer = split_summer,
                               min_days_trigger_winter = min_days_trigger_winter,
                               threshold_mortality = threshold_mortality)
@@ -152,7 +154,7 @@ compute_budget_summarystats <- function(vec_Temp, vec_Dates,
 #' plot_budget_panel(data_nrg, y = "g_fat_per_day")
 #' plot_budget_panel(data_nrg, y = "g_fat_per_winter")
 #'
-plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mortality = 27, base_size = 11) {
+plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mortality = 27, base_size = 11, y_max = NA) {
 
   start_winter <- min(data_budget$Date[data_budget$Winter])
   stop_winter <- max(data_budget$Date[data_budget$Winter])
@@ -160,7 +162,7 @@ plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mor
   data_plot <- data_budget[data_budget$Date >= start_winter - 14 & data_budget$Date < stop_winter + 14, ]
 
   plot <- ggplot2::ggplot(data_plot) +
-    ggplot2::coord_cartesian(xlim = c(start_winter - 14, stop_winter + 14), ylim = c(0, NA)) +
+    ggplot2::coord_cartesian(xlim = c(start_winter - 14, stop_winter + 14), ylim = c(0, y_max)) +
     ggplot2::geom_vline(xintercept = start_winter, linetype = 2, colour = "#0057b7") +
     ggplot2::geom_vline(xintercept = stop_winter, linetype = 2, colour = "#0057b7")
 

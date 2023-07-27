@@ -237,3 +237,53 @@ build_suitability_stars <- function(directory_stars, min_years_trigger_suitabili
 
 }
 
+
+#' Plot the suitability niche
+#'
+#' This function combines all winter stars and count for each combination of mean winter temperature
+#' and winter duration (discretised), for how many hibernation seasons an average bat is expected to
+#' survive.
+#'
+#' @inheritParams arguments
+#'
+#' @return a ggplot2
+#' @export
+#'
+#' @examples
+#' ## See ?winteR
+#'
+plot_hibernation_niche <- function(stars_list) {
+
+  utils::data("lands_polygons", package = "winteR")
+
+  all_data <- lapply(stars_list, function(stars) {
+    stars <- stars[lands_polygons, crop = FALSE]
+    as.data.frame(stars)
+    })
+
+  all_data
+
+  do.call("rbind", all_data) |>
+    dplyr::mutate(Duration_winter_f = cut(.data$Duration_winter, breaks = seq(0, 370, 20), include.lowest = FALSE),
+                  Temp_winter_mean_f = cut(.data$Temp_winter_mean, breaks = seq(-100, 100, 2), include.lowest = TRUE)) |>
+    dplyr::summarise(n = sum(!is.na(.data$Duration_winter)),
+                     Suitability = mean(.data$Survive, na.rm = TRUE),
+                     .by = c("Duration_winter_f", "Temp_winter_mean_f")) |>
+    dplyr::mutate(Suitability_f = cut(.data$Suitability, breaks = seq(0, 1, 0.1), include.lowest = TRUE),
+                  n_f = dplyr::case_when(.data$n < 11 ~ as.character(.data$n),
+                                         .data$n < 100 ~ ">10",
+                                         .data$n < 1000 ~ ">100",
+                                         TRUE ~ ">1000")) |>
+    dplyr::filter(!is.na(.data$Duration_winter_f),
+                  !is.na(.data$Temp_winter_mean_f)) -> data_plot
+
+  ggplot2::ggplot(data_plot) +
+    ggplot2::aes(x = .data$Duration_winter_f, y = .data$Temp_winter_mean_f, fill = .data$Suitability_f) +
+    ggplot2::geom_tile() +
+    ggplot2::geom_text(ggplot2::aes(label = .data$n_f), colour = "white", size = 2) +
+    ggplot2::scale_fill_viridis_d(option = "H") +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = "Duration of the hibernation season (days)", y = "Mean temperature during the hibernation season (\u00B0C)", fill = "Suitability") +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
+}
+

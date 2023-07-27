@@ -104,6 +104,11 @@ plot_fat_map <- function(stars_object,
                          threshold_mortality = 27,
                          base_size = 11) {
 
+  label1_final <- bquote("<"~.(round(threshold_mortality*1/3, 1))~g[fat])
+  label2_final <- bquote("<"~.(round(threshold_mortality*2/3, 1))~g[fat])
+  label3_final <- bquote("\u2264"~.(round(threshold_mortality*3/3, 1))~g[fat])
+  label4_final <- bquote(">"~.(round(threshold_mortality*3/3, 1))~g[fat])
+
   label1 <- paste0("<", round(threshold_mortality*1/3, 1), "gr")
   label2 <- paste0("<", round(threshold_mortality*2/3, 1), "gr")
   label3 <- paste0("\u2264", round(threshold_mortality*3/3, 1), "gr")
@@ -129,7 +134,9 @@ plot_fat_map <- function(stars_object,
     ggplot2::coord_sf(expand = FALSE) +
     ggplot2::lims(x = range(stars::st_get_dimension_values(data_plot, "x")),
                   y = range(stars::st_get_dimension_values(data_plot, "y"))) +
-    ggplot2::scale_fill_manual(values = c(grDevices::rgb(233, 224, 131, maxColorValue = 255), "#EF8D32", "#CC561E", "black"), drop = FALSE, na.value = "grey") +
+    ggplot2::scale_fill_manual(values = c(grDevices::rgb(233, 224, 131, maxColorValue = 255), "#EF8D32", "#CC561E", "black"),
+                               labels = c(label1_final, label2_final, label3_final, label4_final),
+                               drop = FALSE, na.value = "grey") +
     ggplot2::labs(x = "", y = "", fill = "") +
     ggplot2::theme_bw(base_size = base_size) +
     ggplot2::theme(legend.key.size = ggplot2::unit(0.5, "cm"), legend.key.width = ggplot2::unit(1.5, "cm"),

@@ -9,12 +9,13 @@ plot_time_trends(
   window_length_smoothing = 10,
   varname = "Latitude_median",
   vartype = c("latitude", "area"),
-  y_title = "\\n Median latitude of suitable hibernation areas",
+  y_title = "\\n Median latitude of potential hibernation areas",
   scenarios = c("OBSCLIM", "SSP126", "SSP585"),
   .fill_values = c("NA", "blue", "orange"),
   .color_values = c("black", "blue", "orange"),
   .legend_position = "none",
-  base_size = 9
+  base_size = 9,
+  y_max = NA
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ plot_time_trends(
 \item{.legend_position}{the value for the ggplot argument "legend.position" used in \code{\link[ggplot2:theme]{ggplot2::theme()}}}
 
 \item{base_size}{base font size, given in pts}
+
+\item{y_max}{the maximum value for the y axis}
 }
 \value{
 a ggplot2 object

@@ -9,6 +9,7 @@ compute_budget_stars(
   fit_state,
   fit_MR,
   roost_insulation_dTa = 5,
+  huddling_factor = 0.5,
   temp_threshold = 7,
   split_summer = "07-01",
   min_days_trigger_winter = 14,
@@ -25,6 +26,8 @@ compute_budget_stars(
 \item{fit_MR}{a fitted model predicting the metabolic rate in KJh^-1 produced by \code{\link[torpor:tor_fit]{torpor::tor_fit()}}}
 
 \item{roost_insulation_dTa}{the increase in temperature in the roost, compared to outside (default = 5)}
+
+\item{huddling_factor}{a factor multiplied to the metabolic rate, to account for huddling, when individuals are thermoregulating (default = 0.5)}
 
 \item{temp_threshold}{the approximate temperature below which insects do not fly}
 

@@ -20,6 +20,7 @@ compute_budget_stars1year <- function(year_start,
                                       stars_object,
                                       fit_state, fit_MR,
                                       roost_insulation_dTa = 5,
+                                      huddling_factor = 0.5,
                                       temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
                                       threshold_mortality = 27) {
 
@@ -38,6 +39,7 @@ compute_budget_stars1year <- function(year_start,
                                vec_Dates = focal_dates,
                                fit_state = fit_state, fit_MR = fit_MR,
                                roost_insulation_dTa = roost_insulation_dTa,
+                               huddling_factor = huddling_factor,
                                temp_threshold = temp_threshold, split_summer = split_summer,
                                min_days_trigger_winter = min_days_trigger_winter,
                                threshold_mortality = threshold_mortality,
@@ -81,6 +83,7 @@ compute_budget_stars1year <- function(year_start,
 compute_budget_stars <- function(stars_object,
                                  fit_state, fit_MR,
                                  roost_insulation_dTa = 5,
+                                 huddling_factor = 0.5,
                                  temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
                                  threshold_mortality = 27,
                                  nb_cores = 1, lapply_pkg = "pbmcapply") {
@@ -111,6 +114,7 @@ compute_budget_stars <- function(stars_object,
                               stars_object = stars_object,
                               fit_state = fit_state, fit_MR = fit_MR,
                               roost_insulation_dTa = roost_insulation_dTa,
+                              huddling_factor = huddling_factor,
                               temp_threshold = temp_threshold, split_summer = split_summer, min_days_trigger_winter = min_days_trigger_winter,
                               threshold_mortality = threshold_mortality)})
 
@@ -262,7 +266,7 @@ summarise_info_winter.stars <- function(stars_object, mask = NULL) {
     year <- stars::st_get_dimension_values(stars_object_masked[, , , i], "year")
     suitability[i, "Year"]                 <- year
     suitability[i, "Suitable_cells"]       <- as.numeric(cells_prop)
-    suitability[i, "Suitable_area_km2"]        <- suitable_area
+    suitability[i, "Suitable_area_km2"]    <- suitable_area
     suitability[i, "Latitude_mean"]        <- extract_stars_latitude(starts_object_suitable, fn = "mean")
     suitability[i, "Latitude_median"]      <- extract_stars_latitude(starts_object_suitable, fn = "median")
     suitability[i, "Latitude_min"]         <- extract_stars_latitude(starts_object_suitable, fn = "min")

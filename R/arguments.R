@@ -57,6 +57,7 @@
 #' @param stars4 a stars object produced by [compute_budget_stars()]
 #' @param stars_object a stars object
 #' @param stars_tbl a tibble of stars objects produced by [build_suitability_stars()]
+#' @param stars_list a list of stars objects initially produced by [build_suitability_stars()]
 #' @param starsname the name of the column containing the stars objects to be used (in the tibble produced by [build_suitability_stars()])
 #' @param strip_names the title to be used on top of each map (default, if NULL = `= c("Obs (1901-1930)", "Obs (1989-2018)", "SSP1-2.6 (2070-2099)", "SSP5-8.5 (2070-2099)")`)
 #' @param temp_threshold the approximate temperature below which insects do not fly
@@ -74,6 +75,7 @@
 #' @param x a vector
 #' @param y a string of characters indicating what y-variable to plot:
 #'   "g_fat_per_state", "g_fat_per_day", or "g_fat_per_winter"
+#' @param y_max the maximum value for the y axis
 #' @param y_title the title for the y axis
 #' @param year  a numeric scalar indicating the year of the winter to consider
 #' @param year_start a numeric scalar indicating the first year of the winter to consider

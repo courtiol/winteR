@@ -230,7 +230,7 @@ plot_Tskin_fit <- function(fit_state, rangeTa = c(-5, 35), Tmirror = 2, base_siz
     ggplot2::scale_x_continuous(breaks = seq(rangeTa[1], rangeTa[2], by = 5), minor_breaks = NULL) +
     ggplot2::scale_y_continuous(breaks = c(0.01*2^(0:6), 1), minor_breaks = NULL,
                                 sec.axis = ggplot2::sec_axis(~ . * 30 * 2 * 24,
-                                                             name = "Daily time spent in normothermy (min)\n",
+                                                             name = "Daily time spent in normothermy (min)",
                                                              breaks = c(10*2^(0:6), 60 * 24))) +
     ggplot2::labs(y = "Probability of normothermy", x = "Ambient temperature (\u00B0C)") +
     ggplot2::theme_bw(base_size = base_size)

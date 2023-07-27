@@ -15,18 +15,16 @@
 #'
 build_MR_table <- function(filename) {
   ## read MR data
-  d <- utils::read.table(filename, header = TRUE, sep = " ", dec = ".")
-  rownames(d) <- NULL
+  d <- utils::read.table(filename, header = TRUE, sep = "\t", dec = ".")
   d |>
-    dplyr::rename(VCO2_ml_g_h = .data$MR) |> ## remove "g" everywhere in units once new data integrated
-    dplyr::mutate(VCO2_L_g_h = .data$VCO2_ml_g_h/1000,
-                  kJ_g_h = .data$VCO2_L_g_h*27.8,
-                  kJ_h = .data$kJ_g_h * 30.78, ##TODO remove this once new data integrated
+    dplyr::rename(VCO2_ml_h = .data$Whole_animal_VCO2) |>
+    dplyr::mutate(VCO2_L_h = .data$VCO2_ml_h/1000,
+                  kJ_h = .data$VCO2_L_h*27.8,
                   fat_h = .data$kJ_h/37.7,
                   ID2 = as.factor(.data$ID2)) |>
-    dplyr::select("ID" = .data$ID2, .data$Ta, "Tskin" = .data$Tb,
-                  .data$VCO2_ml_g_h, .data$VCO2_L_g_h,
-                  .data$kJ_g_h, .data$kJ_h, .data$fat_h)
+    dplyr::select(ID = "ID2", "Ta", Tskin = "Tb",
+                  "VCO2_ml_h", "VCO2_L_h",
+                  "kJ_h", "kJ_h", "fat_h")
 }
 
 
