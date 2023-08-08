@@ -100,7 +100,7 @@ plot_time_trends <- function(winters_stats_df,
 #' ## see ?winteR
 #'
 tabulate_time_trend <- function(winters_stats_df,
-                                window_length_smoothing = 10) {
+                                window_length_smoothing = 10, OBSCLIM = FALSE) {
   winters_stats_df |>
     dplyr::mutate(Year = as.numeric(as.character(.data$Year))) |>
     dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), \(x) caTools::runmean(x, k = window_length_smoothing), .names = "{.col}_smooth"),
@@ -111,22 +111,45 @@ tabulate_time_trend <- function(winters_stats_df,
     dplyr::mutate(dplyr::across(tidyselect::contains("Suitable"),
                                 .fns = \(x) x[.data$Year == 1901 & .data$Scenario == "OBSCLIM"],
                                 .names = "{.col}_ref1901")) |>
-    dplyr::mutate(dplyr::across(tidyselect::contains("Latitude") & !tidyselect::contains("ref"),
+    dplyr::mutate(dplyr::across(tidyselect::contains("Temp"),
+                                .fns = \(x) x[.data$Year == 1901 & .data$Scenario == "OBSCLIM"],
+                                .names = "{.col}_ref1901")) |>
+    dplyr::mutate(dplyr::across(tidyselect::contains("Duration"),
+                                .fns = \(x) x[.data$Year == 1901 & .data$Scenario == "OBSCLIM"],
+                                .names = "{.col}_ref1901")) |>
+    dplyr::mutate(dplyr::across(tidyselect::contains("Latitude"),
                                 .fns = \(x) x[.data$Year == 2018 & .data$Scenario == "OBSCLIM"],
                                 .names = "{.col}_ref2018")) |>
-    dplyr::mutate(dplyr::across(tidyselect::contains("Suitable") & !tidyselect::contains("ref"),
+    dplyr::mutate(dplyr::across(tidyselect::contains("Suitable"),
                                 .fns = \(x) x[.data$Year == 2018 & .data$Scenario == "OBSCLIM"],
                                 .names = "{.col}_ref2018")) |>
-    dplyr::mutate(Latitude_median_smooth_move_since1901 = compute_northward_move(.data$Latitude_median_smooth, lat_ref = unique(.data$Latitude_median_smooth_ref1901)),
-                  Latitude_min_smooth_move_since1901    = compute_northward_move(.data$Latitude_min_smooth,    lat_ref = unique(.data$Latitude_min_smooth_ref1901)),
-                  Latitude_max_smooth_move_since1901    = compute_northward_move(.data$Latitude_max_smooth,    lat_ref = unique(.data$Latitude_max_smooth_ref1901)),
-                  Suitable_area_km2_smooth_delta_pct_since1901 =  100*((.data$Suitable_area_km2_smooth - unique(.data$Suitable_area_km2_smooth_ref1901))/unique(.data$Suitable_area_km2_smooth_ref1901)),
-                  .by = c("Scenario", "Forcing")) |>
-    dplyr::mutate(Latitude_median_smooth_move_since2018 = compute_northward_move(.data$Latitude_median_smooth, lat_ref = unique(.data$Latitude_median_smooth_ref2018)),
-                  Latitude_min_smooth_move_since2018    = compute_northward_move(.data$Latitude_min_smooth,    lat_ref = unique(.data$Latitude_min_smooth_ref2018)),
-                  Latitude_max_smooth_move_since2018    = compute_northward_move(.data$Latitude_max_smooth,    lat_ref = unique(.data$Latitude_max_smooth_ref2018)),
-                  Suitable_area_km2_smooth_delta_pct_since2018 =  100*((.data$Suitable_area_km2_smooth - unique(.data$Suitable_area_km2_smooth_ref2018))/unique(.data$Suitable_area_km2_smooth_ref2018)),
-                  .by = c("Scenario", "Forcing")) |>
+    dplyr::mutate(dplyr::across(tidyselect::contains("Temp"),
+                                .fns = \(x) x[.data$Year == 2018 & .data$Scenario == "OBSCLIM"],
+                                .names = "{.col}_ref2018")) |>
+    dplyr::mutate(dplyr::across(tidyselect::contains("Duration"),
+                                .fns = \(x) x[.data$Year == 2018 & .data$Scenario == "OBSCLIM"],
+                                .names = "{.col}_ref2018")) -> winters_stats_df_smoothed
+
+  if (OBSCLIM) {
+    winters_stats_df_smoothed |> dplyr::filter(.data$Scenario == "OBSCLIM") -> winters_stats_df_smoothed
+    by_arg <- NULL
+  } else {
+    by_arg <- c("Scenario", "Forcing")
+  }
+
+  winters_stats_df_smoothed |>
+      dplyr::mutate(Latitude_median_smooth_move_since1901 = compute_northward_move(.data$Latitude_median_smooth, lat_ref = unique(.data$Latitude_median_smooth_ref1901)),
+                    Latitude_min_smooth_move_since1901    = compute_northward_move(.data$Latitude_min_smooth,    lat_ref = unique(.data$Latitude_min_smooth_ref1901)),
+                    Latitude_max_smooth_move_since1901    = compute_northward_move(.data$Latitude_max_smooth,    lat_ref = unique(.data$Latitude_max_smooth_ref1901)),
+                    Suitable_area_km2_smooth_delta_pct_since1901 =  100*((.data$Suitable_area_km2_smooth - unique(.data$Suitable_area_km2_smooth_ref1901))/unique(.data$Suitable_area_km2_smooth_ref1901)),
+                    Temp_winter_mean_smooth_delta_since1901 = .data$Temp_winter_mean_smooth - .data$Temp_winter_mean_smooth_ref1901,
+                    Duration_winter_smooth_delta_since1901 = .data$Duration_winter_smooth - .data$Duration_winter_ref1901, .by = by_arg) |>
+      dplyr::mutate(Latitude_median_smooth_move_since2018 = compute_northward_move(.data$Latitude_median_smooth, lat_ref = unique(.data$Latitude_median_smooth_ref2018)),
+                    Latitude_min_smooth_move_since2018    = compute_northward_move(.data$Latitude_min_smooth,    lat_ref = unique(.data$Latitude_min_smooth_ref2018)),
+                    Latitude_max_smooth_move_since2018    = compute_northward_move(.data$Latitude_max_smooth,    lat_ref = unique(.data$Latitude_max_smooth_ref2018)),
+                    Suitable_area_km2_smooth_delta_pct_since2018 =  100*((.data$Suitable_area_km2_smooth - unique(.data$Suitable_area_km2_smooth_ref2018))/unique(.data$Suitable_area_km2_smooth_ref2018)),
+                    Temp_winter_mean_smooth_delta_since2018 = .data$Temp_winter_mean_smooth - .data$Temp_winter_mean_smooth_ref2018,
+                    Duration_winter_smooth_delta_since2018 = .data$Duration_winter_smooth - .data$Duration_winter_ref2018, .by = by_arg) |>
     dplyr::arrange(.data$Year, .data$Scenario, .data$Forcing)
 }
 
@@ -143,12 +166,14 @@ tabulate_time_trend <- function(winters_stats_df,
 #'
 summary_time_trend <- function(winters_stats_df,
                                varname = "Suitable_area_km2_smooth_delta_pct_since1901",
-                               year = 2099,
+                               OBSCLIM = FALSE,
+                               year = ifelse(OBSCLIM, 2018, 2099),
                                window_length_smoothing = 10) {
-  tabulate_time_trend(winters_stats_df = winters_stats_df, window_length_smoothing = window_length_smoothing) |>
+  tabulate_time_trend(winters_stats_df = winters_stats_df, window_length_smoothing = window_length_smoothing, OBSCLIM = OBSCLIM) |>
     dplyr::filter(.data$Year == year) |>
     dplyr::select("Scenario", "Forcing", varname) |>
     tidyr::pivot_wider(names_from = 2, values_from = 3) |>
     dplyr::rowwise() |>
-    dplyr::mutate(mean = mean(dplyr::c_across(tidyselect::where(is.numeric))))
+    dplyr::mutate(mean = mean(dplyr::c_across(tidyselect::where(is.numeric)))) |>
+    dplyr::mutate(mean_without_ukesm = mean(dplyr::c_across(tidyselect::where(is.numeric) & !tidyselect::contains("ukesm1-0-ll") & !tidyselect::contains("mean"))))
 }
