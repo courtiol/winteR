@@ -78,6 +78,8 @@
 
 \item{min_years_trigger_suitability}{the minimum number of suitable winters to trigger the establishment or the disappearance of bats in a region}
 
+\item{OBSCLIM}{a boolean indicating if the function must run on the OBSCLIM data (default = \code{FALSE})}
+
 \item{rangeTa}{the range of ambient temperature to consider in plot}
 
 \item{rangeTskin}{the range of skin temperature to consider in plot}

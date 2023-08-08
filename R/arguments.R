@@ -43,6 +43,7 @@
 #' @param min_days_trigger_winter the minimum number of days for which the temperature should be below `temp_threshold` to enter winter
 #' @param min_Year the minimum year (in numeric format) to consider in the factor
 #' @param min_years_trigger_suitability the minimum number of suitable winters to trigger the establishment or the disappearance of bats in a region
+#' @param OBSCLIM a boolean indicating if the function must run on the OBSCLIM data (default = `FALSE`)
 #' @param rangeTa the range of ambient temperature to consider in plot
 #' @param rangeTskin the range of skin temperature to consider in plot
 #' @param roost_insulation_dTa the increase in temperature in the roost, compared to outside (default = 5)

@@ -4,12 +4,18 @@
 \alias{tabulate_time_trend}
 \title{Compute how the hibernation niche changes over time}
 \usage{
-tabulate_time_trend(winters_stats_df, window_length_smoothing = 10)
+tabulate_time_trend(
+  winters_stats_df,
+  window_length_smoothing = 10,
+  OBSCLIM = FALSE
+)
 }
 \arguments{
 \item{winters_stats_df}{a dataframe of winter statistics produced by \code{\link[=summarise_info_winter.stars.all]{summarise_info_winter.stars.all()}}}
 
 \item{window_length_smoothing}{the width of the window used for smoothing via \code{\link[caTools:runmean]{caTools::runmean()}}}
+
+\item{OBSCLIM}{a boolean indicating if the function must run on the OBSCLIM data (default = \code{FALSE})}
 }
 \value{
 a ggplot2 object

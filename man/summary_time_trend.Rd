@@ -7,7 +7,8 @@
 summary_time_trend(
   winters_stats_df,
   varname = "Suitable_area_km2_smooth_delta_pct_since1901",
-  year = 2099,
+  OBSCLIM = FALSE,
+  year = ifelse(OBSCLIM, 2018, 2099),
   window_length_smoothing = 10
 )
 }
@@ -15,6 +16,8 @@ summary_time_trend(
 \item{winters_stats_df}{a dataframe of winter statistics produced by \code{\link[=summarise_info_winter.stars.all]{summarise_info_winter.stars.all()}}}
 
 \item{varname}{the quoted name of the variable to retain from each stars object (default depends on the function)}
+
+\item{OBSCLIM}{a boolean indicating if the function must run on the OBSCLIM data (default = \code{FALSE})}
 
 \item{year}{a numeric scalar indicating the year of the winter to consider}
 
