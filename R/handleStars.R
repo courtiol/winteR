@@ -248,7 +248,7 @@ summarise_info_winter.stars <- function(stars_object, mask = NULL) {
                             Temp_winter_autocorr = numeric(),
                             Budget_winter = numeric())
 
-  ## Count proportion of suitable cells and other metrics (within the mask if applicable)
+  ## Count proportion of suitable cells and other metrics (within the mask if applicable) year by year
   for (i in c(1:(with(stars::st_dimensions(stars_object_masked)$year, to - from + 1)))) {
 
     ## Suitable cells are those for which budget is sufficient and hibernation occurs
