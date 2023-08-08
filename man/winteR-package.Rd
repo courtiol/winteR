@@ -189,15 +189,24 @@ MR_at_Tt <- torpor::tor_predict(fit_torpor, Ta = Tt)$pred
 round(100*MR_at_Tt[1] / MR_at_Tt[2], digits = 2) # MR in torpor is 1.29 \% of MR in normothermy
 
 ### Step 2E: plotting thermoregulatory curves and temperature relationship
-pS2_A <- plot_Tskin_fit(fit_normo_cauchit)
-pS2_B <- plot_MR_fit(fit_torpor, data_MR)
-pS2_C <- plot_TaTskin_data(fit_torpor, data_MR)
-pS2_ABC <- cowplot::plot_grid(pS2_A, pS2_B, pS2_C, ncol = 1, labels = "AUTO", align = "hv")
+pS2_A <- plot_Tskin_fit(fit_normo_cauchit, base_size = 9)
+pS2_B <- plot_MR_fit(fit_torpor, data_MR, base_size = 9)
+pS2_AB <- cowplot::plot_grid(pS2_A, pS2_B, ncol = 2, labels = "AUTO", align = "hv")
 if (run){
-  ggplot2::ggsave(filename = "figures/fig1.pdf", plot = pS2_ABC,
-                  width = 12, height = 25, units = "cm")
-  ggplot2::ggsave(filename = "figures/fig1.png", plot = pS2_ABC,
-                  width = 12, height = 25, units = "cm")
+  ggplot2::ggsave(filename = "figures/fig1.pdf", plot = pS2_AB,
+                  width = 18, height = 6.5, units = "cm")
+  ggplot2::ggsave(filename = "figures/fig1.png", plot = pS2_AB,
+                  width = 18, height = 6.5, units = "cm")
+}
+
+### Step 2F: plotting temperature relationship
+pS2_C <- plot_TaTskin_data(fit_torpor, data_MR, base_size = 9)
+pS2_BC <- cowplot::plot_grid(pS2_B, pS2_C, ncol = 1, labels = "AUTO", align = "hv")
+if (run){
+  ggplot2::ggsave(filename = "figures/figS2.pdf", plot = pS2_BC,
+                  width = 9, height = 13, units = "cm")
+  ggplot2::ggsave(filename = "figures/figS2.png", plot = pS2_BC,
+                  width = 9, height = 13, units = "cm")
 }
 
 ## Step 3: example of budget requirements at 5 degrees in roost
@@ -307,7 +316,7 @@ if (run) {
 ## Step 7: plotting the map of the prediction for the current distribution
 
 ### Step 7A: preparing IUCN distribution map polygon file
-IUCN_polygon_file <- list.files(system.file("extdata/IUCN", package = "winteR"),
+IUCN_polygon_file <- list.files(system.file("extdata/distribution_range/IUCN", package = "winteR"),
                                 pattern = "*.shp", full.names = TRUE)
 IUCN <- sf::read_sf(IUCN_polygon_file)
 
@@ -339,10 +348,31 @@ if (run) {
  summary_time_trend(winters_stats, varname = "Latitude_min_smooth_move_since1901")
  summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since1901")
 
+ summary_time_trend(winters_stats, varname = "Suitable_area_km2_smooth_delta_pct_since1901", OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since1901", OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Latitude_min_smooth_move_since1901", OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since1901", OBSCLIM = TRUE)
+
  summary_time_trend(winters_stats, varname = "Suitable_area_km2_smooth_delta_pct_since2018")
  summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since2018")
  summary_time_trend(winters_stats, varname = "Latitude_min_smooth_move_since2018")
  summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since2018")
+
+ summary_time_trend(winters_stats, varname = "Temp_winter_mean_smooth_delta_since1901", OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since1901", OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Temp_winter_mean_smooth_delta_since2018")
+ summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since2018")
+
+
+ summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since1901") |>
+   dplyr::select(-"mean") |>
+   tidyr::pivot_longer(!"Scenario") |>
+   dplyr::filter(.data$name != "ukesm1-0-ll") -> d
+
+ summary(lm(value ~ Scenario, data = d))
+ summary(lm(value ~ name, data = d))
+
+ d |> dplyr::summarise(min = min(.data$value), max = max(.data$value), .by = "Scenario")
 
   hibernation_trends |>
      dplyr::filter(.data$Scenario != "OBSCLIM") |>
@@ -429,21 +459,45 @@ if (run) {
 
 ## Step 11: change of winter characteristics through time
 
-  tabulate_time_trend(winters_stats) |>
+ pS11_A <- tabulate_time_trend(winters_stats) |>
     dplyr::filter(Scenario != "OBSCLIM") |>
     ggplot2::ggplot() +
-      ggplot2::aes(y = Duration_winter_smooth, x = Year, colour = Forcing) +
+      ggplot2::aes(y = .data$Temp_winter_mean_smooth, x = .data$Year, linetype = .data$Forcing, colour = .data$Forcing) +
       ggplot2::geom_line() +
       ggplot2::facet_wrap(~ Scenario) +
-      ggplot2::theme_bw()
+      ggplot2::scale_y_continuous(minor_break = NULL, limits = c(-3, 3), breaks = -3:3) +
+      ggplot2::scale_x_continuous(minor_break = NULL) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.direction = "horizontal",
+                     axis.text.x = ggplot2::element_text(angle = 0, vjust = 1, hjust = 0),
+                     strip.background = ggplot2::element_rect(fill = NA)) +
+      ggplot2::labs(colour = "Forcing model", linetype = "Forcing model",
+                    y = "Mean temperature during the hibernation season (\u00B0C)", x = NULL)
 
- tabulate_time_trend(winters_stats) |>
+  pS11_B <- tabulate_time_trend(winters_stats) |>
     dplyr::filter(Scenario != "OBSCLIM") |>
     ggplot2::ggplot() +
-      ggplot2::aes(y = Temp_winter_mean_smooth, x = Year, colour = Forcing) +
+      ggplot2::aes(y = .data$Duration_winter_smooth, x = Year, linetype = .data$Forcing, colour = .data$Forcing) +
       ggplot2::geom_line() +
       ggplot2::facet_wrap(~ Scenario) +
-      ggplot2::theme_bw()
+      ggplot2::scale_y_continuous(minor_break = NULL) +
+      ggplot2::scale_x_continuous(minor_break = NULL) +
+      ggplot2::coord_cartesian(ylim = c(0, NA)) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.direction = "horizontal",
+                     axis.text.x = ggplot2::element_text(angle = 0, vjust = 1, hjust = 0),
+                     strip.background = ggplot2::element_rect(fill = NA)) +
+      ggplot2::labs(colour = "Forcing model", linetype = "Forcing model", y = "Duration of the hibernation season (days)", x = NULL)
+
+ pS11_legend <- cowplot::get_legend(pS11_A)
+ pS11_AB <- cowplot::plot_grid(pS11_legend,
+                               pS11_A + ggplot2::theme(legend.position="none"),
+                               pS11_B + ggplot2::theme(legend.position="none"),
+                               nrow = 3, labels = c("", "A", "B"),
+                               rel_heights = c(0.05, 0.45, 0.45))
+ pS11_AB
+ ggplot2::ggsave(filename = "figures/figSX.png",
+                 width = 18, height = 35, units = "cm")
 }
 }
 \references{
