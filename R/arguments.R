@@ -30,11 +30,11 @@
 #' @param flatten whether to average the winter stars across forcing models (default = `TRUE`)
 #' @param fn a function to be applied
 #' @param huddling_factor a factor multiplied to the metabolic rate, to account for huddling, when individuals are thermoregulating (default = 0.5)
-#' @param IUCN_polygon a sf (MULTI)POLYGON object representing the IUCN distribution of the specoes
 #' @param lapply_pkg the R package used to implement a `lapply()` kind of function (default = "pbmcapply"; other possibilities are "parallel" and "base")
 #' @param lat a latitude
 #' @param lat_ref a latitude of reference
 #' @param .legend_position the value for the ggplot argument "legend.position" used in [ggplot2::theme()]
+#' @param mass_g the mass of a common noctule
 #' @param name_bool_var the quoted name of a boolean variable to use to filter cells in the grid (default is "Survive")
 #' @param nb_cores the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)
 #' @param mask a MULTIPOLYGON object to be used as a mask
@@ -44,6 +44,8 @@
 #' @param min_Year the minimum year (in numeric format) to consider in the factor
 #' @param min_years_trigger_suitability the minimum number of suitable winters to trigger the establishment or the disappearance of bats in a region
 #' @param OBSCLIM a boolean indicating if the function must run on the OBSCLIM data (default = `FALSE`)
+#' @param output4optim a boolean indicating if the function output must be modifed to direct use of optimization routines
+#' @param polygons a list of sf (MULTI)POLYGON object representing the distribution of the species
 #' @param rangeTa the range of ambient temperature to consider in plot
 #' @param rangeTskin the range of skin temperature to consider in plot
 #' @param roost_insulation_dTa the increase in temperature in the roost, compared to outside (default = 5)
