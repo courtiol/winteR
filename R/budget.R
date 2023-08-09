@@ -169,20 +169,20 @@ plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mor
   y <- match.arg(y, c("g_fat_per_state", "g_fat_per_day", "g_fat_per_winter"))
 
   if (y == "g_fat_per_state") {
-    ylab <- expression(atop("Hourly fat consumption"~"("*g[fat]*h^{-1}*")"))
+    ylab <- expression(atop("Hourly fat consumption"~"("*g*.*h^{-1}*")"))
     plot <- plot +
         ggplot2::geom_line(ggplot2::aes(x = .data$Date, y = .data$Fat_normo), colour = "red") +
         ggplot2::geom_line(ggplot2::aes(x = .data$Date, y = .data$Fat_torpor), colour = "blue") +
         ggplot2::scale_y_continuous(breaks = seq(0, 10, by = 0.025), minor_breaks = NULL)
   } else if (y == "g_fat_per_day") {
-    ylab <- expression(atop("Daily fat consumption"~"("*g[fat]*day^{-1}*")"))
+    ylab <- expression(atop("Daily fat consumption"~"("*g*.*day^{-1}*")"))
     plot <- plot +
       ggplot2::geom_line(ggplot2::aes(x = .data$Date, y = .data$Budget_fat)) +
       ggplot2::scale_y_continuous(breaks = seq(0, 10, by = 0.25), minor_breaks = NULL)
   } else if (y == "g_fat_per_winter") {
     date_death <- data_plot$Date[which(data_plot$Budget_cumul > threshold_mortality)[1]]
     print(paste("death date =", date_death))
-    ylab <- expression(atop("Cumulative fat consumption"~"("*Sigma*g[fat]*")"))
+    ylab <- expression(atop("Cumulative fat consumption"~"("*g*.*Sigma*day^{-1}*")"))
     plot <- plot +
       ggplot2::geom_hline(yintercept = threshold_mortality, linetype = 4, colour = "darkgrey") +
       ggplot2::geom_line(ggplot2::aes(x = .data$Date, y = .data$Budget_cumul), data = data_plot[data_plot$Budget_cumul < threshold_mortality, ]) +
@@ -202,7 +202,7 @@ plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mor
                           minor_breaks = NULL, limits = c(start_winter - 14, stop_winter + 14)) +
     ggplot2::labs(y = ylab, x = NULL) +
     ggplot2::theme_bw(base_size = base_size) +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(hjust = 0))
+    ggplot2::theme(axis.text.x = ggplot2::element_text(hjust = 0), plot.margin = ggplot2::margin(l = 15))
 }
 
 

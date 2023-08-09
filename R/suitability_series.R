@@ -129,7 +129,7 @@ recode_year_decade <- function(vec_Year, min_Year = 1901, max_Year = 2099) {
   possible_decades[1] <- paste0("<", min_decade + 10)
   decades <- dplyr::case_when(decades == min_decade ~ paste0("<", decades + 10),
                               decades > min_decade ~ paste0(as.character(decades), "-", as.character(decades + 9)))
-  factor(decades, levels = possible_decades)
+  factor(decades, levels = rev(possible_decades))
 }
 
 
@@ -151,7 +151,7 @@ recode_freq_pct <- function(vec_Proportion) {
                                       100*vec_Proportion < 10 ~ "1-9%",
                                       100*vec_Proportion <= 99 ~ paste0(as.character(floor(10*vec_Proportion)*10), "-", as.character(floor(10*vec_Proportion)*10 + 9), "%"),
                                       100*vec_Proportion > 99 ~ ">99%")
-  factor(vec_Proportion2, levels = possible_pct)
+  factor(vec_Proportion2, levels = rev(possible_pct))
 }
 
 

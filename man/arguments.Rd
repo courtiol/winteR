@@ -52,8 +52,6 @@
 
 \item{huddling_factor}{a factor multiplied to the metabolic rate, to account for huddling, when individuals are thermoregulating (default = 0.5)}
 
-\item{IUCN_polygon}{a sf (MULTI)POLYGON object representing the IUCN distribution of the specoes}
-
 \item{lapply_pkg}{the R package used to implement a \code{lapply()} kind of function (default = "pbmcapply"; other possibilities are "parallel" and "base")}
 
 \item{lat}{a latitude}
@@ -61,6 +59,8 @@
 \item{lat_ref}{a latitude of reference}
 
 \item{.legend_position}{the value for the ggplot argument "legend.position" used in \code{\link[ggplot2:theme]{ggplot2::theme()}}}
+
+\item{mass_g}{the mass of a common noctule}
 
 \item{name_bool_var}{the quoted name of a boolean variable to use to filter cells in the grid (default is "Survive")}
 
@@ -79,6 +79,10 @@
 \item{min_years_trigger_suitability}{the minimum number of suitable winters to trigger the establishment or the disappearance of bats in a region}
 
 \item{OBSCLIM}{a boolean indicating if the function must run on the OBSCLIM data (default = \code{FALSE})}
+
+\item{output4optim}{a boolean indicating if the function output must be modifed to direct use of optimization routines}
+
+\item{polygons}{a list of sf (MULTI)POLYGON object representing the distribution of the species}
 
 \item{rangeTa}{the range of ambient temperature to consider in plot}
 

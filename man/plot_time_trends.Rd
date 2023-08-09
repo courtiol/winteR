@@ -7,7 +7,7 @@
 plot_time_trends(
   winters_stats_df,
   window_length_smoothing = 10,
-  varname = "Latitude_median",
+  varname = "Latitude_median_smooth",
   vartype = c("latitude", "area"),
   y_title = "\\n Median latitude of potential hibernation areas",
   scenarios = c("OBSCLIM", "SSP126", "SSP585"),

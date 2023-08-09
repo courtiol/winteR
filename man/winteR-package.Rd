@@ -77,6 +77,31 @@ fit_normo_logit
 # logL       (p_v(h)): -3699.397
 
 
+fit_normo_probit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
+                                family = binomial(link = "probit"))
+fit_normo_probit
+# formula: Normo ~ Ta + (1 | ID)
+# Estimation of lambda by ML (P_v approximation of logL).
+# Estimation of fixed effects by ML (P_v approximation of logL).
+# family: binomial( link = probit )
+#  ------------ Fixed effects (beta) ------------
+#             Estimate Cond. SE t-value
+# (Intercept) -2.38168  0.10461 -22.768
+# Ta           0.07936  0.01219   6.509
+#  --------------- Random effects ---------------
+# Family: gaussian( link = identity )
+#            --- Variance parameters ('lambda'):
+# lambda = var(u) for u ~ Gaussian;
+#    ID  :  0.04458
+#              --- Coefficients for log(lambda):
+#  Group        Term Estimate Cond.SE
+#     ID (Intercept)   -3.111  0.3229
+# # of obs: 22554; # of groups: ID, 22
+#  ------------- Likelihood values  -------------
+#                        logLik
+# logL      (P_v(h)): -3700.482
+
+
 fit_normo_cauchit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
                                  family = binomial(link = "cauchit"))
 ## rm(list = ls()[ls() != "fit_normo_cauchit"])
@@ -105,25 +130,29 @@ fit_normo_cauchit
 
 ### Step 1D: compare goodness of fit
 AIC(fit_normo_logit, verbose = FALSE)["       marginal AIC:"] # 7404.795
+AIC(fit_normo_probit, verbose = FALSE)["       marginal AIC:"] # 7406.964
 AIC(fit_normo_cauchit, verbose = FALSE)["       marginal AIC:"] # 7406.804
 
 ### Step 1E: check model
 DHARMa::simulateResiduals(fit_normo_logit, plot = TRUE)
+DHARMa::simulateResiduals(fit_normo_probit, plot = TRUE)
 DHARMa::simulateResiduals(fit_normo_cauchit, plot = TRUE)
 
 ### Step 1F: plot model predictions
 plot_Tskin_fit(fit_normo_logit)
+plot_Tskin_fit(fit_normo_probit)
 plot_Tskin_fit(fit_normo_cauchit)
 
-### Step 1G: create fig S1
+### Step 1G: create Extended Data Fig. 1
 pS1_1 <- plot_Tskin_fit(fit_normo_cauchit, rangeTa = c(-5, 35))
 pS1_2 <- plot_Tskin_fit(fit_normo_logit, rangeTa = c(-5, 35))
-pS1_12 <- cowplot::plot_grid(pS1_1, pS1_2, nrow = 2, labels= "AUTO", align = "hv")
+pS1_3 <- plot_Tskin_fit(fit_normo_probit, rangeTa = c(-5, 35))
+pS1_123 <- cowplot::plot_grid(pS1_1, pS1_2, pS1_3, nrow = 3, labels= "AUTO", align = "hv")
 if (run) {
-  ggplot2::ggsave(filename = "figures/figS1.pdf", plot = pS1_12,
-                  width = 12, height = 20, units = "cm")
-  ggplot2::ggsave(filename = "figures/figS1.png", plot = pS1_12,
-                  width = 12, height = 20, units = "cm")
+  ggplot2::ggsave(filename = "figures/EDfig1.pdf", plot = pS1_123,
+                  width = 12, height = 30, units = "cm")
+  ggplot2::ggsave(filename = "figures/EDfig1.png", plot = pS1_123,
+                  width = 12, height = 30, units = "cm")
 }
 
 ## Step 2: fitting thermoregulatory curves
@@ -203,39 +232,39 @@ if (run){
 pS2_C <- plot_TaTskin_data(fit_torpor, data_MR, base_size = 9)
 pS2_BC <- cowplot::plot_grid(pS2_B, pS2_C, ncol = 1, labels = "AUTO", align = "hv")
 if (run){
-  ggplot2::ggsave(filename = "figures/figS2.pdf", plot = pS2_BC,
+  ggplot2::ggsave(filename = "figures/EDfig2.pdf", plot = pS2_BC,
                   width = 9, height = 13, units = "cm")
-  ggplot2::ggsave(filename = "figures/figS2.png", plot = pS2_BC,
+  ggplot2::ggsave(filename = "figures/EDfig2.png", plot = pS2_BC,
                   width = 9, height = 13, units = "cm")
 }
 
-## Step 3: example of budget requirements at 5 degrees in roost
+## Step 3: example of budget requirements at -5 degrees in roost
 
-budget_5degrees <- compute_budget_df(data.frame(Temp = 5),
-                                     roost_insulation_dTa = 0, # note remove insulation
-                                     fit_state = fit_normo_cauchit,
-                                     fit_MR = fit_torpor, huddling_factor = 1) # note remove huddling
+budget_minus5degrees <- compute_budget_df(data.frame(Temp = -5),
+                               roost_insulation_dTa = 0, # note remove insulation
+                               fit_state = fit_normo_cauchit,
+                               fit_MR = fit_torpor, huddling_factor = 1) # note remove huddling
 
 ### Step 3A: time spent in each physiological state
-round(budget_5degrees[, c("Daily_duration_normo", "Daily_duration_torpor")], digit = 2)
+round(budget_minus5degrees[, c("Daily_duration_normo", "Daily_duration_torpor")], digit = 2)
 #   Daily_duration_normo Daily_duration_torpor
-# 1                 0.51                 23.49
+# 1                 0.25                 23.75
 
 ### Step 3B: metabolic rate in each physiological state
-signif(budget_5degrees[, c("MR_normo", "MR_torpor")], digit = 3)
+signif(budget_minus5degrees[, c("MR_normo", "MR_torpor")], digit = 3)
 #   MR_normo   MR_torpor
-# 1     4.33      0.0496
+# 1     5.71      1.35
 
 ### Step 3C: daily metabolic rate
-signif(budget_5degrees[, c("Budget_MR")], digit = 3)
-# 3.38
+signif(budget_minus5degrees[, c("Budget_MR")], digit = 3)
+# 33.5
 
 ### Step 3D: daily fat consumption
-signif(budget_5degrees[, c("Budget_fat")], digit = 3)
-# 0.0896
+signif(budget_minus5degrees[, c("Budget_fat")], digit = 3)
+# 0.888
 
 ### Step 3E: daily fat consumption with insulation + huddling effect
-signif(compute_budget_df(data.frame(Temp = 5), fit_state = fit_normo_cauchit, fit_MR = fit_torpor)[, "Budget_fat"], 3)
+signif(compute_budget_df(data.frame(Temp = -5), fit_state = fit_normo_cauchit, fit_MR = fit_torpor)[, "Budget_fat"], 3)
 
 ## Step 4: illustration of winter and budget for Kharkiv
 
@@ -316,21 +345,33 @@ if (run) {
 ## Step 7: plotting the map of the prediction for the current distribution
 
 ### Step 7A: preparing IUCN distribution map polygon file
-IUCN_polygon_file <- list.files(system.file("extdata/distribution_range/IUCN", package = "winteR"),
-                                pattern = "*.shp", full.names = TRUE)
-IUCN <- sf::read_sf(IUCN_polygon_file)
+winter_2015_polygon_file <- list.files(system.file("extdata/distribution_range/winter_2015", package = "winteR"),
+                                       pattern = "*.shp", full.names = TRUE)
+winter_2015 <- sf::read_sf(winter_2015_polygon_file)
 
 ### Step 7B: plotting winter budget over Europe for 2018
 if (run) {
  readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
    dplyr::select(Budget_winter) |>
    dplyr::filter(year == 2018) |>
-   plot_fat_map(IUCN_polygon = IUCN)
+   plot_fat_map(polygons = list(winter_2015))
  ggplot2::ggsave(filename = "figures/fig3.png",
                  width = 14, height = 14, units = "cm")
  ggplot2::ggsave(filename = "figures/fig3.pdf",
                  width = 14, height = 14, units = "cm")
 }
+
+### Step 7C: extracting info about stars characteristics
+stars_example <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+## coordinates
+range(sf::st_coordinates(stars_example)$y) # range of latitude of center of cells
+range(sf::st_coordinates(stars_example)$x) # range of longitude of center of cells
+## CRS, projection
+sf::st_crs(stars_example, type = "proj")
+## area
+mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
+sqrt(mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2)))
+sd(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
 
 ## Step 8: predicting shift in hibernation niche
 
@@ -341,7 +382,7 @@ if (run) {
   winters_stats <- summarise_info_winter.stars.all("../NC/stars_winter",
                                                    mask = lands_polygons) ## takes a few min
 
-## Step 9: computing change in potential hibernation area (WIP)
+## Step 9: computing change in potential hibernation area
 
  summary_time_trend(winters_stats, varname = "Suitable_area_km2_smooth_delta_pct_since1901")
  summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since1901")
@@ -363,43 +404,30 @@ if (run) {
  summary_time_trend(winters_stats, varname = "Temp_winter_mean_smooth_delta_since2018")
  summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since2018")
 
-
+ ### Example of data summary: range of change in smoothed median latitude:
  summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since1901") |>
    dplyr::select(-"mean") |>
    tidyr::pivot_longer(!"Scenario") |>
-   dplyr::filter(.data$name != "ukesm1-0-ll") -> d
-
- summary(lm(value ~ Scenario, data = d))
- summary(lm(value ~ name, data = d))
-
- d |> dplyr::summarise(min = min(.data$value), max = max(.data$value), .by = "Scenario")
-
-  hibernation_trends |>
-     dplyr::filter(.data$Scenario != "OBSCLIM") |>
-     ggplot2::ggplot() +
-     ggplot2::aes(y = Suitable_area_km2_smooth_delta_pct_since1901, x = Year, colour = Forcing) +
-     ggplot2::geom_line() +
-     ggplot2::facet_wrap(~ Scenario) +
-     ggplot2::theme_bw()
+   dplyr::summarise(min = min(.data$value), max = max(.data$value), .by = "Scenario")
 
 
-### Step 8B: plotting time trends about the suitable area ## TODO: take output from tabulate_time_trend() as input
-  pS8_A <- plot_time_trends(winters_stats, varname = "Suitable_area_km2", vartype = "area",
+### Step 8B: plotting time trends about the suitable area
+  pS8_A <- plot_time_trends(winters_stats, varname = "Suitable_area_km2_smooth", vartype = "area",
                            y_title = "Potential hibernation area\n (x 1,000,000 km²)")
   pS8_B <- plot_time_trends(winters_stats)
-  pS8_C <- plot_time_trends(winters_stats, varname = "Latitude_min",
-                                y_title = "\n Minimal latitude of potential hibernation areas",
-                                y_max = 33.25)
-  pS8_D <- plot_time_trends(winters_stats, varname = "Latitude_max",
-                                y_title = "\n Maximal latitude of potential hibernation areas",
-                                y_max = 73)
+  pS8_C <- plot_time_trends(winters_stats, varname = "Latitude_min_smooth",
+                            y_title = "\n Minimal latitude of potential hibernation areas",
+                            y_max = 33.25)
+  pS8_D <- plot_time_trends(winters_stats, varname = "Latitude_max_smooth",
+                            y_title = "\n Maximal latitude of potential hibernation areas",
+                            y_max = 73)
   pS8_ABCD <- cowplot::plot_grid(pS8_A, pS8_B, pS8_C, pS8_D,
                                  nrow = 2, labels = c("A", "B", "C", "D"))
   pS8_ABCD
-    ggplot2::ggsave(filename = "figures/fig4.png",
-                   width = 18, height = 16, units = "cm")
-    ggplot2::ggsave(filename = "figures/fig4.pdf",
-                   width = 18, height = 16, units = "cm")
+  ggplot2::ggsave(filename = "figures/fig4.png",
+                  width = 18, height = 16, units = "cm")
+  ggplot2::ggsave(filename = "figures/fig4.pdf",
+                  width = 18, height = 16, units = "cm")
 
 
 ## Step 9: plotting change in suitability maps
@@ -413,25 +441,25 @@ if (run) {
                                 scenario = "SSP126",
                                 starsname = "stars_with_OBSCLIM_avg",
                                 varname = "decade_establishment",
-                                IUCN_polygon = IUCN,
+                                polygons = list(winter_2015),
                                 base_size = 9, legend_position = "left")
   pS9_B <- plot_suitability_map(stars_tbl = stars_suitability,
                                 scenario = "SSP585",
                                 starsname = "stars_with_OBSCLIM_avg",
                                 varname = "decade_establishment",
-                                IUCN_polygon = IUCN,
+                                polygons = list(winter_2015),
                                 base_size = 9, legend_position = "none")
   pS9_C <- plot_suitability_map(stars_tbl = stars_suitability,
                                 scenario = "SSP126",
                                 starsname = "stars_avg",
                                 varname = "freq_suitability_pct",
-                                IUCN_polygon = IUCN,
+                                polygons = list(winter_2015),
                                 base_size = 9)
   pS9_D <- plot_suitability_map(stars_tbl = stars_suitability,
                                 scenario = "SSP585",
                                 starsname = "stars_avg",
                                 varname = "freq_suitability_pct",
-                                IUCN_polygon = IUCN,
+                                polygons = list(winter_2015),
                                 base_size = 9, legend_position = "none")
   pS9_legend1 <- cowplot::get_legend(pS9_A)
   pS9_legend2 <- cowplot::get_legend(pS9_C)
@@ -470,7 +498,8 @@ if (run) {
       ggplot2::theme_bw() +
       ggplot2::theme(legend.direction = "horizontal",
                      axis.text.x = ggplot2::element_text(angle = 0, vjust = 1, hjust = 0),
-                     strip.background = ggplot2::element_rect(fill = NA)) +
+                     strip.background = ggplot2::element_rect(fill = NA),
+                     plot.margin = ggplot2::margin(b = 10, l = 15, r = 15)) +
       ggplot2::labs(colour = "Forcing model", linetype = "Forcing model",
                     y = "Mean temperature during the hibernation season (\u00B0C)", x = NULL)
 
@@ -486,7 +515,8 @@ if (run) {
       ggplot2::theme_bw() +
       ggplot2::theme(legend.direction = "horizontal",
                      axis.text.x = ggplot2::element_text(angle = 0, vjust = 1, hjust = 0),
-                     strip.background = ggplot2::element_rect(fill = NA)) +
+                     strip.background = ggplot2::element_rect(fill = NA),
+                     plot.margin = ggplot2::margin(b = 10, l = 15, r = 15)) +
       ggplot2::labs(colour = "Forcing model", linetype = "Forcing model", y = "Duration of the hibernation season (days)", x = NULL)
 
  pS11_legend <- cowplot::get_legend(pS11_A)
@@ -496,7 +526,9 @@ if (run) {
                                nrow = 3, labels = c("", "A", "B"),
                                rel_heights = c(0.05, 0.45, 0.45))
  pS11_AB
- ggplot2::ggsave(filename = "figures/figSX.png",
+ ggplot2::ggsave(filename = "figures/EDfig3.png",
+                 width = 18, height = 35, units = "cm")
+ ggplot2::ggsave(filename = "figures/EDfig3.pdf",
                  width = 18, height = 35, units = "cm")
 }
 }
