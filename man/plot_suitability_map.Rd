@@ -9,7 +9,7 @@ plot_suitability_map(
   scenario = "SSP126",
   starsname = "stars_avg",
   varname = "freq_suitability_pct",
-  IUCN_polygon = NULL,
+  polygons = NULL,
   base_size = 9,
   legend_position = "left"
 )
@@ -23,7 +23,7 @@ plot_suitability_map(
 
 \item{varname}{the quoted name of the variable to retain from each stars object (default depends on the function)}
 
-\item{IUCN_polygon}{a sf (MULTI)POLYGON object representing the IUCN distribution of the specoes}
+\item{polygons}{a list of sf (MULTI)POLYGON object representing the distribution of the species}
 
 \item{base_size}{base font size, given in pts}
 

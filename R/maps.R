@@ -36,9 +36,9 @@ plot_fat_map.panel <- function(stars1, stars2, stars3, stars4,
 
   if (is.null(strip_names)) {
     strip_names <- c("<span style='font-size:15pt'> **A** </span> <span> </span> <span> </span> Obs (1901-1930)",
-                                         "<span style='font-size:15pt'> **B** </span> <span> </span> <span> </span> Obs (1989-2018)",
-                                         "<span style='font-size:15pt'> **C** </span> <span> </span> <span> </span> SSP1-2.6 (2070-2099)",
-                                         "<span style='font-size:15pt'> **D** </span> <span> </span> <span> </span> SSP5-8.5 (2070-2099)")
+                     "<span style='font-size:15pt'> **B** </span> <span> </span> <span> </span> Obs (1989-2018)",
+                     "<span style='font-size:15pt'> **C** </span> <span> </span> <span> </span> SSP1-2.6 (2070-2099)",
+                     "<span style='font-size:15pt'> **D** </span> <span> </span> <span> </span> SSP5-8.5 (2070-2099)")
   }
 
   label1 <- paste0("<", round(threshold_mortality*1/3, 1), "gr")
@@ -100,7 +100,7 @@ plot_fat_map.panel <- function(stars1, stars2, stars3, stars4,
 #' # see ?winterR
 #'
 plot_fat_map <- function(stars_object,
-                         IUCN_polygon = NULL,
+                         polygons = NULL,
                          threshold_mortality = 27,
                          base_size = 11) {
 
@@ -130,7 +130,6 @@ plot_fat_map <- function(stars_object,
     stars::geom_stars(data = data_plot, ggplot2::aes(fill = .data$Survive), sf = TRUE) + ## sf mode for degrees in axes
     ggplot2::geom_sf(data = lands_polygons, fill = NA, colour = "lightgrey", size = 0.1) +
     ggplot2::geom_sf(data = oceans_polygons, fill = "white", colour = NA) +
-    {if (!is.null(IUCN_polygon)) ggplot2::geom_sf(data = IUCN_polygon, fill = NA, colour = "darkgreen", linewidth = 1) } +
     ggplot2::coord_sf(expand = FALSE) +
     ggplot2::lims(x = range(stars::st_get_dimension_values(data_plot, "x")),
                   y = range(stars::st_get_dimension_values(data_plot, "y"))) +
@@ -141,7 +140,15 @@ plot_fat_map <- function(stars_object,
     ggplot2::theme_bw(base_size = base_size) +
     ggplot2::theme(legend.key.size = ggplot2::unit(0.5, "cm"), legend.key.width = ggplot2::unit(1.5, "cm"),
                    legend.position = "top", strip.background = ggplot2::element_rect(fill = NA, colour = NA),
-                   strip.text = ggtext::element_markdown(hjust = 0))
+                   strip.text = ggtext::element_markdown(hjust = 0)) -> plot
+
+  if (!is.null(polygons)) {
+    for (i in seq_along(polygons)) {
+      plot <- plot + ggplot2::geom_sf(data = polygons[[i]], fill = NA, colour = "darkgreen", linewidth = 1, linetype = i)
+    }
+  }
+
+  plot
 }
 
 #' Plot maps showing the variation in hibernation suitability budget through Europe
@@ -157,7 +164,7 @@ plot_fat_map <- function(stars_object,
 #' # see ?winterR
 #'
 plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "stars_avg", varname = "freq_suitability_pct",
-                                 IUCN_polygon = NULL,
+                                 polygons = NULL,
                                  base_size = 9, legend_position = "left") {
 
   utils::data("lands_polygons", package = "winteR")
@@ -177,10 +184,9 @@ plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "st
 
   ggplot2::ggplot() +
     stars::geom_stars(mapping = ggplot2::aes(fill = .data[[varname]]), data = stars_obj) +
-    ggplot2::scale_fill_manual(values = grDevices::hcl.colors(n = length(levels(c(stars_obj[[varname]]))), palette = palette), drop = FALSE, na.value = na_value) +
+    ggplot2::scale_fill_manual(values = rev(grDevices::hcl.colors(n = length(levels(c(stars_obj[[varname]]))), palette = palette)), drop = FALSE, na.value = na_value) +
     ggplot2::geom_sf(data = lands_polygons, fill = NA, colour = "grey", size = 0.1) +
     ggplot2::geom_sf(data = oceans_polygons, fill = "white", colour = NA) +
-    {if (!is.null(IUCN_polygon)) ggplot2::geom_sf(data = IUCN_polygon, fill = NA, colour = "darkgreen", linewidth = 1) } +
     ggplot2::lims(x = range(stars::st_get_dimension_values(stars_obj, "x")),
                   y = range(stars::st_get_dimension_values(stars_obj, "y"))) +
     ggplot2::coord_sf(expand = FALSE) +
@@ -191,7 +197,15 @@ plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "st
                    legend.text = ggplot2::element_text(size = base_size*0.5),
                    legend.position = legend_position,
                    strip.background = ggplot2::element_rect(fill = NA, colour = NA),
-                   strip.text = ggtext::element_markdown(hjust = 0))
+                   strip.text = ggtext::element_markdown(hjust = 0)) -> plot
+
+  if (!is.null(polygons)) {
+    for (i in seq_along(polygons)) {
+      plot <- plot + ggplot2::geom_sf(data = polygons[[i]], fill = NA, colour = "darkgreen", linewidth = 1, linetype = i)
+    }
+  }
+
+  plot
 
 }
 

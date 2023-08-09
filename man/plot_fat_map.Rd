@@ -6,7 +6,7 @@
 \usage{
 plot_fat_map(
   stars_object,
-  IUCN_polygon = NULL,
+  polygons = NULL,
   threshold_mortality = 27,
   base_size = 11
 )
@@ -14,7 +14,7 @@ plot_fat_map(
 \arguments{
 \item{stars_object}{a stars object}
 
-\item{IUCN_polygon}{a sf (MULTI)POLYGON object representing the IUCN distribution of the specoes}
+\item{polygons}{a list of sf (MULTI)POLYGON object representing the distribution of the species}
 
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
 
