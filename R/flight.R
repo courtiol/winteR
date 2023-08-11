@@ -61,23 +61,29 @@ compute_flightpower_excess <- function(mass_g = 26.5, output4optim = FALSE) {
 plot_flightpower <- function(base_size = 11) {
 
   print("(this function needs to run for a minute or so... be patient)")
+  print("estimating maximum mass for flight...")
 
-  max_fat_mass <- optimize(compute_flightpower_excess, lower = 0, upper = 100, output4optim = TRUE)$minimum - 26.5 # max fat mass able to fly
+  max_total_mass <- optimize(compute_flightpower_excess, lower = 0, upper = 100, output4optim = TRUE)$minimum # max mass able to fly
+  print(paste("maximum fat mass =", round(max_total_mass - 26.5, 2), "g"))
+  print(paste("maximum total mass =", round(max_total_mass, 2), "g"))
 
-  res_list <- lapply(seq(26.5, 50, by = 0.1), \(m) compute_flightpower_excess(mass_g = m))
+  res_list <- lapply(seq(0, 25, by = 0.1), \(m) compute_flightpower_excess(mass_g = 26.5 + m))
   res_df <- do.call("rbind", res_list)
 
   res_df |>
-    dplyr::select(c("mass_fat", "available_power", "required_power")) |>
-    tidyr::pivot_longer(-"mass_fat") |>
+    dplyr::select(c("mass_total", "available_power", "required_power")) |>
+    dplyr::rename(available = .data$available_power, required = .data$required_power) |>
+    tidyr::pivot_longer(-"mass_total") |>
     ggplot2::ggplot() +
-      ggplot2::aes(x = .data$mass_fat, y = .data$value, colour = .data$name, linetype = .data$name) +
-      ggplot2::geom_line() +
-      ggplot2::geom_vline(xintercept = max_fat_mass, linetype = "dotted", colour = "black") +
-      ggplot2::scale_x_continuous(sec.axis = ggplot2::sec_axis( ~ . + 26.5, name = "Total mass (g)", breaks = c(26.5, seq(20, 100, by = 5))),
-                                  breaks = seq(0, 50, by = 5), minor_breaks = NULL) +
+      ggplot2::aes(x = .data$mass_total, y = .data$value, colour = .data$name, linetype = .data$name) +
+      ggplot2::geom_line(linewidth = 2) +
+      ggplot2::geom_vline(xintercept = max_total_mass, linetype = "dotted", colour = "black", linewidth = 2) +
+      ggplot2::scale_x_continuous(sec.axis = ggplot2::sec_axis( ~ . - 26.5, name = "Fat mass above average (g)",
+                                                                breaks = seq(0, 100, by = 5)),
+                                  breaks = c(26.5, seq(0, 50, by = 5)), minor_breaks = NULL) +
       ggplot2::scale_y_continuous(minor_breaks = NULL, breaks = seq(0, 1, by = 0.1)) +
-      ggplot2::labs(x = "Fat mass (g)", y = "Power (W)", colour = NULL, linetype = NULL) +
+      ggplot2::scale_color_manual(values = c("orange", "blue")) +
+      ggplot2::labs(x = "Total mass (g)", y = "Flight power (W)", colour = NULL, linetype = NULL) +
       ggplot2::theme_bw(base_size = base_size) +
       ggplot2::theme(legend.position = "top")
 }

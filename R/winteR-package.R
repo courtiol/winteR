@@ -482,6 +482,8 @@
 #'
 #'   stars_list <- lapply(list.files(path = "~/collaborations/kseniia/NC/stars_winter",
 #'                                   pattern = "*.rds", full.names = TRUE), readRDS)
+#'   sum(sapply(stars_list, \(star) length(star$Budget_winter))) ## number of time-series
+#'   #21585960
 #'   plot_hibernation_niche(stars_list = stars_list)
 #'   ggplot2::ggsave(filename = "figures/fig6.png",
 #'                   width = 18, height = 16, units = "cm")
@@ -533,5 +535,13 @@
 #'                  width = 18, height = 35, units = "cm")
 #'  ggplot2::ggsave(filename = "figures/EDfig3.pdf",
 #'                  width = 18, height = 35, units = "cm")
+#'
+#' ## Step 12: estimation of maximum mass for flight
+#'  plot_flightpower()
+#'  ggplot2::ggsave(filename = "figures/EDfig4.png",
+#'                  width = 14, height = 14, units = "cm")
+#'  ggplot2::ggsave(filename = "figures/EDfig4.pdf",
+#'                  width = 14, height = 14, units = "cm")
+#'
 #' }
 NULL

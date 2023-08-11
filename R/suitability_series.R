@@ -269,7 +269,8 @@ plot_hibernation_niche <- function(stars_list) {
     dplyr::summarise(n = sum(!is.na(.data$Duration_winter)),
                      Suitability = mean(.data$Survive, na.rm = TRUE),
                      .by = c("Duration_winter_f", "Temp_winter_mean_f")) |>
-    dplyr::mutate(Suitability_f = cut(.data$Suitability, breaks = seq(0, 1, 0.1), include.lowest = TRUE),
+    dplyr::mutate(Suitability_f = cut(.data$Suitability, breaks = c(0, 0.1, 0.5, 0.9, 1), include.lowest = TRUE),
+                  Suitability_f = factor(.data$Suitability_f, levels = rev(levels(.data$Suitability_f))),
                   n_f = dplyr::case_when(.data$n < 11 ~ as.character(.data$n),
                                          .data$n < 100 ~ ">10",
                                          .data$n < 1000 ~ ">100",
@@ -281,7 +282,7 @@ plot_hibernation_niche <- function(stars_list) {
     ggplot2::aes(x = .data$Duration_winter_f, y = .data$Temp_winter_mean_f, fill = .data$Suitability_f) +
     ggplot2::geom_tile() +
     ggplot2::geom_text(ggplot2::aes(label = .data$n_f), colour = "white", size = 2) +
-    ggplot2::scale_fill_viridis_d(option = "H") +
+    ggplot2::scale_fill_viridis_d(option = "H", direction = -1, begin = 0.1, end = 1) +
     ggplot2::theme_bw() +
     ggplot2::labs(x = "Duration of the hibernation season (days)", y = "Mean temperature during the hibernation season (\u00B0C)", fill = "Suitability") +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))

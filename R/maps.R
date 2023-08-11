@@ -130,9 +130,6 @@ plot_fat_map <- function(stars_object,
     stars::geom_stars(data = data_plot, ggplot2::aes(fill = .data$Survive), sf = TRUE) + ## sf mode for degrees in axes
     ggplot2::geom_sf(data = lands_polygons, fill = NA, colour = "lightgrey", size = 0.1) +
     ggplot2::geom_sf(data = oceans_polygons, fill = "white", colour = NA) +
-    ggplot2::coord_sf(expand = FALSE) +
-    ggplot2::lims(x = range(stars::st_get_dimension_values(data_plot, "x")),
-                  y = range(stars::st_get_dimension_values(data_plot, "y"))) +
     ggplot2::scale_fill_manual(values = c(grDevices::rgb(233, 224, 131, maxColorValue = 255), "#EF8D32", "#CC561E", "black"),
                                labels = c(label1_final, label2_final, label3_final, label4_final),
                                drop = FALSE, na.value = "grey") +
@@ -148,7 +145,10 @@ plot_fat_map <- function(stars_object,
     }
   }
 
-  plot
+  plot +
+    ggplot2::coord_sf(expand = FALSE,
+                  xlim = sf::st_bbox(data_plot)[c("xmin", "xmax")],
+                  ylim = sf::st_bbox(data_plot)[c("ymin", "ymax")])
 }
 
 #' Plot maps showing the variation in hibernation suitability budget through Europe
@@ -187,9 +187,6 @@ plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "st
     ggplot2::scale_fill_manual(values = rev(grDevices::hcl.colors(n = length(levels(c(stars_obj[[varname]]))), palette = palette)), drop = FALSE, na.value = na_value) +
     ggplot2::geom_sf(data = lands_polygons, fill = NA, colour = "grey", size = 0.1) +
     ggplot2::geom_sf(data = oceans_polygons, fill = "white", colour = NA) +
-    ggplot2::lims(x = range(stars::st_get_dimension_values(stars_obj, "x")),
-                  y = range(stars::st_get_dimension_values(stars_obj, "y"))) +
-    ggplot2::coord_sf(expand = FALSE) +
     ggplot2::labs(x = NULL, y = NULL, fill = NULL) +
     ggplot2::theme_bw(base_size = base_size) +
     ggplot2::guides(fill = ggplot2::guide_legend(ncol = 1)) +
@@ -205,7 +202,10 @@ plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "st
     }
   }
 
-  plot
+  plot +
+    ggplot2::coord_sf(expand = FALSE,
+                  xlim = sf::st_bbox(stars_obj)[c("xmin", "xmax")],
+                  ylim = sf::st_bbox(stars_obj)[c("ymin", "ymax")])
 
 }
 
