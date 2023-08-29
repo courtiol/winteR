@@ -10,6 +10,7 @@ plot_suitability_map(
   starsname = "stars_avg",
   varname = "freq_suitability_pct",
   polygons = NULL,
+  years_to_combine = 10,
   base_size = 9,
   legend_position = "left"
 )
@@ -24,6 +25,8 @@ plot_suitability_map(
 \item{varname}{the quoted name of the variable to retain from each stars object (default depends on the function)}
 
 \item{polygons}{a list of sf (MULTI)POLYGON object representing the distribution of the species}
+
+\item{years_to_combine}{the number of year to include in so-called decade (default = 10)}
 
 \item{base_size}{base font size, given in pts}
 

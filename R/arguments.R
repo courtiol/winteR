@@ -18,6 +18,7 @@
 #' @param data_suitability a dataframe with at least columns `Year` and `Suitable_winter`
 #' @param data_temp a dataframe with at least columns `Date` and `Temp`, such as those produced by [build_temp_2years()]
 #' @param data_Tskin a file produced by [load_Tskin_datafile()]
+#' @param digits the number of digits used for rounding averaged results using [round()]
 #' @param directory_NCfiles the path to a folder containing subfolders with NC files
 #' @param directory_stars the destination location for the rds files storing the stars object
 #' @param downsample a boolean indicating whether to reduce the resolution or not (default = `FALSE`)
@@ -82,5 +83,6 @@
 #' @param y_title the title for the y axis
 #' @param year  a numeric scalar indicating the year of the winter to consider
 #' @param year_start a numeric scalar indicating the first year of the winter to consider
+#' @param years_to_combine the number of year to include in so-called decade (default = 10)
 #'
 NULL

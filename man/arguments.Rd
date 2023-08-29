@@ -28,6 +28,8 @@
 
 \item{data_Tskin}{a file produced by \code{\link[=load_Tskin_datafile]{load_Tskin_datafile()}}}
 
+\item{digits}{the number of digits used for rounding averaged results using \code{\link[=round]{round()}}}
+
 \item{directory_NCfiles}{the path to a folder containing subfolders with NC files}
 
 \item{directory_stars}{the destination location for the rds files storing the stars object}
@@ -154,6 +156,8 @@
 \item{year}{a numeric scalar indicating the year of the winter to consider}
 
 \item{year_start}{a numeric scalar indicating the first year of the winter to consider}
+
+\item{years_to_combine}{the number of year to include in so-called decade (default = 10)}
 }
 \description{
 Here is the list of most function arguments used in the package.

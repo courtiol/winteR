@@ -2,9 +2,14 @@
 % Please edit documentation in R/suitability_series.R
 \name{recode_year_decade}
 \alias{recode_year_decade}
-\title{Helper function to turn years into decades}
+\title{Helper function to turn years into decades or other time periods}
 \usage{
-recode_year_decade(vec_Year, min_Year = 1901, max_Year = 2099)
+recode_year_decade(
+  vec_Year,
+  min_Year = 1901,
+  max_Year = 2099,
+  years_to_combine = 10
+)
 }
 \arguments{
 \item{vec_Year}{a vector of years}
@@ -12,14 +17,17 @@ recode_year_decade(vec_Year, min_Year = 1901, max_Year = 2099)
 \item{min_Year}{the minimum year (in numeric format) to consider in the factor}
 
 \item{max_Year}{the maximum year (in numeric format) to consider in the factor}
+
+\item{years_to_combine}{the number of year to include in so-called decade (default = 10)}
 }
 \value{
 a vector
 }
 \description{
-Helper function to turn years into decades
+Helper function to turn years into decades or other time periods
 }
 \examples{
 recode_year_decade(c(1909, 1910, 2022, 2099))
+recode_year_decade(c(1909, 1910, 2022, 2099), years_to_combine = 20)
 
 }

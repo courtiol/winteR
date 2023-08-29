@@ -12,7 +12,7 @@ plot_time_trends <- function(winters_stats_df,
                              window_length_smoothing = 10,
                              varname = "Latitude_median_smooth",
                              vartype = c('latitude', 'area'),
-                             y_title = "\n Median latitude of potential hibernation areas",
+                             y_title = "\n Median latitude of potential hibernation area",
                              scenarios = c("OBSCLIM", "SSP126", "SSP585"),
                              .fill_values = c("NA", "blue", "orange"),
                              .color_values = c("black", "blue", "orange"),
@@ -177,12 +177,12 @@ summary_time_trend <- function(winters_stats_df,
                                varname = "Suitable_area_km2_smooth_delta_pct_since1901",
                                OBSCLIM = FALSE,
                                year = ifelse(OBSCLIM, 2018, 2099),
-                               window_length_smoothing = 10) {
+                               window_length_smoothing = 10, digits = 2) {
   tabulate_time_trend(winters_stats_df = winters_stats_df, window_length_smoothing = window_length_smoothing, OBSCLIM = OBSCLIM) |>
     dplyr::filter(.data$Year == year) |>
     dplyr::select("Scenario", "Forcing", varname) |>
     tidyr::pivot_wider(names_from = 2, values_from = 3) |>
     dplyr::rowwise() |>
-    dplyr::mutate(mean = mean(dplyr::c_across(tidyselect::where(is.numeric)))) |>
-    dplyr::mutate(mean_without_ukesm = mean(dplyr::c_across(tidyselect::where(is.numeric) & !tidyselect::contains("ukesm1-0-ll") & !tidyselect::contains("mean"))))
+    dplyr::mutate(mean = round(mean(dplyr::c_across(tidyselect::where(is.numeric))), digits = digits)) |>
+    dplyr::mutate(mean_without_ukesm = round(mean(dplyr::c_across(tidyselect::where(is.numeric) & !tidyselect::contains("ukesm1-0-ll") & !tidyselect::contains("mean"))), digits = digits))
 }

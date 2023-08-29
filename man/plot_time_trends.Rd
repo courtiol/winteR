@@ -9,7 +9,7 @@ plot_time_trends(
   window_length_smoothing = 10,
   varname = "Latitude_median_smooth",
   vartype = c("latitude", "area"),
-  y_title = "\\n Median latitude of potential hibernation areas",
+  y_title = "\\n Median latitude of potential hibernation area",
   scenarios = c("OBSCLIM", "SSP126", "SSP585"),
   .fill_values = c("NA", "blue", "orange"),
   .color_values = c("black", "blue", "orange"),

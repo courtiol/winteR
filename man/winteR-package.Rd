@@ -344,21 +344,37 @@ if (run) {
 
 ## Step 7: plotting the map of the prediction for the current distribution
 
-### Step 7A: preparing IUCN distribution map polygon file
+### Step 7A: preparing IUCN distribution map polygon file (note: no smoothing used here)
 winter_2015_polygon_file <- list.files(system.file("extdata/distribution_range/winter_2015", package = "winteR"),
                                        pattern = "*.shp", full.names = TRUE)
 winter_2015 <- sf::read_sf(winter_2015_polygon_file)
 
-### Step 7B: plotting winter budget over Europe for 2018
+winter_1980_polygon_file <- list.files(system.file("extdata/distribution_range/winter_1980", package = "winteR"),
+                                       pattern = "*.shp", full.names = TRUE)
+winter_1980 <- sf::read_sf(winter_1980_polygon_file)
+
+### Step 7B: plotting winter budget over Europe for 1979 and 2014
 if (run) {
- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
+ pS7_A <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
    dplyr::select(Budget_winter) |>
-   dplyr::filter(year == 2018) |>
-   plot_fat_map(polygons = list(winter_2015))
+   dplyr::filter(year == 1979) |>
+   plot_fat_map(polygons = list(winter_1980), base_size = 9)
+ pS7_B <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
+   dplyr::select(Budget_winter) |>
+   dplyr::filter(year == 2014) |>
+   plot_fat_map(polygons = list(winter_2015), base_size = 9)
+ pS7_legend <- cowplot::get_legend(pS7_A)
+ pS7_AB <- cowplot::plot_grid(pS7_legend,
+                              pS7_A + ggplot2::theme(legend.position="none"),
+                              pS7_B + ggplot2::theme(legend.position="none"),
+                              nrow = 1, labels = c("", "A. Winter 1979-1980", "B. Winter 2014-2015"),
+                              rel_widths = c(0.1, 0.45, 0.45))
+ pS7_AB
+
  ggplot2::ggsave(filename = "figures/fig3.png",
-                 width = 14, height = 14, units = "cm")
+                 width = 18, height = 9, units = "cm")
  ggplot2::ggsave(filename = "figures/fig3.pdf",
-                 width = 14, height = 14, units = "cm")
+                 width = 18, height = 9, units = "cm")
 }
 
 ### Step 7C: extracting info about stars characteristics
@@ -400,7 +416,7 @@ if (run) {
  summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since2018")
 
  summary_time_trend(winters_stats, varname = "Temp_winter_mean_smooth_delta_since1901", OBSCLIM = TRUE)
- summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since1901", OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since1901", OBSCLIM = TRUE, digits = 0)
  summary_time_trend(winters_stats, varname = "Temp_winter_mean_smooth_delta_since2018")
  summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since2018")
 
@@ -416,10 +432,10 @@ if (run) {
                            y_title = "Potential hibernation area\n (x 1,000,000 km²)")
   pS8_B <- plot_time_trends(winters_stats)
   pS8_C <- plot_time_trends(winters_stats, varname = "Latitude_min_smooth",
-                            y_title = "\n Minimal latitude of potential hibernation areas",
+                            y_title = "\n Minimal latitude of potential hibernation area",
                             y_max = 33.25)
   pS8_D <- plot_time_trends(winters_stats, varname = "Latitude_max_smooth",
-                            y_title = "\n Maximal latitude of potential hibernation areas",
+                            y_title = "\n Maximal latitude of potential hibernation area",
                             y_max = 73)
   pS8_ABCD <- cowplot::plot_grid(pS8_A, pS8_B, pS8_C, pS8_D,
                                  nrow = 2, labels = c("A", "B", "C", "D"))
@@ -442,24 +458,28 @@ if (run) {
                                 starsname = "stars_with_OBSCLIM_avg",
                                 varname = "decade_establishment",
                                 polygons = list(winter_2015),
-                                base_size = 9, legend_position = "left")
+                                years_to_combine = 20,
+                                base_size = 9, legend_position = "left") + ggplot2::labs(fill = "Decade of\n possible\n establishment")
   pS9_B <- plot_suitability_map(stars_tbl = stars_suitability,
                                 scenario = "SSP585",
                                 starsname = "stars_with_OBSCLIM_avg",
                                 varname = "decade_establishment",
                                 polygons = list(winter_2015),
+                                years_to_combine = 20,
                                 base_size = 9, legend_position = "none")
   pS9_C <- plot_suitability_map(stars_tbl = stars_suitability,
                                 scenario = "SSP126",
                                 starsname = "stars_avg",
                                 varname = "freq_suitability_pct",
                                 polygons = list(winter_2015),
-                                base_size = 9)
+                                years_to_combine = 20,
+                                base_size = 9) + ggplot2::labs(fill = "Proportion of\n suitable\n winters")
   pS9_D <- plot_suitability_map(stars_tbl = stars_suitability,
                                 scenario = "SSP585",
                                 starsname = "stars_avg",
                                 varname = "freq_suitability_pct",
                                 polygons = list(winter_2015),
+                                years_to_combine = 20,
                                 base_size = 9, legend_position = "none")
   pS9_legend1 <- cowplot::get_legend(pS9_A)
   pS9_legend2 <- cowplot::get_legend(pS9_C)
@@ -467,13 +487,14 @@ if (run) {
                                  pS9_A + ggplot2::theme(legend.position="none"), pS9_B,
                                  pS9_legend2,
                                  pS9_C + ggplot2::theme(legend.position="none"), pS9_D,
-                                 nrow = 2, labels = c("", "A", "B", "", "C", "D"),
-                                 rel_widths = c(0.15, 0.425, 0.425))
+                                 nrow = 2, labels = c("", "A. OBSCLIM + SSP1-2.6", "B. OBSCLIM + SSP5-8.5",
+                                                      "", "C. OBSCLIM + SSP1-2.6", "D. OBSCLIM + SSP5-8.5"),
+                                 rel_widths = c(0.15, 0.425, 0.425), hjust = -0.25)
   pS9_ABCD
     ggplot2::ggsave(filename = "figures/fig5.png",
-                    width = 18, height = 16, units = "cm")
+                    width = 18, height = 17, units = "cm")
     ggplot2::ggsave(filename = "figures/fig5.pdf",
-                    width = 18, height = 16, units = "cm")
+                    width = 18, height = 17, units = "cm")
 
 ## Step 10: plot the hibernation niche
 
@@ -533,12 +554,18 @@ if (run) {
  ggplot2::ggsave(filename = "figures/EDfig3.pdf",
                  width = 18, height = 35, units = "cm")
 
+ tabulate_time_trend(winters_stats) |>
+    dplyr::filter(Scenario == "SSP585", Year == 2099) |>
+    dplyr::select(c("Forcing", "Temp_winter_mean_smooth_delta_since2018", "Duration_winter_smooth_delta_since2018")) |>
+    dplyr::summarise(mean_duration = mean(.data$Duration_winter_smooth_delta_since2018),
+                     mean_temp = mean(.data$Temp_winter_mean_smooth_delta_since2018))
+
 ## Step 12: estimation of maximum mass for flight
  plot_flightpower()
  ggplot2::ggsave(filename = "figures/EDfig4.png",
-                 width = 14, height = 14, units = "cm")
+                 width = 18, height = 14, units = "cm")
  ggplot2::ggsave(filename = "figures/EDfig4.pdf",
-                 width = 14, height = 14, units = "cm")
+                 width = 18, height = 14, units = "cm")
 
 }
 }

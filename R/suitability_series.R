@@ -109,7 +109,7 @@ add_suitability_stars <- function(stars_object, min_years_trigger_suitability = 
 }
 
 
-#' Helper function to turn years into decades
+#' Helper function to turn years into decades or other time periods
 #'
 #' @inheritParams arguments
 #'
@@ -118,19 +118,21 @@ add_suitability_stars <- function(stars_object, min_years_trigger_suitability = 
 #'
 #' @examples
 #' recode_year_decade(c(1909, 1910, 2022, 2099))
+#' recode_year_decade(c(1909, 1910, 2022, 2099), years_to_combine = 20)
 #'
-recode_year_decade <- function(vec_Year, min_Year = 1901, max_Year = 2099) {
-  decades <- 10*floor(vec_Year/10)
-  min_decade <- 10*floor(min_Year/10)
-  max_decade <- 10*floor(max_Year/10)
-  start_possible_decades <- as.character(seq(min_decade, max_decade, by = 10))
-  end_possible_decades <- as.character(seq(min_decade + 9, max_decade + 9, by = 10))
+recode_year_decade <- function(vec_Year, min_Year = 1901, max_Year = 2099, years_to_combine = 10) {
+  decades <- years_to_combine*floor(vec_Year/years_to_combine)
+  min_decade <- years_to_combine*floor(min_Year/years_to_combine)
+  max_decade <- years_to_combine*floor(max_Year/years_to_combine)
+  start_possible_decades <- as.character(seq(min_decade, max_decade, by = years_to_combine))
+  end_possible_decades <- as.character(seq(min_decade + years_to_combine - 1, max_decade + years_to_combine - 1, by = years_to_combine))
   possible_decades <- paste0(start_possible_decades, "-", end_possible_decades)
-  possible_decades[1] <- paste0("<", min_decade + 10)
-  decades <- dplyr::case_when(decades == min_decade ~ paste0("<", decades + 10),
-                              decades > min_decade ~ paste0(as.character(decades), "-", as.character(decades + 9)))
+  possible_decades[1] <- paste0("<", min_decade + years_to_combine)
+  decades <- dplyr::case_when(decades == min_decade ~ paste0("<", decades + years_to_combine),
+                              decades > min_decade ~ paste0(as.character(decades), "-", as.character(decades + years_to_combine - 1)))
   factor(decades, levels = rev(possible_decades))
 }
+
 
 
 #' Helper function to turn proportion into categories of percentages

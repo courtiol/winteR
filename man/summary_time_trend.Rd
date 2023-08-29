@@ -9,7 +9,8 @@ summary_time_trend(
   varname = "Suitable_area_km2_smooth_delta_pct_since1901",
   OBSCLIM = FALSE,
   year = ifelse(OBSCLIM, 2018, 2099),
-  window_length_smoothing = 10
+  window_length_smoothing = 10,
+  digits = 2
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ summary_time_trend(
 \item{year}{a numeric scalar indicating the year of the winter to consider}
 
 \item{window_length_smoothing}{the width of the window used for smoothing via \code{\link[caTools:runmean]{caTools::runmean()}}}
+
+\item{digits}{the number of digits used for rounding averaged results using \code{\link[=round]{round()}}}
 }
 \value{
 a ggplot2 object

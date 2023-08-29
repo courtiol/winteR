@@ -133,15 +133,16 @@ plot_fat_map <- function(stars_object,
     ggplot2::scale_fill_manual(values = c(grDevices::rgb(233, 224, 131, maxColorValue = 255), "#EF8D32", "#CC561E", "black"),
                                labels = c(label1_final, label2_final, label3_final, label4_final),
                                drop = FALSE, na.value = "grey") +
-    ggplot2::labs(x = "", y = "", fill = "") +
+    ggplot2::labs(x = "", y = "", fill = "Budget") +
     ggplot2::theme_bw(base_size = base_size) +
-    ggplot2::theme(legend.key.size = ggplot2::unit(0.5, "cm"), legend.key.width = ggplot2::unit(1.5, "cm"),
-                   legend.position = "top", strip.background = ggplot2::element_rect(fill = NA, colour = NA),
+    ggplot2::theme(#legend.key.size = ggplot2::unit(0.5, "cm"), legend.key.width = ggplot2::unit(1.5, "cm"),
+                   legend.text.align = 1,
+                   legend.position = "left", strip.background = ggplot2::element_rect(fill = NA, colour = NA),
                    strip.text = ggtext::element_markdown(hjust = 0)) -> plot
 
   if (!is.null(polygons)) {
     for (i in seq_along(polygons)) {
-      plot <- plot + ggplot2::geom_sf(data = polygons[[i]], fill = NA, colour = "darkgreen", linewidth = 1, linetype = i)
+      plot <- plot + ggplot2::geom_sf(data = polygons[[i]], fill = NA, colour = "darkgreen", linewidth = 0.5, linetype = i)
     }
   }
 
@@ -164,7 +165,7 @@ plot_fat_map <- function(stars_object,
 #' # see ?winterR
 #'
 plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "stars_avg", varname = "freq_suitability_pct",
-                                 polygons = NULL,
+                                 polygons = NULL, years_to_combine = 10,
                                  base_size = 9, legend_position = "left") {
 
   utils::data("lands_polygons", package = "winteR")
@@ -175,16 +176,18 @@ plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "st
    dplyr::pull(.data[[starsname]]) -> stars_object_list
 
   stars_object_list[[1]][lands_polygons, crop = FALSE] |>
-   dplyr::mutate(decade_establishment = recode_year_decade(.data$year_establishment),
-                 decade_disappearance = recode_year_decade(.data$year_disappearance),
+   dplyr::mutate(decade_establishment = recode_year_decade(.data$year_establishment, years_to_combine = years_to_combine),
+                 decade_disappearance = recode_year_decade(.data$year_disappearance, years_to_combine = years_to_combine),
                  freq_suitability_pct = recode_freq_pct(.data$freq_suitability)) -> stars_obj
 
-  palette <- ifelse(varname == "freq_suitability_pct", "Inferno", "Plasma") # see https://blog.r-project.org/2019/04/01/hcl-based-color-palettes-in-grdevices/ for palette choices
+  # palette <- ifelse(varname == "freq_suitability_pct", "Inferno", "Plasma") # see https://blog.r-project.org/2019/04/01/hcl-based-color-palettes-in-grdevices/ for palette choices
+  reverse_or_not <- ifelse(varname == "freq_suitability_pct", identity, rev)
+  palette <- "Plasma"
   na_value <- "lightgrey"
 
   ggplot2::ggplot() +
     stars::geom_stars(mapping = ggplot2::aes(fill = .data[[varname]]), data = stars_obj) +
-    ggplot2::scale_fill_manual(values = rev(grDevices::hcl.colors(n = length(levels(c(stars_obj[[varname]]))), palette = palette)), drop = FALSE, na.value = na_value) +
+    ggplot2::scale_fill_manual(values = reverse_or_not(grDevices::hcl.colors(n = length(levels(c(stars_obj[[varname]]))), palette = palette)), drop = FALSE, na.value = na_value) +
     ggplot2::geom_sf(data = lands_polygons, fill = NA, colour = "grey", size = 0.1) +
     ggplot2::geom_sf(data = oceans_polygons, fill = "white", colour = NA) +
     ggplot2::labs(x = NULL, y = NULL, fill = NULL) +
@@ -198,7 +201,7 @@ plot_suitability_map <- function(stars_tbl, scenario = "SSP126", starsname = "st
 
   if (!is.null(polygons)) {
     for (i in seq_along(polygons)) {
-      plot <- plot + ggplot2::geom_sf(data = polygons[[i]], fill = NA, colour = "darkgreen", linewidth = 1, linetype = i)
+      plot <- plot + ggplot2::geom_sf(data = polygons[[i]], fill = NA, colour = "darkgreen", linewidth = 0.5, linetype = i)
     }
   }
 

@@ -83,7 +83,7 @@ plot_flightpower <- function(base_size = 11) {
                                   breaks = c(26.5, seq(0, 50, by = 5)), minor_breaks = NULL) +
       ggplot2::scale_y_continuous(minor_breaks = NULL, breaks = seq(0, 1, by = 0.1)) +
       ggplot2::scale_color_manual(values = c("orange", "blue")) +
-      ggplot2::labs(x = "Total mass (g)", y = "Flight power (W)", colour = NULL, linetype = NULL) +
+      ggplot2::labs(x = "Total mass (g)", y = "Flight power (W)", colour = "", linetype = "") +
       ggplot2::theme_bw(base_size = base_size) +
-      ggplot2::theme(legend.position = "top")
+      ggplot2::theme(legend.position = "right", legend.key.size = ggplot2::unit(1, "cm"))
 }
