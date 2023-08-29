@@ -23,7 +23,8 @@ If the \code{output4optim} parameter is set to \code{TRUE}, the function report 
 compute_flightpower_excess() # avg noctule can fly
 compute_flightpower_excess(50) # 50 g noctule cannot
 \dontrun{
-optimize(compute_flightpower_excess, lower = 0, upper = 100, output4optim = TRUE)$minimum # max mass able to fly
+optimize(compute_flightpower_excess, lower = 0, upper = 100,
+         output4optim = TRUE)$minimum # max mass able to fly
 }
 
 }

@@ -13,7 +13,8 @@
 #' compute_flightpower_excess() # avg noctule can fly
 #' compute_flightpower_excess(50) # 50 g noctule cannot
 #' \dontrun{
-#' optimize(compute_flightpower_excess, lower = 0, upper = 100, output4optim = TRUE)$minimum # max mass able to fly
+#' optimize(compute_flightpower_excess, lower = 0, upper = 100,
+#'          output4optim = TRUE)$minimum # max mass able to fly
 #' }
 #'
 compute_flightpower_excess <- function(mass_g = 26.5, output4optim = FALSE) {
@@ -63,7 +64,7 @@ plot_flightpower <- function(base_size = 11) {
   print("(this function needs to run for a minute or so... be patient)")
   print("estimating maximum mass for flight...")
 
-  max_total_mass <- optimize(compute_flightpower_excess, lower = 0, upper = 100, output4optim = TRUE)$minimum # max mass able to fly
+  max_total_mass <- stats::optimize(compute_flightpower_excess, lower = 0, upper = 100, output4optim = TRUE)$minimum # max mass able to fly
   print(paste("maximum fat mass =", round(max_total_mass - 26.5, 2), "g"))
   print(paste("maximum total mass =", round(max_total_mass, 2), "g"))
 

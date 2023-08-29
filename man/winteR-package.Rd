@@ -264,7 +264,8 @@ signif(budget_minus5degrees[, c("Budget_fat")], digit = 3)
 # 0.888
 
 ### Step 3E: daily fat consumption with insulation + huddling effect
-signif(compute_budget_df(data.frame(Temp = -5), fit_state = fit_normo_cauchit, fit_MR = fit_torpor)[, "Budget_fat"], 3)
+signif(compute_budget_df(data.frame(Temp = -5),
+                         fit_state = fit_normo_cauchit, fit_MR = fit_torpor)[, "Budget_fat"], 3)
 
 ## Step 4: illustration of winter and budget for Kharkiv
 
@@ -331,7 +332,8 @@ if (run) {
     stars_winter <- compute_budget_stars(stars_to_do,
                                          fit_state = fit_normo_cauchit,
                                          fit_MR = fit_torpor, nb_cores = 30)
-    if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years and future predictions
+    if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
+                                                  ## and future predictions
       stars_winter |>
         dplyr::filter(year > 2018) -> stars_winter
     }
@@ -345,11 +347,13 @@ if (run) {
 ## Step 7: plotting the map of the prediction for the current distribution
 
 ### Step 7A: preparing IUCN distribution map polygon file (note: no smoothing used here)
-winter_2015_polygon_file <- list.files(system.file("extdata/distribution_range/winter_2015", package = "winteR"),
+winter_2015_polygon_file <- list.files(system.file("extdata/distribution_range/winter_2015",
+                                                   package = "winteR"),
                                        pattern = "*.shp", full.names = TRUE)
 winter_2015 <- sf::read_sf(winter_2015_polygon_file)
 
-winter_1980_polygon_file <- list.files(system.file("extdata/distribution_range/winter_1980", package = "winteR"),
+winter_1980_polygon_file <- list.files(system.file("extdata/distribution_range/winter_1980",
+                                                   package = "winteR"),
                                        pattern = "*.shp", full.names = TRUE)
 winter_1980 <- sf::read_sf(winter_1980_polygon_file)
 
@@ -367,7 +371,8 @@ if (run) {
  pS7_AB <- cowplot::plot_grid(pS7_legend,
                               pS7_A + ggplot2::theme(legend.position="none"),
                               pS7_B + ggplot2::theme(legend.position="none"),
-                              nrow = 1, labels = c("", "A. Winter 1979-1980", "B. Winter 2014-2015"),
+                              nrow = 1, labels = c("", "A. Winter 1979-1980",
+                                                   "B. Winter 2014-2015"),
                               rel_widths = c(0.1, 0.45, 0.45))
  pS7_AB
 
@@ -405,18 +410,24 @@ if (run) {
  summary_time_trend(winters_stats, varname = "Latitude_min_smooth_move_since1901")
  summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since1901")
 
- summary_time_trend(winters_stats, varname = "Suitable_area_km2_smooth_delta_pct_since1901", OBSCLIM = TRUE)
- summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since1901", OBSCLIM = TRUE)
- summary_time_trend(winters_stats, varname = "Latitude_min_smooth_move_since1901", OBSCLIM = TRUE)
- summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since1901", OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Suitable_area_km2_smooth_delta_pct_since1901",
+                    OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since1901",
+                    OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Latitude_min_smooth_move_since1901",
+                    OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since1901",
+                    OBSCLIM = TRUE)
 
  summary_time_trend(winters_stats, varname = "Suitable_area_km2_smooth_delta_pct_since2018")
  summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since2018")
  summary_time_trend(winters_stats, varname = "Latitude_min_smooth_move_since2018")
  summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since2018")
 
- summary_time_trend(winters_stats, varname = "Temp_winter_mean_smooth_delta_since1901", OBSCLIM = TRUE)
- summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since1901", OBSCLIM = TRUE, digits = 0)
+ summary_time_trend(winters_stats, varname = "Temp_winter_mean_smooth_delta_since1901",
+                    OBSCLIM = TRUE)
+ summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since1901",
+                    OBSCLIM = TRUE, digits = 0)
  summary_time_trend(winters_stats, varname = "Temp_winter_mean_smooth_delta_since2018")
  summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since2018")
 
@@ -459,7 +470,8 @@ if (run) {
                                 varname = "decade_establishment",
                                 polygons = list(winter_2015),
                                 years_to_combine = 20,
-                                base_size = 9, legend_position = "left") + ggplot2::labs(fill = "Decade of\n possible\n establishment")
+                                base_size = 9, legend_position = "left") +
+           ggplot2::labs(fill = "Decade of\n possible\n establishment")
   pS9_B <- plot_suitability_map(stars_tbl = stars_suitability,
                                 scenario = "SSP585",
                                 starsname = "stars_with_OBSCLIM_avg",
@@ -473,7 +485,8 @@ if (run) {
                                 varname = "freq_suitability_pct",
                                 polygons = list(winter_2015),
                                 years_to_combine = 20,
-                                base_size = 9) + ggplot2::labs(fill = "Proportion of\n suitable\n winters")
+                                base_size = 9) +
+           ggplot2::labs(fill = "Proportion of\n suitable\n winters")
   pS9_D <- plot_suitability_map(stars_tbl = stars_suitability,
                                 scenario = "SSP585",
                                 starsname = "stars_avg",
@@ -487,9 +500,11 @@ if (run) {
                                  pS9_A + ggplot2::theme(legend.position="none"), pS9_B,
                                  pS9_legend2,
                                  pS9_C + ggplot2::theme(legend.position="none"), pS9_D,
-                                 nrow = 2, labels = c("", "A. OBSCLIM + SSP1-2.6", "B. OBSCLIM + SSP5-8.5",
-                                                      "", "C. OBSCLIM + SSP1-2.6", "D. OBSCLIM + SSP5-8.5"),
-                                 rel_widths = c(0.15, 0.425, 0.425), hjust = -0.25)
+                                 nrow = 2, labels = c("", "A. GSWP3-W5E5 + SSP1-2.6",
+                                                      "B. GSWP3-W5E5 + SSP5-8.5",
+                                                      "", "C. GSWP3-W5E5 + SSP1-2.6",
+                                                      "D. GSWP3-W5E5 + SSP5-8.5"),
+                                 rel_widths = c(0.15, 0.425, 0.425), hjust = -0.15)
   pS9_ABCD
     ggplot2::ggsave(filename = "figures/fig5.png",
                     width = 18, height = 17, units = "cm")
@@ -513,7 +528,8 @@ if (run) {
  pS11_A <- tabulate_time_trend(winters_stats) |>
     dplyr::filter(Scenario != "OBSCLIM") |>
     ggplot2::ggplot() +
-      ggplot2::aes(y = .data$Temp_winter_mean_smooth, x = .data$Year, linetype = .data$Forcing, colour = .data$Forcing) +
+      ggplot2::aes(y = .data$Temp_winter_mean_smooth, x = .data$Year, linetype = .data$Forcing,
+                   colour = .data$Forcing) +
       ggplot2::geom_line() +
       ggplot2::facet_wrap(~ Scenario) +
       ggplot2::scale_y_continuous(minor_break = NULL, limits = c(-3, 3), breaks = -3:3) +
@@ -529,7 +545,8 @@ if (run) {
   pS11_B <- tabulate_time_trend(winters_stats) |>
     dplyr::filter(Scenario != "OBSCLIM") |>
     ggplot2::ggplot() +
-      ggplot2::aes(y = .data$Duration_winter_smooth, x = Year, linetype = .data$Forcing, colour = .data$Forcing) +
+      ggplot2::aes(y = .data$Duration_winter_smooth, x = Year, linetype = .data$Forcing,
+                   colour = .data$Forcing) +
       ggplot2::geom_line() +
       ggplot2::facet_wrap(~ Scenario) +
       ggplot2::scale_y_continuous(minor_break = NULL) +
@@ -540,7 +557,8 @@ if (run) {
                      axis.text.x = ggplot2::element_text(angle = 0, vjust = 1, hjust = 0),
                      strip.background = ggplot2::element_rect(fill = NA),
                      plot.margin = ggplot2::margin(b = 10, l = 15, r = 15)) +
-      ggplot2::labs(colour = "Forcing model", linetype = "Forcing model", y = "Duration of the hibernation season (days)", x = NULL)
+      ggplot2::labs(colour = "Forcing model", linetype = "Forcing model",
+                    y = "Duration of the hibernation season (days)", x = NULL)
 
  pS11_legend <- cowplot::get_legend(pS11_A)
  pS11_AB <- cowplot::plot_grid(pS11_legend,
@@ -556,7 +574,8 @@ if (run) {
 
  tabulate_time_trend(winters_stats) |>
     dplyr::filter(Scenario == "SSP585", Year == 2099) |>
-    dplyr::select(c("Forcing", "Temp_winter_mean_smooth_delta_since2018", "Duration_winter_smooth_delta_since2018")) |>
+    dplyr::select(c("Forcing", "Temp_winter_mean_smooth_delta_since2018",
+                    "Duration_winter_smooth_delta_since2018")) |>
     dplyr::summarise(mean_duration = mean(.data$Duration_winter_smooth_delta_since2018),
                      mean_temp = mean(.data$Temp_winter_mean_smooth_delta_since2018))
 
