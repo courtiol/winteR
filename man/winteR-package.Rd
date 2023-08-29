@@ -4,9 +4,10 @@
 \name{winteR-package}
 \alias{winteR-package}
 \alias{winteR}
-\title{ADD TITLE PAPER HERE}
+\title{Shorter and warmer winters constrain the energetics and distribution of hibernating animals}
 \description{
-The goal of winteR is to reproduce the results from the paper entitled "XXX" by Kravchenko et al.
+The goal of winteR is to reproduce the results from the paper entitled "Shorter and warmer
+winters constrain the energetics and distribution of hibernating animals" by Kravchenko et al.
 }
 \details{
 For reproducing the results of our paper, just follow the code presented in the section

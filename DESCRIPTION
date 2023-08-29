@@ -1,11 +1,14 @@
 Package: winteR
-Title: Predict Hibernation Range of Common Noctules
+Title: Predict Energetics and Geographic Distribution of Hibernating Animals
 Version: 0.0.0.9000
 Authors@R: 
     c(person("Alexandre", "Courtiol", email = "courtiol@izw-berlin.de",
              role = c("aut", "cre"), comment = c(ORCID = "0000-0003-0637-2959")),
       person("Kseniia", "Kravchenko", email = "shusha.kravcheneo@gmail.com",
-             role = c("aut"), comment = c(ORCID = "0000-0003-0637-2959")))
+             role = c("aut"), comment = c(ORCID = "0000-0003-0637-2959")),
+      person("Shannon", "Currie", email = "shannon.e.currie@gmail.com",
+             role = c("aut"), comment = c(ORCID = "0000-0001-5956-0481")),
+      )
 Description: This package produces the results of the paper Kravchenko et al. XXX.
 License: CC BY 4.0
 Encoding: UTF-8
