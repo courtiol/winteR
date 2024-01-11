@@ -201,7 +201,7 @@ fit_torpor
 #
 # $ppo
 #   name  ppo
-# 1   Mr 17.0
+# 1   Mr 17.0 ## note: these numbers can change upon reruning the code, this is expected.
 # 2  TMR  9.1
 
 ### Step 2C: extract useful information from the fit
@@ -215,6 +215,7 @@ summarise_MR_fit(fit_torpor)
 
 ### Step 2D: extract statistics for main text
 Tt <- summarise_MR_fit(fit_torpor)$median[summarise_MR_fit(fit_torpor)$parameter == "Tt"]
+# 4.397
 MR_at_Tt <- torpor::tor_predict(fit_torpor, Ta = Tt)$pred
 round(100*MR_at_Tt[1] / MR_at_Tt[2], digits = 2) # MR in torpor is 1.29 \% of MR in normothermy
 
@@ -242,31 +243,38 @@ if (run){
 ## Step 3: example of budget requirements at -5 degrees in roost
 
 budget_minus5degrees <- compute_budget_df(data.frame(Temp = -5),
-                               roost_insulation_dTa = 0, # note remove insulation
-                               fit_state = fit_normo_cauchit,
-                               fit_MR = fit_torpor, huddling_factor = 1) # note remove huddling
+                                          roost_insulation_dTa = 0, # note remove insulation
+                                          fit_state = fit_normo_cauchit,
+                                          fit_MR = fit_torpor, huddling_factor = 1) # note remove huddling
 
 ### Step 3A: time spent in each physiological state
 round(budget_minus5degrees[, c("Daily_duration_normo", "Daily_duration_torpor")], digit = 2)
 #   Daily_duration_normo Daily_duration_torpor
-# 1                 0.25                 23.75
+# 1                 0.86                 23.14
 
 ### Step 3B: metabolic rate in each physiological state
 signif(budget_minus5degrees[, c("MR_normo", "MR_torpor")], digit = 3)
 #   MR_normo   MR_torpor
 # 1     5.71      1.35
 
-### Step 3C: daily metabolic rate
+### Step 3C: daily metabolic rate per state
+signif(budget_minus5degrees[, c("Budget_MR_normo", "Budget_MR_torpor")], digit = 3)
+#   Budget_MR_normo Budget_MR_torpor
+# 1             4.9             31.2
+
+### Step 3D: daily metabolic rate
 signif(budget_minus5degrees[, c("Budget_MR")], digit = 3)
-# 33.5
+# 36.1
 
-### Step 3D: daily fat consumption
+### Step 3E: daily fat consumption
 signif(budget_minus5degrees[, c("Budget_fat")], digit = 3)
-# 0.888
+# 0.958
 
-### Step 3E: daily fat consumption with insulation + huddling effect
+### Step 3F: daily fat consumption with insulation + huddling effect
 signif(compute_budget_df(data.frame(Temp = -5),
                          fit_state = fit_normo_cauchit, fit_MR = fit_torpor)[, "Budget_fat"], 3)
+# 0.237
+
 
 ## Step 4: illustration of winter and budget for Kharkiv
 
@@ -281,8 +289,9 @@ data_nrg <- compute_budget_df(data_Kharkiv, fit_state = fit_normo_cauchit, fit_M
 
 ### Step 3C: plotting temperature and budget
 pS4_B <- plot_budget_panel(data_nrg, y = "g_fat_per_state", base_size = 9)
-pS4_C <- plot_budget_panel(data_nrg, y = "g_fat_per_day", base_size = 9, y_max = 1)
+pS4_C <- plot_budget_panel(data_nrg, y = "g_fat_per_day", base_size = 9, y_max = 2.5)
 pS4_D <- plot_budget_panel(data_nrg, y = "g_fat_per_winter", base_size = 9)
+# "death date = 2012-02-07"
 pS4_ABCD <- cowplot::plot_grid(pS4_A, NULL, pS4_B, pS4_C, NULL, pS4_D,
                                nrow = 2,
                                labels = c("A", "", "B", "C", "", "D"),
@@ -387,13 +396,43 @@ if (run) {
 stars_example <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
 ## coordinates
 range(sf::st_coordinates(stars_example)$y) # range of latitude of center of cells
+# [1] 27.25 71.75
+
 range(sf::st_coordinates(stars_example)$x) # range of longitude of center of cells
+# [1] -12.75  55.75
+
 ## CRS, projection
 sf::st_crs(stars_example, type = "proj")
+# Coordinate Reference System:
+#   User input: +proj=longlat +datum=WGS84 +no_defs
+#   wkt:
+# GEOGCRS["unknown",
+#     DATUM["World Geodetic System 1984",
+#         ELLIPSOID["WGS 84",6378137,298.257223563,
+#             LENGTHUNIT["metre",1]],
+#         ID["EPSG",6326]],
+#     PRIMEM["Greenwich",0,
+#         ANGLEUNIT["degree",0.0174532925199433],
+#         ID["EPSG",8901]],
+#     CS[ellipsoidal,2],
+#         AXIS["longitude",east,
+#             ORDER[1],
+#             ANGLEUNIT["degree",0.0174532925199433,
+#                 ID["EPSG",9122]]],
+#         AXIS["latitude",north,
+#             ORDER[2],
+#             ANGLEUNIT["degree",0.0174532925199433,
+#                 ID["EPSG",9122]]]]
+
 ## area
 mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
+# 1956.294 [km^2]
+
 sqrt(mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2)))
+# 44.23001 [km]
+
 sd(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
+# 526.7266
 
 ## Step 8: predicting shift in hibernation niche
 
@@ -407,36 +446,165 @@ if (run) {
 ## Step 9: computing change in potential hibernation area
 
  summary_time_trend(winters_stats, varname = "Suitable_area_km2_smooth_delta_pct_since1901")
+ # A tibble: 4 × 8
+ # Rowwise:
+ #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`  mean mean_without_ukesm
+ #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl> <dbl>              <dbl>
+ # 1 SSP126          9.41           18.9            10.7         3.01          20.4  12.5               10.5
+ # 2 SSP245         15.1            29.2            12.3         9.97          40.8  21.5               16.7
+ # 3 SSP370         18.8            22.7            15.5        14.4           21.5  18.6               17.8
+ # 4 SSP585         20.0            26.0            26.9        12.3           10.5  19.2               21.3
+
  summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since1901")
+ # A tibble: 4 × 8
+ # Rowwise:
+ #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`  mean mean_without_ukesm
+ #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl> <dbl>              <dbl>
+ # 1 SSP126          237.           482.            271.         193.          504.  337.               296.
+ # 2 SSP245          437.           571.            315.         382.          860.  513.               426.
+ # 3 SSP370          593.           938.            604.         482.         1338.  791.               654.
+ # 4 SSP585          804.          1249.            849.         582.         1471.  991.               871.
+
  summary_time_trend(winters_stats, varname = "Latitude_min_smooth_move_since1901")
+ # A tibble: 4 × 8
+ # Rowwise:
+ #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`  mean mean_without_ukesm
+ #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl> <dbl>              <dbl>
+ # 1 SSP126          61.2           106.            83.4         83.4          117.  90.1               83.4
+ # 2 SSP245         128.            128.            72.3        128.           228. 137.               114.
+ # 3 SSP370         239.            261.           206.         161.           328. 239.               217.
+ # 4 SSP585         261.            395.           261.         306.           384. 321.               306.
+
  summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since1901")
+ # A tibble: 4 × 8
+ # Rowwise:
+ #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`  mean mean_without_ukesm
+ #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl> <dbl>              <dbl>
+ # 1 SSP126           0             22.2             0            0            89.0  22.2               5.56
+ # 2 SSP245          22.2           77.8            66.7         66.7         367.  120.               58.4
+ # 3 SSP370         145.           167.            211.          77.8         389.  198.              150.
+ # 4 SSP585         200.           256.            289.         189.          389.  265.              234.
 
  summary_time_trend(winters_stats, varname = "Suitable_area_km2_smooth_delta_pct_since1901",
                     OBSCLIM = TRUE)
+ # A tibble: 1 × 4
+ # Rowwise:
+ #   Scenario `gswp3-w5e5`  mean mean_without_ukesm
+ #   <chr>           <dbl> <dbl>              <dbl>
+ # 1 OBSCLIM          6.33  6.33               6.33
+
  summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since1901",
                     OBSCLIM = TRUE)
+ # A tibble: 1 × 4
+ # Rowwise:
+ #   Scenario `gswp3-w5e5`  mean mean_without_ukesm
+ #   <chr>           <dbl> <dbl>              <dbl>
+ # 1 OBSCLIM          259.  259.               259.
+
  summary_time_trend(winters_stats, varname = "Latitude_min_smooth_move_since1901",
                     OBSCLIM = TRUE)
+ # A tibble: 1 × 4
+ # Rowwise:
+ #   Scenario `gswp3-w5e5`  mean mean_without_ukesm
+ #   <chr>           <dbl> <dbl>              <dbl>
+ # 1 OBSCLIM          106.  106.               106.
+
  summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since1901",
                     OBSCLIM = TRUE)
+ # A tibble: 1 × 4
+ # Rowwise:
+ #   Scenario `gswp3-w5e5`  mean mean_without_ukesm
+ #   <chr>           <dbl> <dbl>              <dbl>
+ # 1 OBSCLIM             0     0                  0
 
  summary_time_trend(winters_stats, varname = "Suitable_area_km2_smooth_delta_pct_since2018")
+ # A tibble: 4 × 8
+ # Rowwise:
+ #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`  mean mean_without_ukesm
+ #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl> <dbl>              <dbl>
+ # 1 SSP126          2.89           11.8            4.07        -3.12         13.2   5.77               3.91
+ # 2 SSP245          8.25           21.5            5.65         3.42         32.4  14.2                9.71
+ # 3 SSP370         11.7            15.4            8.59         7.59         14.3  11.5               10.8
+ # 4 SSP585         12.9            18.5           19.4          5.58          3.93 12.1               14.1
+
  summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since2018")
+ # A tibble: 4 × 8
+ # Rowwise:
+ #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`  mean mean_without_ukesm
+ #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl> <dbl>              <dbl>
+ # 1 SSP126         -22.2           222.            11.1        -66.7          245.  77.8               36.1
+ # 2 SSP245         178.            311.            55.6        122.           600. 254.               167.
+ # 3 SSP370         334.            678.           345.         222.          1079. 532.               395.
+ # 4 SSP585         545.            990.           589.         322.          1212. 732.               612.
+
  summary_time_trend(winters_stats, varname = "Latitude_min_smooth_move_since2018")
+ # A tibble: 4 × 8
+ # Rowwise:
+ #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`  mean mean_without_ukesm
+ #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl> <dbl>              <dbl>
+ # 1 SSP126         -44.5            0             -22.2        -22.2          11.1 -15.6             -22.2
+ # 2 SSP245          22.2           22.2           -33.4         22.2         122.   31.1               8.34
+ # 3 SSP370         133.           156.            100.          55.6         222.  133.              111.
+ # 4 SSP585         156.           289.            156.         200.          278.  216.              200.
+
  summary_time_trend(winters_stats, varname = "Latitude_max_smooth_move_since2018")
+ # A tibble: 4 × 8
+ # Rowwise:
+ #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`  mean mean_without_ukesm
+ #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl> <dbl>              <dbl>
+ # 1 SSP126           0             22.2             0            0            89.0  22.2               5.56
+ # 2 SSP245          22.2           77.8            66.7         66.7         367.  120.               58.4
+ # 3 SSP370         145.           167.            211.          77.8         389.  198.              150.
+ # 4 SSP585         200.           256.            289.         189.          389.  265.              234.
 
  summary_time_trend(winters_stats, varname = "Temp_winter_mean_smooth_delta_since1901",
                     OBSCLIM = TRUE)
+ # A tibble: 1 × 4
+ # Rowwise:
+ #   Scenario `gswp3-w5e5`  mean mean_without_ukesm
+ #   <chr>           <dbl> <dbl>              <dbl>
+ # 1 OBSCLIM          1.02  1.02               1.02
+
  summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since1901",
                     OBSCLIM = TRUE, digits = 0)
+ # A tibble: 1 × 4
+ # Rowwise:
+ #   Scenario `gswp3-w5e5`  mean mean_without_ukesm
+ #   <chr>           <dbl> <dbl>              <dbl>
+ # 1 OBSCLIM         -19.5   -19                -19
+
  summary_time_trend(winters_stats, varname = "Temp_winter_mean_smooth_delta_since2018")
+ # A tibble: 4 × 8
+ # Rowwise:
+ #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`  mean mean_without_ukesm
+ #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl> <dbl>              <dbl>
+ # 1 SSP126        -0.402          0.333         -0.191       -0.909           1.72  0.11              -0.29
+ # 2 SSP245         0.296          1.06           0.0543      -0.0204          3.07  0.89               0.35
+ # 3 SSP370         0.671          2.40           0.923        0.379           3.60  1.59               1.09
+ # 4 SSP585         2.32           3.05           1.56         1.09            3.71  2.35               2.01
+
  summary_time_trend(winters_stats, varname = "Duration_winter_smooth_delta_since2018")
+ # A tibble: 4 × 8
+ # Rowwise:
+ #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`   mean mean_without_ukesm
+ #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl>  <dbl>              <dbl>
+ # 1 SSP126          5.62          -8.34            2.28         6.05         -12.8  -1.43                1.4
+ # 2 SSP245        -11.3          -17.5            -7.29        -5.46         -37.4 -15.8               -10.4
+ # 3 SSP370        -23.0          -35.7           -27.4        -16.3          -62.3 -32.9               -25.6
+ # 4 SSP585        -29.7          -49.9           -35.4        -19.4          -70.1 -40.9               -33.6
 
  ### Example of data summary: range of change in smoothed median latitude:
  summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since1901") |>
    dplyr::select(-"mean") |>
    tidyr::pivot_longer(!"Scenario") |>
    dplyr::summarise(min = min(.data$value), max = max(.data$value), .by = "Scenario")
+ # A tibble: 4 × 3
+ #   Scenario   min   max
+ #   <chr>    <dbl> <dbl>
+ # 1 SSP126    193.  504.
+ # 2 SSP245    315.  860.
+ # 3 SSP370    482. 1338.
+ # 4 SSP585    582. 1471.
 
 
 ### Step 8B: plotting time trends about the suitable area
@@ -445,10 +613,10 @@ if (run) {
   pS8_B <- plot_time_trends(winters_stats)
   pS8_C <- plot_time_trends(winters_stats, varname = "Latitude_min_smooth",
                             y_title = "\n Minimal latitude of potential hibernation area",
-                            y_max = 33.25)
+                            y_max = 32)
   pS8_D <- plot_time_trends(winters_stats, varname = "Latitude_max_smooth",
                             y_title = "\n Maximal latitude of potential hibernation area",
-                            y_max = 73)
+                            y_max = 72)
   pS8_ABCD <- cowplot::plot_grid(pS8_A, pS8_B, pS8_C, pS8_D,
                                  nrow = 2, labels = c("A", "B", "C", "D"))
   pS8_ABCD
@@ -507,17 +675,17 @@ if (run) {
                                                       "D. GSWP3-W5E5 + SSP5-8.5"),
                                  rel_widths = c(0.15, 0.425, 0.425), hjust = -0.15)
   pS9_ABCD
-    ggplot2::ggsave(filename = "figures/fig5.png",
-                    width = 18, height = 17, units = "cm")
-    ggplot2::ggsave(filename = "figures/fig5.pdf",
-                    width = 18, height = 17, units = "cm")
+  ggplot2::ggsave(filename = "figures/fig5.png",
+                  width = 18, height = 17, units = "cm")
+  ggplot2::ggsave(filename = "figures/fig5.pdf",
+                  width = 18, height = 17, units = "cm")
 
 ## Step 10: plot the hibernation niche
 
   stars_list <- lapply(list.files(path = "~/collaborations/kseniia/NC/stars_winter",
                                   pattern = "*.rds", full.names = TRUE), readRDS)
   sum(sapply(stars_list, \(star) length(star$Budget_winter))) ## number of time-series
-  #21585960
+  # 21585960
   plot_hibernation_niche(stars_list = stars_list)
   ggplot2::ggsave(filename = "figures/fig6.png",
                   width = 18, height = 16, units = "cm")
@@ -579,13 +747,34 @@ if (run) {
                     "Duration_winter_smooth_delta_since2018")) |>
     dplyr::summarise(mean_duration = mean(.data$Duration_winter_smooth_delta_since2018),
                      mean_temp = mean(.data$Temp_winter_mean_smooth_delta_since2018))
+#  mean_duration mean_temp
+# 1     -40.92207  2.346603
 
-## Step 12: estimation of maximum mass for flight
+
+## Step 12: extra info for discussion
+ compar <- compute_budget_df(data.frame(Temp = c(-5, 2)),
+                             fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+ compar[1, "Budget_fat"] / compar[2, "Budget_fat"]
+ # [1] 3.32319
+
+
+## Step 13: estimation of maximum mass for flight
  plot_flightpower()
+ # [1] "maximum fat mass = 18.92 g"
+ # [1] "maximum total mass = 45.42 g"
  ggplot2::ggsave(filename = "figures/EDfig4.png",
                  width = 18, height = 14, units = "cm")
  ggplot2::ggsave(filename = "figures/EDfig4.pdf",
                  width = 18, height = 14, units = "cm")
+
+## Step 14: additional figure on energy expenditure
+  plot_budget_curves(fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
+  if (run) {
+    ggplot2::ggsave(filename = "figures/figSX.pdf",
+                    width = 9, height = 6.5, units = "cm")
+    ggplot2::ggsave(filename = "figures/figSX.png",
+                    width = 9, height = 6.5, units = "cm")
+  }
 
 }
 }

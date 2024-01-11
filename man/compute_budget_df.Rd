@@ -13,7 +13,8 @@ compute_budget_df(
   split_summer = "07-01",
   min_days_trigger_winter = 14,
   threshold_mortality = 27,
-  huddling_factor = 0.5
+  huddling_factor = 0.5,
+  Tmirror = 2
 )
 }
 \arguments{
@@ -34,14 +35,17 @@ compute_budget_df(
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
 
 \item{huddling_factor}{a factor multiplied to the metabolic rate, to account for huddling, when individuals are thermoregulating (default = 0.5)}
+
+\item{Tmirror}{the ambient temperature around which predictions are mirrored}
 }
 \value{
 a dataframe
 }
 \description{
-Bugets are computed in KJ per hour and grams of fat consumed. If \code{data_MR} contains a column
-\code{Date}, the function will also compute the cumulative budget during the hibernation season and
-the predicted survival status.
+Bugets are computed in KJ and grams of fat consumed per hour (\code{MR_normo}, \code{MR_torpor},
+\code{Fat_normo}, \code{Fat_torpor}) and per day (\code{Budget_MR} and \code{Budget_fat}). If \code{data_MR} contains a
+column \code{Date}, the function will also compute the cumulative budget during the hibernation season
+and the predicted survival status.
 }
 \examples{
 #See ?winteR
