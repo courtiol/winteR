@@ -81,6 +81,7 @@ compute_budget_df <- function(data_MR, fit_state, fit_MR, roost_insulation_dTa =
 
     data_MR$Winter <- data_MR$Date >= winter$start_winter & data_MR$Date <= winter$stop_winter
     data_MR$Budget_cumul <- cumsum(data_MR$Budget_fat * data_MR$Winter)
+    data_MR$Budget_cumul_assumingcontinuoustorpor <- cumsum(data_MR$Budget_fat_assumingcontinuoustorpor * data_MR$Winter)
 
     ## compute survival status
     data_MR$Survival <- TRUE
@@ -199,6 +200,8 @@ plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mor
   } else if (y == "g_fat_per_winter") {
     date_death <- data_plot$Date[which(data_plot$Budget_cumul > threshold_mortality)[1]]
     print(paste("death date =", date_death))
+    date_death_torpor <- data_plot$Date[which(data_plot$Budget_cumul_assumingcontinuoustorpor > threshold_mortality)[1]]
+    print(paste("death date torpor only =", date_death_torpor))
     ylab <- expression(atop("Cumulative fat consumption"~"("*g*.*Sigma*" "*day^{-1}*")"))
     plot <- plot +
       ggplot2::geom_hline(yintercept = threshold_mortality, linetype = 4, colour = "darkgrey") +
@@ -209,6 +212,14 @@ plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mor
                          data = data.frame(y = threshold_mortality,
                                            x = date_death),
                          shape = 4, size = 5) + # skull: "\U2620"
+      ggplot2::geom_line(ggplot2::aes(x = .data$Date, y = .data$Budget_cumul_assumingcontinuoustorpor), data = data_plot[data_plot$Budget_cumul_assumingcontinuoustorpor < threshold_mortality, ],
+                         colour = "blue") +
+      ggplot2::geom_line(ggplot2::aes(x = .data$Date, y = .data$Budget_cumul_assumingcontinuoustorpor), data = data_plot[data_plot$Budget_cumul_assumingcontinuoustorpor > threshold_mortality, ],
+                         colour = "blue", linetype = 3) +
+      ggplot2::geom_point(ggplot2::aes(x = .data$x, y = .data$y),
+                          data = data.frame(y = threshold_mortality,
+                                            x = date_death_torpor),
+                          colour = "blue", shape = 4, size = 5) + # skull: "\U2620"
       ggplot2::scale_y_continuous(breaks = c(threshold_mortality, seq(0, 1000, by = 10)), minor_breaks = NULL)
   } else {
     stop("argument 'y' incorrect. It should be 'g_fat_per_state', 'g_fat_per_day', or 'g_fat_per_winter'")
@@ -238,7 +249,7 @@ plot_budget_panel <- function(data_budget, y = "g_fat_per_winter", threshold_mor
 plot_budget_curves <- function(fit_state, fit_MR, rangeTa = c(-15, 35), Tmirror = 2, base_size = 11) {
 
   xlab <- "Ambient temperature (\u00B0C)"
-  ylab <- expression(atop("Daily fat consumption"~"("*g*.*day^{-1}*")"))
+  ylab <- expression(atop("Daily fat consumption"~"("*g*.*day^{- 1}*")"))
 
   budg <- compute_budget_df(data.frame(Temp = seq(rangeTa[1], rangeTa[2], by = 0.01)),
                                        roost_insulation_dTa = 0, # note remove insulation
