@@ -278,9 +278,9 @@ signif(compute_budget_df(data.frame(Temp = -5),
 
 ## Step 4: illustration of winter and budget for Kharkiv
 
-### Step 4A: plotting winter 2011-2012
+### Step 4A: plotting winter 2015-2016
 file_Kharkiv <- paste0(system.file("extdata/weather_real", package = "winteR"),
-                       "/Kharkiv_weather_2011_2012.csv")
+                       "/Kharkiv_weather_2015_2016.csv")
 data_Kharkiv <- build_temp_2years(file_Kharkiv)
 pS4_A <- plot_winter_temp2years(data_Kharkiv, base_size = 9)
 
@@ -291,7 +291,8 @@ data_nrg <- compute_budget_df(data_Kharkiv, fit_state = fit_normo_cauchit, fit_M
 pS4_B <- plot_budget_panel(data_nrg, y = "g_fat_per_state", base_size = 9)
 pS4_C <- plot_budget_panel(data_nrg, y = "g_fat_per_day", base_size = 9, y_max = 2.5)
 pS4_D <- plot_budget_panel(data_nrg, y = "g_fat_per_winter", base_size = 9)
-# "death date = 2012-02-07"
+# [1] "death date = 2016-01-26"
+# [1] "death date torpor only = NA"
 pS4_ABCD <- cowplot::plot_grid(pS4_A, NULL, pS4_B, pS4_C, NULL, pS4_D,
                                nrow = 2,
                                labels = c("A", "", "B", "C", "", "D"),
@@ -770,10 +771,10 @@ if (run) {
 ## Step 14: additional figure on energy expenditure
   plot_budget_curves(fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
   if (run) {
-    ggplot2::ggsave(filename = "figures/figSX.pdf",
-                    width = 9, height = 6.5, units = "cm")
-    ggplot2::ggsave(filename = "figures/figSX.png",
-                    width = 9, height = 6.5, units = "cm")
+    ggplot2::ggsave(filename = "figures/figS3.pdf",
+                    width = 18, height = 14, units = "cm")
+    ggplot2::ggsave(filename = "figures/figS3.png",
+                    width = 18, height = 14, units = "cm")
   }
 
 }
