@@ -215,6 +215,7 @@ summarise_MR_fit(fit_torpor)
 
 ### Step 2D: extract statistics for main text
 Tt <- summarise_MR_fit(fit_torpor)$median[summarise_MR_fit(fit_torpor)$parameter == "Tt"]
+Tt
 # 4.397
 MR_at_Tt <- torpor::tor_predict(fit_torpor, Ta = Tt)$pred
 round(100*MR_at_Tt[1] / MR_at_Tt[2], digits = 2) # MR in torpor is 1.29 \% of MR in normothermy
@@ -223,6 +224,7 @@ round(100*MR_at_Tt[1] / MR_at_Tt[2], digits = 2) # MR in torpor is 1.29 \% of MR
 pS2_A <- plot_Tskin_fit(fit_normo_cauchit, base_size = 9)
 pS2_B <- plot_MR_fit(fit_torpor, data_MR, base_size = 9)
 pS2_AB <- cowplot::plot_grid(pS2_A, pS2_B, ncol = 2, labels = "AUTO", align = "hv")
+pS2_AB
 if (run){
   ggplot2::ggsave(filename = "figures/fig1.pdf", plot = pS2_AB,
                   width = 18, height = 6.5, units = "cm")
@@ -233,6 +235,7 @@ if (run){
 ### Step 2F: plotting temperature relationship
 pS2_C <- plot_TaTskin_data(fit_torpor, data_MR, base_size = 9)
 pS2_BC <- cowplot::plot_grid(pS2_B, pS2_C, ncol = 1, labels = "AUTO", align = "hv")
+pS2_BC
 if (run){
   ggplot2::ggsave(filename = "figures/EDfig2.pdf", plot = pS2_BC,
                   width = 9, height = 13, units = "cm")
@@ -394,46 +397,48 @@ if (run) {
 }
 
 ### Step 7C: extracting info about stars characteristics
-stars_example <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
-## coordinates
-range(sf::st_coordinates(stars_example)$y) # range of latitude of center of cells
-# [1] 27.25 71.75
+if (run) {
+  stars_example <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+  ## coordinates
+  range(sf::st_coordinates(stars_example)$y) # range of latitude of center of cells
+  # [1] 27.25 71.75
 
-range(sf::st_coordinates(stars_example)$x) # range of longitude of center of cells
-# [1] -12.75  55.75
+  range(sf::st_coordinates(stars_example)$x) # range of longitude of center of cells
+  # [1] -12.75  55.75
 
-## CRS, projection
-sf::st_crs(stars_example, type = "proj")
-# Coordinate Reference System:
-#   User input: +proj=longlat +datum=WGS84 +no_defs
-#   wkt:
-# GEOGCRS["unknown",
-#     DATUM["World Geodetic System 1984",
-#         ELLIPSOID["WGS 84",6378137,298.257223563,
-#             LENGTHUNIT["metre",1]],
-#         ID["EPSG",6326]],
-#     PRIMEM["Greenwich",0,
-#         ANGLEUNIT["degree",0.0174532925199433],
-#         ID["EPSG",8901]],
-#     CS[ellipsoidal,2],
-#         AXIS["longitude",east,
-#             ORDER[1],
-#             ANGLEUNIT["degree",0.0174532925199433,
-#                 ID["EPSG",9122]]],
-#         AXIS["latitude",north,
-#             ORDER[2],
-#             ANGLEUNIT["degree",0.0174532925199433,
-#                 ID["EPSG",9122]]]]
+  ## CRS, projection
+  sf::st_crs(stars_example, type = "proj")
+  # Coordinate Reference System:
+  #   User input: +proj=longlat +datum=WGS84 +no_defs
+  #   wkt:
+  # GEOGCRS["unknown",
+  #     DATUM["World Geodetic System 1984",
+  #         ELLIPSOID["WGS 84",6378137,298.257223563,
+  #             LENGTHUNIT["metre",1]],
+  #         ID["EPSG",6326]],
+  #     PRIMEM["Greenwich",0,
+  #         ANGLEUNIT["degree",0.0174532925199433],
+  #         ID["EPSG",8901]],
+  #     CS[ellipsoidal,2],
+  #         AXIS["longitude",east,
+  #             ORDER[1],
+  #             ANGLEUNIT["degree",0.0174532925199433,
+  #                 ID["EPSG",9122]]],
+  #         AXIS["latitude",north,
+  #             ORDER[2],
+  #             ANGLEUNIT["degree",0.0174532925199433,
+  #                 ID["EPSG",9122]]]]
 
-## area
-mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
-# 1956.294 [km^2]
+  ## area
+  mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
+  # 1956.294 [km^2]
 
-sqrt(mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2)))
-# 44.23001 [km]
+  sqrt(mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2)))
+  # 44.23001 [km]
 
-sd(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
-# 526.7266
+  sd(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
+  # 526.7266
+}
 
 ## Step 8: predicting shift in hibernation niche
 
@@ -444,7 +449,7 @@ if (run) {
   winters_stats <- summarise_info_winter.stars.all("../NC/stars_winter",
                                                    mask = lands_polygons) ## takes a few min
 
-## Step 9: computing change in potential hibernation area
+### Step 8B: computing change in potential hibernation area
 
  summary_time_trend(winters_stats, varname = "Suitable_area_km2_smooth_delta_pct_since1901")
  # A tibble: 4 × 8
@@ -608,7 +613,7 @@ if (run) {
  # 4 SSP585    582. 1471.
 
 
-### Step 8B: plotting time trends about the suitable area
+### Step 8C: plotting time trends about the suitable area
   pS8_A <- plot_time_trends(winters_stats, varname = "Suitable_area_km2_smooth", vartype = "area",
                            y_title = "Potential hibernation area\n (x 1,000,000 km²)")
   pS8_B <- plot_time_trends(winters_stats)
@@ -770,13 +775,10 @@ if (run) {
 
 ## Step 14: additional figure on energy expenditure
   plot_budget_curves(fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
-  if (run) {
-    ggplot2::ggsave(filename = "figures/figS3.pdf",
-                    width = 18, height = 14, units = "cm")
-    ggplot2::ggsave(filename = "figures/figS3.png",
-                    width = 18, height = 14, units = "cm")
-  }
-
+  ggplot2::ggsave(filename = "figures/figS3.pdf",
+                  width = 18, height = 14, units = "cm")
+  ggplot2::ggsave(filename = "figures/figS3.png",
+                  width = 18, height = 14, units = "cm")
 }
 }
 \references{
@@ -784,5 +786,15 @@ ADD REF PAPER HERE
 }
 \seealso{
 \code{\link[=build_Tskin_table]{build_Tskin_table()}}, \code{\link[=clean_Tskin_table]{clean_Tskin_table()}}
+}
+\author{
+\strong{Maintainer}: Alexandre Courtiol \email{courtiol@izw-berlin.de} (\href{https://orcid.org/0000-0003-0637-2959}{ORCID})
+
+Authors:
+\itemize{
+  \item Kseniia Kravchenko \email{shusha.kravcheneo@gmail.com} (\href{https://orcid.org/0000-0003-0637-2959}{ORCID})
+  \item Shannon Currie \email{shannon.e.currie@gmail.com} (\href{https://orcid.org/0000-0001-5956-0481}{ORCID})
+}
+
 }
 \keyword{package}

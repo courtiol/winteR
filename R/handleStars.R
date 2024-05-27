@@ -78,7 +78,7 @@ compute_budget_stars1year <- function(year_start,
 #'                               fit_state = fit_normo_cauchit, fit_MR = fit_torpor,
 #'                               nb_cores = 30)
 #'  test
-#'  }
+#' }
 #'
 compute_budget_stars <- function(stars_object,
                                  fit_state, fit_MR,
@@ -143,7 +143,7 @@ compute_budget_stars <- function(stars_object,
 #' run <- FALSE
 #' if (run) {
 #'  reshape_stars_across.models(directory_stars = "../NC/stars_winter", SSP = "126")
-#'  }
+#' }
 #'
 reshape_stars_across.models <- function(directory_stars, SSP, varname = "Budget_winter", flatten = TRUE) {
   ##TODO, check that this function works
@@ -175,7 +175,7 @@ reshape_stars_across.models <- function(directory_stars, SSP, varname = "Budget_
 #'  test_stars_small <- dplyr::filter(test_stars, year > 2080, x < -10, y > 70)
 #'  extract_stars_latitude(test_stars_small)
 #'  extract_stars_latitude(test_stars_small, fn = "max")
-#'  }
+#' }
 #'
 extract_stars_latitude <- function(stars_object, year = NULL, name_bool_var = "Survive", mask = NULL, fn = "median") {
 
@@ -223,7 +223,7 @@ extract_stars_latitude <- function(stars_object, year = NULL, name_bool_var = "S
 #'  #test_stars_small <- dplyr::filter(test_stars, year > 2080, x < -10, y > 70)
 #'  data(lands_polygons, package = "winteR")
 #'  test <- summarise_info_winter.stars(test_stars, mask = lands_polygons)
-#'  }
+#' }
 #'
 summarise_info_winter.stars <- function(stars_object, mask = NULL) {
 
@@ -331,8 +331,11 @@ summarise_info_winter.stars.all <- function(directory_stars, mask = NULL) {
 #' @export
 #'
 #' @examples
-#' data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
-#' build_stars_winter.stats(data_OBSCLIM)
+#' run <- FALSE
+#' if (run) {
+#'   data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+#'   build_stars_winter.stats(data_OBSCLIM)
+#' }
 #'
 build_stars_winter.stats <- function(stars_object) {
 
@@ -366,10 +369,13 @@ build_stars_winter.stats <- function(stars_object) {
 #' @export
 #'
 #' @examples
-#' data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
-#' stars::st_apply(data_OBSCLIM[c("Duration_winter", "Temp_winter_mean")],
-#'                 MARGIN = c("x", "y"),
-#'                 FUN = compute_winter_summarystats)
+#' run <- FALSE
+#' if (run) {
+#'   data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+#'   stars::st_apply(data_OBSCLIM[c("Duration_winter", "Temp_winter_mean")],
+#'                   MARGIN = c("x", "y"),
+#'                   FUN = compute_winter_summarystats)
+#' }
 #'
 compute_winter_summarystats <- function(x) {
   c(mean = mean(x, na.rm = TRUE), median = stats::median(x, na.rm = TRUE))

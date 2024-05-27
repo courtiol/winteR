@@ -16,9 +16,12 @@ a data frame
 Extract summary statistics about winter characteristics
 }
 \examples{
-data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
-stars::st_apply(data_OBSCLIM[c("Duration_winter", "Temp_winter_mean")],
-                MARGIN = c("x", "y"),
-                FUN = compute_winter_summarystats)
+run <- FALSE
+if (run) {
+  data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+  stars::st_apply(data_OBSCLIM[c("Duration_winter", "Temp_winter_mean")],
+                  MARGIN = c("x", "y"),
+                  FUN = compute_winter_summarystats)
+}
 
 }

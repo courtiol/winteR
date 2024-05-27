@@ -58,6 +58,6 @@ if (run) {
                               fit_state = fit_normo_cauchit, fit_MR = fit_torpor,
                               nb_cores = 30)
  test
- }
+}
 
 }

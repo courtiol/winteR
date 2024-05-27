@@ -24,6 +24,6 @@ if (run) {
  #test_stars_small <- dplyr::filter(test_stars, year > 2080, x < -10, y > 70)
  data(lands_polygons, package = "winteR")
  test <- summarise_info_winter.stars(test_stars, mask = lands_polygons)
- }
+}
 
 }

@@ -30,6 +30,6 @@ Loads, combine and merge winter stars across forcing models
 run <- FALSE
 if (run) {
  reshape_stars_across.models(directory_stars = "../NC/stars_winter", SSP = "126")
- }
+}
 
 }

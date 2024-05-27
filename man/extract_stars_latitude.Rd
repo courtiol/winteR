@@ -37,6 +37,6 @@ if (run) {
  test_stars_small <- dplyr::filter(test_stars, year > 2080, x < -10, y > 70)
  extract_stars_latitude(test_stars_small)
  extract_stars_latitude(test_stars_small, fn = "max")
- }
+}
 
 }
