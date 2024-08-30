@@ -24,7 +24,10 @@ a stars object
 Estimate suitability across space and add it to a stars object
 }
 \examples{
-data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
-add_suitability_stars(data_OBSCLIM)
+run <- FALSE
+if (run) {
+  data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+  add_suitability_stars(data_OBSCLIM)
+}
 
 }

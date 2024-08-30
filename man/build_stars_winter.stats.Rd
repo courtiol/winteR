@@ -16,7 +16,10 @@ a stars object
 Build a stars object with summary statistics aggregated across years
 }
 \examples{
-data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
-build_stars_winter.stats(data_OBSCLIM)
+run <- FALSE
+if (run) {
+  data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+  build_stars_winter.stats(data_OBSCLIM)
+}
 
 }

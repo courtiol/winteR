@@ -8,7 +8,6 @@
 #'
 #' @name winteR-package
 #' @aliases winteR-package winteR
-#' @docType package
 #'
 #' @references
 #' ADD REF PAPER HERE
@@ -22,13 +21,16 @@
 #' ## Step 0: preparation
 #'
 #' ### Step 0A: check that all R packages used below are installed if you wish to reproduce everything
-#' checkDependencies()
+#' alldeps <- checkDependencies()
 #'
 #' ### Step 0B: decide to run slow operations from this workflow
 #' run <- FALSE # change to TRUE for running everything (slow)
 #'
 #' ### Step 0C: set the plotting resolution
-#' showtext::showtext_opts(dpi = 300)
+#' if(alldeps) showtext::showtext_opts(dpi = 300)
+#' 
+#' ### Step 0D: create a repository to store the figures
+#' dir.create("figures")
 #'
 #' ## Step 1: predicting normothermy from skin temperature (Tskin)
 #' # Note: it is important _not_ to model temporal autocorrelation
@@ -138,9 +140,11 @@
 #' AIC(fit_normo_cauchit, verbose = FALSE)["       marginal AIC:"] # 7406.804
 #'
 #' ### Step 1E: check model
-#' DHARMa::simulateResiduals(fit_normo_logit, plot = TRUE)
-#' DHARMa::simulateResiduals(fit_normo_probit, plot = TRUE)
-#' DHARMa::simulateResiduals(fit_normo_cauchit, plot = TRUE)
+#' if (alldeps) {
+#'   DHARMa::simulateResiduals(fit_normo_logit, plot = TRUE)
+#'   DHARMa::simulateResiduals(fit_normo_probit, plot = TRUE)
+#'   DHARMa::simulateResiduals(fit_normo_cauchit, plot = TRUE)
+#' }
 #'
 #' ### Step 1F: plot model predictions
 #' plot_Tskin_fit(fit_normo_logit)
@@ -151,8 +155,8 @@
 #' pS1_1 <- plot_Tskin_fit(fit_normo_cauchit, rangeTa = c(-5, 35))
 #' pS1_2 <- plot_Tskin_fit(fit_normo_logit, rangeTa = c(-5, 35))
 #' pS1_3 <- plot_Tskin_fit(fit_normo_probit, rangeTa = c(-5, 35))
-#' pS1_123 <- cowplot::plot_grid(pS1_1, pS1_2, pS1_3, nrow = 3, labels= "AUTO", align = "hv")
-#' if (run) {
+#' if (alldeps) {
+#'   pS1_123 <- cowplot::plot_grid(pS1_1, pS1_2, pS1_3, nrow = 3, labels= "AUTO", align = "hv")
 #'   ggplot2::ggsave(filename = "figures/EDfig1.pdf", plot = pS1_123,
 #'                   width = 12, height = 30, units = "cm")
 #'   ggplot2::ggsave(filename = "figures/EDfig1.png", plot = pS1_123,
@@ -225,8 +229,8 @@
 #' ### Step 2E: plotting thermoregulatory curves and temperature relationship
 #' pS2_A <- plot_Tskin_fit(fit_normo_cauchit, base_size = 9)
 #' pS2_B <- plot_MR_fit(fit_torpor, data_MR, base_size = 9)
-#' pS2_AB <- cowplot::plot_grid(pS2_A, pS2_B, ncol = 2, labels = "AUTO", align = "hv")
-#' if (run){
+#' if (alldeps){
+#'   pS2_AB <- cowplot::plot_grid(pS2_A, pS2_B, ncol = 2, labels = "AUTO", align = "hv")
 #'   ggplot2::ggsave(filename = "figures/fig1.pdf", plot = pS2_AB,
 #'                   width = 18, height = 6.5, units = "cm")
 #'   ggplot2::ggsave(filename = "figures/fig1.png", plot = pS2_AB,
@@ -235,8 +239,8 @@
 #'
 #' ### Step 2F: plotting temperature relationship
 #' pS2_C <- plot_TaTskin_data(fit_torpor, data_MR, base_size = 9)
-#' pS2_BC <- cowplot::plot_grid(pS2_B, pS2_C, ncol = 1, labels = "AUTO", align = "hv")
-#' if (run){
+#' if (alldeps){
+#'   pS2_BC <- cowplot::plot_grid(pS2_B, pS2_C, ncol = 1, labels = "AUTO", align = "hv")
 #'   ggplot2::ggsave(filename = "figures/EDfig2.pdf", plot = pS2_BC,
 #'                   width = 9, height = 13, units = "cm")
 #'   ggplot2::ggsave(filename = "figures/EDfig2.png", plot = pS2_BC,
@@ -296,13 +300,13 @@
 #' pS4_D <- plot_budget_panel(data_nrg, y = "g_fat_per_winter", base_size = 9)
 #' # [1] "death date = 2016-01-26"
 #' # [1] "death date torpor only = NA"
-#' pS4_ABCD <- cowplot::plot_grid(pS4_A, NULL, pS4_B, pS4_C, NULL, pS4_D,
-#'                                nrow = 2,
-#'                                labels = c("A", "", "B", "C", "", "D"),
-#'                                align = "hv",
-#'                                rel_widths = c(1, 0.1, 1), hjust = 0)
-#' pS4_ABCD
-#' if (run){
+#' if (alldeps){
+#'  pS4_ABCD <- cowplot::plot_grid(pS4_A, NULL, pS4_B, pS4_C, NULL, pS4_D,
+#'                                 nrow = 2,
+#'                                 labels = c("A", "", "B", "C", "", "D"),
+#'                                 align = "hv",
+#'                                 rel_widths = c(1, 0.1, 1), hjust = 0)
+#'   pS4_ABCD
 #'   ggplot2::ggsave(filename = "figures/fig2.pdf", plot = pS4_ABCD,
 #'                   width = 18, height = 12.5, units = "cm")
 #'   ggplot2::ggsave(filename = "figures/fig2.png", plot = pS4_ABCD,
@@ -329,7 +333,7 @@
 #' # Do also make sure to adjust your path as required
 #' if (run) {
 #'   build_source_stars(metadirectory_NCfiles = "../NC/ISIMIP_sources/",
-#'                      directory_stars = "../NC/stars/", nb_cores = 10)
+#'                      directory_stars = "../NC/stars/", nb_cores = 21)
 #' }
 #'
 #'
@@ -397,47 +401,48 @@
 #' }
 #'
 #' ### Step 7C: extracting info about stars characteristics
-#' stars_example <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
-#' ## coordinates
-#' range(sf::st_coordinates(stars_example)$y) # range of latitude of center of cells
-#' # [1] 27.25 71.75
-#'
-#' range(sf::st_coordinates(stars_example)$x) # range of longitude of center of cells
-#' # [1] -12.75  55.75
-#'
-#' ## CRS, projection
-#' sf::st_crs(stars_example, type = "proj")
-#' # Coordinate Reference System:
-#' #   User input: +proj=longlat +datum=WGS84 +no_defs
-#' #   wkt:
-#' # GEOGCRS["unknown",
-#' #     DATUM["World Geodetic System 1984",
-#' #         ELLIPSOID["WGS 84",6378137,298.257223563,
-#' #             LENGTHUNIT["metre",1]],
-#' #         ID["EPSG",6326]],
-#' #     PRIMEM["Greenwich",0,
-#' #         ANGLEUNIT["degree",0.0174532925199433],
-#' #         ID["EPSG",8901]],
-#' #     CS[ellipsoidal,2],
-#' #         AXIS["longitude",east,
-#' #             ORDER[1],
-#' #             ANGLEUNIT["degree",0.0174532925199433,
-#' #                 ID["EPSG",9122]]],
-#' #         AXIS["latitude",north,
-#' #             ORDER[2],
-#' #             ANGLEUNIT["degree",0.0174532925199433,
-#' #                 ID["EPSG",9122]]]]
-#'
-#' ## area
-#' mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
-#' # 1956.294 [km^2]
-#'
-#' sqrt(mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2)))
-#' # 44.23001 [km]
-#'
-#' sd(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
-#' # 526.7266
-#'
+#' if (run) {
+#'   stars_example <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+#'   ## coordinates
+#'   range(sf::st_coordinates(stars_example)$y) # range of latitude of center of cells
+#'   # [1] 27.25 71.75
+#'  
+#'   range(sf::st_coordinates(stars_example)$x) # range of longitude of center of cells
+#'   # [1] -12.75  55.75
+#'  
+#'   ## CRS, projection
+#'   sf::st_crs(stars_example, type = "proj")
+#'   # Coordinate Reference System:
+#'   #   User input: +proj=longlat +datum=WGS84 +no_defs
+#'   #   wkt:
+#'   # GEOGCRS["unknown",
+#'   #     DATUM["World Geodetic System 1984",
+#'   #         ELLIPSOID["WGS 84",6378137,298.257223563,
+#'   #             LENGTHUNIT["metre",1]],
+#'   #         ID["EPSG",6326]],
+#'   #     PRIMEM["Greenwich",0,
+#'   #         ANGLEUNIT["degree",0.0174532925199433],
+#'   #         ID["EPSG",8901]],
+#'   #     CS[ellipsoidal,2],
+#'   #         AXIS["longitude",east,
+#'   #             ORDER[1],
+#'   #             ANGLEUNIT["degree",0.0174532925199433,
+#'   #                 ID["EPSG",9122]]],
+#'   #         AXIS["latitude",north,
+#'   #             ORDER[2],
+#'   #             ANGLEUNIT["degree",0.0174532925199433,
+#'   #                 ID["EPSG",9122]]]]
+#'  
+#'   ## area
+#'   mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
+#'   # 1956.294 [km^2]
+#'  
+#'   sqrt(mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2)))
+#'   # 44.23001 [km]
+#'  
+#'   sd(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
+#'   # 526.7266
+#' }
 #' ## Step 8: predicting shift in hibernation niche
 #'
 #' if (run) {
@@ -612,22 +617,25 @@
 #'
 #'
 #' ### Step 8B: plotting time trends about the suitable area
-#'   pS8_A <- plot_time_trends(winters_stats, varname = "Suitable_area_km2_smooth", vartype = "area",
-#'                            y_title = "Potential hibernation area\n (x 1,000,000 km²)")
-#'   pS8_B <- plot_time_trends(winters_stats)
-#'   pS8_C <- plot_time_trends(winters_stats, varname = "Latitude_min_smooth",
-#'                             y_title = "\n Minimal latitude of potential hibernation area",
-#'                             y_max = 32)
-#'   pS8_D <- plot_time_trends(winters_stats, varname = "Latitude_max_smooth",
-#'                             y_title = "\n Maximal latitude of potential hibernation area",
-#'                             y_max = 72)
-#'   pS8_ABCD <- cowplot::plot_grid(pS8_A, pS8_B, pS8_C, pS8_D,
-#'                                  nrow = 2, labels = c("A", "B", "C", "D"))
-#'   pS8_ABCD
-#'   ggplot2::ggsave(filename = "figures/fig4.png",
-#'                   width = 18, height = 16, units = "cm")
-#'   ggplot2::ggsave(filename = "figures/fig4.pdf",
-#'                   width = 18, height = 16, units = "cm")
+#'  pS8_A <- plot_time_trends(winters_stats, varname = "Suitable_area_km2_smooth", vartype = "area",
+#'                           y_title = "Potential hibernation area\n (x 1,000,000 km²)")
+#'  pS8_B <- plot_time_trends(winters_stats)
+#'  pS8_C <- plot_time_trends(winters_stats, varname = "Latitude_min_smooth",
+#'                            y_title = "\n Minimal latitude of potential hibernation area",
+#'                            y_max = 32)
+#'  pS8_D <- plot_time_trends(winters_stats, varname = "Latitude_max_smooth",
+#'                            y_title = "\n Maximal latitude of potential hibernation area",
+#'                            y_max = 72)
+#'
+#'  if(alldeps) {
+#'    pS8_ABCD <- cowplot::plot_grid(pS8_A, pS8_B, pS8_C, pS8_D,
+#'                                   nrow = 2, labels = c("A", "B", "C", "D"))
+#'    pS8_ABCD
+#'    ggplot2::ggsave(filename = "figures/fig4.png",
+#'                    width = 18, height = 16, units = "cm")
+#'    ggplot2::ggsave(filename = "figures/fig4.pdf",
+#'                    width = 18, height = 16, units = "cm")
+#' }
 #'
 #'
 #' ## Step 9: plotting change in suitability maps
@@ -667,22 +675,25 @@
 #'                                 polygons = list(winter_2015),
 #'                                 years_to_combine = 20,
 #'                                 base_size = 9, legend_position = "none")
-#'   pS9_legend1 <- cowplot::get_legend(pS9_A)
-#'   pS9_legend2 <- cowplot::get_legend(pS9_C)
-#'   pS9_ABCD <- cowplot::plot_grid(pS9_legend1,
-#'                                  pS9_A + ggplot2::theme(legend.position="none"), pS9_B,
-#'                                  pS9_legend2,
-#'                                  pS9_C + ggplot2::theme(legend.position="none"), pS9_D,
-#'                                  nrow = 2, labels = c("", "A. GSWP3-W5E5 + SSP1-2.6",
-#'                                                       "B. GSWP3-W5E5 + SSP5-8.5",
-#'                                                       "", "C. GSWP3-W5E5 + SSP1-2.6",
-#'                                                       "D. GSWP3-W5E5 + SSP5-8.5"),
-#'                                  rel_widths = c(0.15, 0.425, 0.425), hjust = -0.15)
-#'   pS9_ABCD
-#'   ggplot2::ggsave(filename = "figures/fig5.png",
-#'                   width = 18, height = 17, units = "cm")
-#'   ggplot2::ggsave(filename = "figures/fig5.pdf",
-#'                   width = 18, height = 17, units = "cm")
+#' 
+#'  if(alldeps) {
+#'    pS9_legend1 <- cowplot::get_legend(pS9_A)
+#'    pS9_legend2 <- cowplot::get_legend(pS9_C)
+#'    pS9_ABCD <- cowplot::plot_grid(pS9_legend1,
+#'                                   pS9_A + ggplot2::theme(legend.position="none"), pS9_B,
+#'                                   pS9_legend2,
+#'                                   pS9_C + ggplot2::theme(legend.position="none"), pS9_D,
+#'                                   nrow = 2, labels = c("", "A. GSWP3-W5E5 + SSP1-2.6",
+#'                                                        "B. GSWP3-W5E5 + SSP5-8.5",
+#'                                                        "", "C. GSWP3-W5E5 + SSP1-2.6",
+#'                                                        "D. GSWP3-W5E5 + SSP5-8.5"),
+#'                                   rel_widths = c(0.15, 0.425, 0.425), hjust = -0.15)
+#'    pS9_ABCD
+#'    ggplot2::ggsave(filename = "figures/fig5.png",
+#'                    width = 18, height = 17, units = "cm")
+#'    ggplot2::ggsave(filename = "figures/fig5.pdf",
+#'                    width = 18, height = 17, units = "cm")
+#' }
 #'
 #' ## Step 10: plot the hibernation niche
 #'
@@ -733,17 +744,19 @@
 #'       ggplot2::labs(colour = "Forcing model", linetype = "Forcing model",
 #'                     y = "Duration of the hibernation season (days)", x = NULL)
 #'
-#'  pS11_legend <- cowplot::get_legend(pS11_A)
-#'  pS11_AB <- cowplot::plot_grid(pS11_legend,
-#'                                pS11_A + ggplot2::theme(legend.position="none"),
-#'                                pS11_B + ggplot2::theme(legend.position="none"),
-#'                                nrow = 3, labels = c("", "A", "B"),
-#'                                rel_heights = c(0.05, 0.45, 0.45))
-#'  pS11_AB
-#'  ggplot2::ggsave(filename = "figures/EDfig3.png",
-#'                  width = 18, height = 35, units = "cm")
-#'  ggplot2::ggsave(filename = "figures/EDfig3.pdf",
-#'                  width = 18, height = 35, units = "cm")
+#' if (alldeps) {
+#'   pS11_legend <- cowplot::get_legend(pS11_A)
+#'   pS11_AB <- cowplot::plot_grid(pS11_legend,
+#'                                 pS11_A + ggplot2::theme(legend.position="none"),
+#'                                 pS11_B + ggplot2::theme(legend.position="none"),
+#'                                 nrow = 3, labels = c("", "A", "B"),
+#'                                 rel_heights = c(0.05, 0.45, 0.45))
+#'   pS11_AB
+#'   ggplot2::ggsave(filename = "figures/EDfig3.png",
+#'                   width = 18, height = 35, units = "cm")
+#'   ggplot2::ggsave(filename = "figures/EDfig3.pdf",
+#'                   width = 18, height = 35, units = "cm")
+#' }
 #'
 #'  tabulate_time_trend(winters_stats) |>
 #'     dplyr::filter(Scenario == "SSP585", Year == 2099) |>
@@ -773,7 +786,7 @@
 #'
 #' ## Step 14: additional figure on energy expenditure
 #'   plot_budget_curves(fit_state = fit_normo_cauchit, fit_MR = fit_torpor)
-#'   if (run) {
+#'   if (alldeps) {
 #'     ggplot2::ggsave(filename = "figures/figS3.pdf",
 #'                     width = 18, height = 14, units = "cm")
 #'     ggplot2::ggsave(filename = "figures/figS3.png",
@@ -781,4 +794,4 @@
 #'   }
 #'
 #' }
-NULL
+"_PACKAGE"

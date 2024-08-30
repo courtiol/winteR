@@ -7,7 +7,7 @@
 checkDependencies()
 }
 \value{
-noting
+a boolean indicating if all dependencies are met or not
 }
 \description{
 This function checks that the dependencies not required to install the package but needed to run

@@ -331,8 +331,11 @@ summarise_info_winter.stars.all <- function(directory_stars, mask = NULL) {
 #' @export
 #'
 #' @examples
-#' data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
-#' build_stars_winter.stats(data_OBSCLIM)
+#' run <- FALSE
+#' if (run) {
+#'   data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+#'   build_stars_winter.stats(data_OBSCLIM)
+#' }
 #'
 build_stars_winter.stats <- function(stars_object) {
 
@@ -366,10 +369,13 @@ build_stars_winter.stats <- function(stars_object) {
 #' @export
 #'
 #' @examples
-#' data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
-#' stars::st_apply(data_OBSCLIM[c("Duration_winter", "Temp_winter_mean")],
-#'                 MARGIN = c("x", "y"),
-#'                 FUN = compute_winter_summarystats)
+#' run <- FALSE
+#' if (run) {
+#'   data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+#'   stars::st_apply(data_OBSCLIM[c("Duration_winter", "Temp_winter_mean")],
+#'                   MARGIN = c("x", "y"),
+#'                   FUN = compute_winter_summarystats)
+#' }
 #'
 compute_winter_summarystats <- function(x) {
   c(mean = mean(x, na.rm = TRUE), median = stats::median(x, na.rm = TRUE))

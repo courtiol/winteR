@@ -72,8 +72,11 @@ compute_suitability_summarystats <- function(vec_Suitable_winter, vec_Year, min_
 #' @export
 #'
 #' @examples
-#' data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
-#' add_suitability_stars(data_OBSCLIM)
+#' run <- FALSE
+#' if (run) {
+#'   data_OBSCLIM <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+#'   add_suitability_stars(data_OBSCLIM)
+#' }
 #'
 add_suitability_stars <- function(stars_object, min_years_trigger_suitability = 10, add_winter.stats = TRUE) {
 
