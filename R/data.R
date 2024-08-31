@@ -15,12 +15,20 @@ NULL
 
 #' Fitted model predicting probability to be in normothermy
 #'
-#' A model fitted with [spaMM::fitme()].
+#' A model fitted with [spaMM::fitme()] using the cauchit link.
 #'
 #' @name fit_normo_cauchit
 #' @docType data
 NULL
 
+
+#' Fitted model predicting probability to be in normothermy
+#'
+#' A model fitted with [spaMM::fitme()] using the probit link.
+#'
+#' @name fit_normo_probit
+#' @docType data
+NULL
 
 #' Mask of world land and country borders
 #'

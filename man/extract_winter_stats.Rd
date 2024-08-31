@@ -8,7 +8,9 @@ extract_winter_stats(
   data_temp,
   split_summer = "07-01",
   temp_threshold = 7,
-  min_days_trigger_winter = 14
+  min_days_trigger_winter = 14,
+  min_temp = 2,
+  max_temp = 12
 )
 }
 \arguments{
@@ -19,6 +21,10 @@ extract_winter_stats(
 \item{temp_threshold}{the approximate temperature below which insects do not fly}
 
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
+
+\item{min_temp}{the minimal temperature use to compute the duration of winter below it}
+
+\item{max_temp}{the maximal temperature use to compute the duration of winter above it}
 }
 \value{
 a list

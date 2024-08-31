@@ -52,6 +52,8 @@ progress messages are more informative outside RStudio.
 \examples{
 run <- FALSE
 if (run) {
+ data("fit_torpor", package = "winteR")
+ data("fit_normo_cauchit", package = "winteR")
  test_stars <- readRDS("../NC/stars/gfdl-esm4_SSP126.rds")
  test_stars_small <- dplyr::filter(test_stars, time < as.Date("2017-01-01"), x < -10, y > 70)
  test <- compute_budget_stars(test_stars_small,

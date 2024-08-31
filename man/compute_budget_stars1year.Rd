@@ -14,7 +14,8 @@ compute_budget_stars1year(
   temp_threshold = 7,
   split_summer = "07-01",
   min_days_trigger_winter = 14,
-  threshold_mortality = 27
+  threshold_mortality = 27,
+  .progress = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ compute_budget_stars1year(
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
 
 \item{threshold_mortality}{the maximal amount of fat consumed before mortality occurs (default = 27)}
+
+\item{.progress}{an internal argument to control the display of progression bars}
 }
 \value{
 a stars object with energy budget information

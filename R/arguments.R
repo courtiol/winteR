@@ -39,14 +39,17 @@
 #' @param name_bool_var the quoted name of a boolean variable to use to filter cells in the grid (default is "Survive")
 #' @param nb_cores the number of CPU cores to use (for Linux or MacOS only, not Windows, and don't use too many cores otherwise, you may reach the RAM limit and it won't work. If error, do reduce)
 #' @param mask a MULTIPOLYGON object to be used as a mask
+#' @param max_temp the maximal temperature use to compute the duration of winter above it
 #' @param max_Year the maximum year (in numeric format) to consider in the factor
 #' @param metadirectory_NCfiles a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themselves containing the NC files
 #' @param min_days_trigger_winter the minimum number of days for which the temperature should be below `temp_threshold` to enter winter
+#' @param min_temp the minimal temperature use to compute the duration of winter below it
 #' @param min_Year the minimum year (in numeric format) to consider in the factor
 #' @param min_years_trigger_suitability the minimum number of suitable winters to trigger the establishment or the disappearance of bats in a region
 #' @param OBSCLIM a boolean indicating if the function must run on the OBSCLIM data (default = `FALSE`)
 #' @param output4optim a boolean indicating if the function output must be modifed to direct use of optimization routines
 #' @param polygons a list of sf (MULTI)POLYGON object representing the distribution of the species
+#' @param .progress an internal argument to control the display of progression bars
 #' @param rangeTa the range of ambient temperature to consider in plot
 #' @param rangeTskin the range of skin temperature to consider in plot
 #' @param roost_insulation_dTa the increase in temperature in the roost, compared to outside (default = 5)

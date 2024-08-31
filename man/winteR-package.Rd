@@ -28,7 +28,7 @@ run <- FALSE # change to TRUE for running everything (slow)
 if(alldeps) showtext::showtext_opts(dpi = 300)
 
 ### Step 0D: create a repository to store the figures
-dir.create("figures")
+if (!dir.exists("figures")) dir.create("figures")
 
 ## Step 1: predicting normothermy from skin temperature (Tskin)
 # Note: it is important _not_ to model temporal autocorrelation
@@ -82,7 +82,9 @@ fit_normo_logit
 
 
 fit_normo_probit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
-                                family = binomial(link = "probit"))
+                                 family = binomial(link = "probit"))
+## rm(list = ls()[ls() != "fit_normo_probit"])
+## usethis::use_data(fit_normo_probit, compress = "xz", overwrite = TRUE)
 fit_normo_probit
 # formula: Normo ~ Ta + (1 | ID)
 # Estimation of lambda by ML (P_v approximation of logL).
@@ -107,7 +109,7 @@ fit_normo_probit
 
 
 fit_normo_cauchit <- spaMM::fitme(Normo ~ Ta + (1|ID), data = data_normothermy,
-                                 family = binomial(link = "cauchit"))
+                                  family = binomial(link = "cauchit"))
 ## rm(list = ls()[ls() != "fit_normo_cauchit"])
 ## usethis::use_data(fit_normo_cauchit, compress = "xz", overwrite = TRUE)
 fit_normo_cauchit
@@ -176,7 +178,7 @@ nrow(data_MR) # = 281 (number of hourly averages of the metabolic rate)
 # by setting run to TRUE
 if (run) {
   set.seed(123)
-  fit_torpor <- torpor::tor_fit(Ta = data_MR$Ta, M = data_MR$kJ_h) ## slow
+  n
   ## rm(list = ls()[ls() != "fit_torpor"]);
   ## usethis::use_data(fit_torpor, compress = "xz", overwrite = TRUE)
   params <- torpor::tor_summarise(fit_torpor)$params[, "parameter"]
@@ -337,7 +339,10 @@ if (run) {
 
 ## Step 6: creating stars objects with winter summary statistics for each year
 
-if (!dir.exists("../NC/stars_winter/")) dir.create("../NC/stars_winter/")
+### Step 6A: standard setup: cauchit model and 5 degree insulation
+folder_winter_stars <- "stars_winter_cauchit_dTa5"
+
+if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
 if (run) {
   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
   for (rds_index in seq_along(all_rds_to_do)) {
@@ -347,13 +352,95 @@ if (run) {
     print(paste("processing stars", name_stars, "be patient!"))
     stars_winter <- compute_budget_stars(stars_to_do,
                                          fit_state = fit_normo_cauchit,
+                                         roost_insulation_dTa = 5,
                                          fit_MR = fit_torpor, nb_cores = 30)
     if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
                                                   ## and future predictions
       stars_winter |>
         dplyr::filter(year > 2018) -> stars_winter
     }
-    saveRDS(stars_winter, file = paste0("../NC/stars_winter/", name_stars, "_winter.rds"),
+    saveRDS(stars_winter, file = paste0("../NC/", folder_winter_stars, "/", name_stars, "_winter.rds"),
+            compress = FALSE)
+    rm(list = "stars_to_do"); gc()
+  }
+}
+
+
+### Step 6B: alternative setup: cauchit model and 0 degree insulation
+folder_winter_stars <- "stars_winter_cauchit_dTa0"
+
+if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
+if (run) {
+  all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
+  for (rds_index in seq_along(all_rds_to_do)) {
+    rds_to_do <- all_rds_to_do[rds_index]
+    stars_to_do <- readRDS(file = rds_to_do)
+    name_stars <- strsplit(basename(rds_to_do), split = "\\\\.rds")[[1]]
+    print(paste("processing stars", name_stars, "be patient!"))
+    stars_winter <- compute_budget_stars(stars_to_do,
+                                         fit_state = fit_normo_cauchit,
+                                         roost_insulation_dTa = 0,
+                                         fit_MR = fit_torpor, nb_cores = 30)
+    if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
+                                                  ## and future predictions
+      stars_winter |>
+        dplyr::filter(year > 2018) -> stars_winter
+    }
+    saveRDS(stars_winter, file = paste0("../NC/", folder_winter_stars, "/", name_stars, "_winter.rds"),
+            compress = FALSE)
+    rm(list = "stars_to_do"); gc()
+  }
+}
+
+
+### Step 6C: alternative setup: probit model and 5 degree insulation
+folder_winter_stars <- "stars_winter_probit_dTa5"
+
+if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
+if (run) {
+  all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
+  for (rds_index in seq_along(all_rds_to_do)) {
+    rds_to_do <- all_rds_to_do[rds_index]
+    stars_to_do <- readRDS(file = rds_to_do)
+    name_stars <- strsplit(basename(rds_to_do), split = "\\\\.rds")[[1]]
+    print(paste("processing stars", name_stars, "be patient!"))
+    stars_winter <- compute_budget_stars(stars_to_do,
+                                         fit_state = fit_normo_probit,
+                                         roost_insulation_dTa = 5,
+                                         fit_MR = fit_torpor, nb_cores = 30)
+    if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
+                                                  ## and future predictions
+      stars_winter |>
+        dplyr::filter(year > 2018) -> stars_winter
+    }
+    saveRDS(stars_winter, file = paste0("../NC/", folder_winter_stars, "/", name_stars, "_winter.rds"),
+            compress = FALSE)
+    rm(list = "stars_to_do"); gc()
+  }
+}
+
+
+### Step 6D: alternative setup: probit model and 0 degree insulation
+folder_winter_stars <- "stars_winter_probit_dTa0"
+
+if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
+if (run) {
+  all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
+  for (rds_index in seq_along(all_rds_to_do)) {
+    rds_to_do <- all_rds_to_do[rds_index]
+    stars_to_do <- readRDS(file = rds_to_do)
+    name_stars <- strsplit(basename(rds_to_do), split = "\\\\.rds")[[1]]
+    print(paste("processing stars", name_stars, "be patient!"))
+    stars_winter <- compute_budget_stars(stars_to_do,
+                                         fit_state = fit_normo_probit,
+                                         roost_insulation_dTa = 0,
+                                         fit_MR = fit_torpor, nb_cores = 30)
+    if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
+                                                  ## and future predictions
+      stars_winter |>
+        dplyr::filter(year > 2018) -> stars_winter
+    }
+    saveRDS(stars_winter, file = paste0("../NC/", folder_winter_stars, "/", name_stars, "_winter.rds"),
             compress = FALSE)
     rm(list = "stars_to_do"); gc()
   }

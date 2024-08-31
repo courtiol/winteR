@@ -22,7 +22,8 @@ compute_budget_stars1year <- function(year_start,
                                       roost_insulation_dTa = 5,
                                       huddling_factor = 0.5,
                                       temp_threshold = 7, split_summer = "07-01", min_days_trigger_winter = 14,
-                                      threshold_mortality = 27) {
+                                      threshold_mortality = 27,
+                                      .progress = TRUE) {
 
   ## extract dates
   print(paste("computing budget for year", year_start))
@@ -43,7 +44,7 @@ compute_budget_stars1year <- function(year_start,
                                temp_threshold = temp_threshold, split_summer = split_summer,
                                min_days_trigger_winter = min_days_trigger_winter,
                                threshold_mortality = threshold_mortality,
-                               PROGRESS = TRUE)
+                               PROGRESS = .progress)
 
   ## reformat output (see also https://github.com/r-spatial/stars/issues/635)
   data <- do.call("rbind", stars_obj$compute_budget_summarystats)
@@ -72,6 +73,8 @@ compute_budget_stars1year <- function(year_start,
 #' @examples
 #' run <- FALSE
 #' if (run) {
+#'  data("fit_torpor", package = "winteR")
+#'  data("fit_normo_cauchit", package = "winteR")
 #'  test_stars <- readRDS("../NC/stars/gfdl-esm4_SSP126.rds")
 #'  test_stars_small <- dplyr::filter(test_stars, time < as.Date("2017-01-01"), x < -10, y > 70)
 #'  test <- compute_budget_stars(test_stars_small,
@@ -116,7 +119,8 @@ compute_budget_stars <- function(stars_object,
                               roost_insulation_dTa = roost_insulation_dTa,
                               huddling_factor = huddling_factor,
                               temp_threshold = temp_threshold, split_summer = split_summer, min_days_trigger_winter = min_days_trigger_winter,
-                              threshold_mortality = threshold_mortality)})
+                              threshold_mortality = threshold_mortality,
+                              .progress = ifelse(nb_cores == 1, TRUE, FALSE))})
 
   stars_object_filled_all_years <- do.call("c", c(stars_object_filled, along = 3))
 

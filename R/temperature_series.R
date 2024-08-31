@@ -38,7 +38,9 @@ build_temp_2years <- function(filename) {
 extract_winter_stats <- function(data_temp,
                                  split_summer = "07-01",
                                  temp_threshold = 7,
-                                 min_days_trigger_winter = 14) {
+                                 min_days_trigger_winter = 14,
+                                 min_temp = 2,
+                                 max_temp = 12) {
 
   if (!all(c("Date", "Temp") %in% colnames(data_temp))) {
     stop("The function `extract_winter_stats()` requires at least 2 columns: `Date` and `Temp`")
@@ -90,7 +92,11 @@ extract_winter_stats <- function(data_temp,
        year2 = year2,
        mid_summer1 = mid_summer1,
        mid_summer2 = mid_summer2,
-       duration_winter = ifelse(winter, as.numeric(difftime(end, begin, units = "days")), 0),
+       duration_winter = ifelse(winter, as.numeric(difftime(end, begin, units = "days") + 1), 0),
+       ## additional stats to know how often temp is beyond range of experimental values
+       duration_winter_below_min_temp = ifelse(winter, sum(temp_winter < min_temp), 0),  # note: works only for daily resolution
+       duration_winter_above_max_temp = ifelse(winter, sum(temp_winter > max_temp), 0),  # note: works only for daily resolution
+       duration_winter_outside_range_temp = ifelse(winter, sum(temp_winter < min_temp | temp_winter < min_temp), 0),  # note: works only for daily resolution
        temp_winter_mean = ifelse(winter, mean(temp_winter), NA),
        temp_winter_sd = ifelse(winter, stats::sd(temp_winter), NA),
        temp_winter_median = ifelse(winter, stats::median(temp_winter), NA),

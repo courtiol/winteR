@@ -1,6 +1,6 @@
 Package: winteR
 Title: Predict Energetics and Geographic Distribution of Hibernating Animals
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     c(person("Alexandre", "Courtiol", email = "courtiol@izw-berlin.de",
              role = c("aut", "cre"), comment = c(ORCID = "0000-0003-0637-2959")),

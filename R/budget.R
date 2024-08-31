@@ -124,7 +124,9 @@ compute_budget_summarystats <- function(vec_Temp, vec_Dates,
     d2 <- data.frame(Temp = vec_Temp, Date = vec_Dates)
 
     winter <- extract_winter_stats(d2, temp_threshold = temp_threshold, split_summer = split_summer,
-                                   min_days_trigger_winter = min_days_trigger_winter)
+                                   min_days_trigger_winter = min_days_trigger_winter,
+                                   min_temp = 2 + roost_insulation_dTa,
+                                   max_temp = 12 + roost_insulation_dTa)
 
     ## compute cumulative energy budget
     budg$Date <- d2$Date
@@ -141,6 +143,9 @@ compute_budget_summarystats <- function(vec_Temp, vec_Dates,
                Start_winter = winter$start_winter,
                Stop_winter = winter$stop_winter,
                Duration_winter = winter$duration_winter,
+               Duration_winter_below_min_temp = winter$duration_winter_below_min_temp, # note: works only for daily resolution
+               Duration_winter_above_max_temp = winter$duration_winter_above_max_temp, # note: works only for daily resolution
+               Duration_winter_outside_range_temp = winter$duration_winter_outside_range_temp, # note: works only for daily resolution
                Temp_winter_mean = winter$temp_winter_mean,
                Temp_winter_sd = winter$temp_winter_sd,
                Temp_winter_median = winter$temp_winter_median,

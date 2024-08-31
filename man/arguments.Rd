@@ -70,11 +70,15 @@
 
 \item{mask}{a MULTIPOLYGON object to be used as a mask}
 
+\item{max_temp}{the maximal temperature use to compute the duration of winter above it}
+
 \item{max_Year}{the maximum year (in numeric format) to consider in the factor}
 
 \item{metadirectory_NCfiles}{a folder containing one subfolder per climate model, themselves containing one subfolder per SSP scenarios, themselves containing the NC files}
 
 \item{min_days_trigger_winter}{the minimum number of days for which the temperature should be below \code{temp_threshold} to enter winter}
+
+\item{min_temp}{the minimal temperature use to compute the duration of winter below it}
 
 \item{min_Year}{the minimum year (in numeric format) to consider in the factor}
 
@@ -85,6 +89,8 @@
 \item{output4optim}{a boolean indicating if the function output must be modifed to direct use of optimization routines}
 
 \item{polygons}{a list of sf (MULTI)POLYGON object representing the distribution of the species}
+
+\item{.progress}{an internal argument to control the display of progression bars}
 
 \item{rangeTa}{the range of ambient temperature to consider in plot}
 
