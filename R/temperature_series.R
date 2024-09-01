@@ -96,7 +96,7 @@ extract_winter_stats <- function(data_temp,
        ## additional stats to know how often temp is beyond range of experimental values
        duration_winter_below_min_temp = ifelse(winter, sum(temp_winter < min_temp), 0),  # note: works only for daily resolution
        duration_winter_above_max_temp = ifelse(winter, sum(temp_winter > max_temp), 0),  # note: works only for daily resolution
-       duration_winter_outside_range_temp = ifelse(winter, sum(temp_winter < min_temp | temp_winter < min_temp), 0),  # note: works only for daily resolution
+       duration_winter_outside_range_temp = ifelse(winter, sum(temp_winter < min_temp | temp_winter > max_temp), 0),  # note: works only for daily resolution
        temp_winter_mean = ifelse(winter, mean(temp_winter), NA),
        temp_winter_sd = ifelse(winter, stats::sd(temp_winter), NA),
        temp_winter_median = ifelse(winter, stats::median(temp_winter), NA),

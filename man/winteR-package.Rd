@@ -461,16 +461,24 @@ winter_1980_polygon_file <- list.files(system.file("extdata/distribution_range/w
 winter_1980 <- sf::read_sf(winter_1980_polygon_file)
 
 ### Step 7B: plotting winter budget over Europe for 1979 and 2014
+folder_winter_stars <- "stars_winter_cauchit_dTa5"
+#folder_winter_stars <- "stars_winter_cauchit_dTa0"
+#folder_winter_stars <- "stars_winter_probit_dTa5"
+#folder_winter_stars <- "stars_winter_probit_dTa0"
+
+if (!dir.exists(paste0("figures/", folder_winter_stars))) dir.create(paste0("figures/", folder_winter_stars))
+
 if (run) {
- pS7_A <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
+ pS7_A <- readRDS(paste0("../NC/", folder_winter_stars, "/gswp3-w5e5_OBSCLIM_winter.rds")) |>
    dplyr::select(Budget_winter) |>
    dplyr::filter(year == 1979) |>
    plot_fat_map(polygons = list(winter_1980), base_size = 9)
- pS7_B <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds") |>
+ pS7_B <-readRDS(paste0("../NC/", folder_winter_stars, "/gswp3-w5e5_OBSCLIM_winter.rds")) |>
    dplyr::select(Budget_winter) |>
    dplyr::filter(year == 2014) |>
    plot_fat_map(polygons = list(winter_2015), base_size = 9)
- pS7_legend <- cowplot::get_legend(pS7_A)
+ #pS7_legend <- cowplot::get_legend(pS7_A) ## broken at the time of coding: https://github.com/wilkelab/cowplot/issues/202
+ pS7_legend <- ggplot2::ggplotGrob(pS7_A)$grob[ggplot2::ggplotGrob(pS7_A)$layout$name == "guide-box-left"][[1]]
  pS7_AB <- cowplot::plot_grid(pS7_legend,
                               pS7_A + ggplot2::theme(legend.position="none"),
                               pS7_B + ggplot2::theme(legend.position="none"),
@@ -479,15 +487,17 @@ if (run) {
                               rel_widths = c(0.1, 0.45, 0.45))
  pS7_AB
 
- ggplot2::ggsave(filename = "figures/fig3.png",
+ ggplot2::ggsave(filename = paste0("figures/", folder_winter_stars, "/fig3.png"),
                  width = 18, height = 9, units = "cm")
- ggplot2::ggsave(filename = "figures/fig3.pdf",
-                 width = 18, height = 9, units = "cm")
+ ggplot2::ggsave(filename = paste0("figures/", folder_winter_stars, "/fig3.pdf"),
+                 width = 18, height = 9, units = "cm", device = Cairo::CairoPDF)
 }
 
 ### Step 7C: extracting info about stars characteristics
+folder_winter_stars <- "stars_winter_cauchit_dTa5"
+
 if (run) {
-  stars_example <- readRDS("../NC/stars_winter/gswp3-w5e5_OBSCLIM_winter.rds")
+  stars_example <- readRDS(paste0("../NC/", folder_winter_stars, "/gswp3-w5e5_OBSCLIM_winter.rds")) 
   ## coordinates
   range(sf::st_coordinates(stars_example)$y) # range of latitude of center of cells
   # [1] 27.25 71.75
@@ -534,8 +544,21 @@ if (run) {
 
 ### Step 8A: extracting winter info from all stars
   data("lands_polygons", package = "winteR") # load the mask
-  winters_stats <- summarise_info_winter.stars.all("../NC/stars_winter",
-                                                   mask = lands_polygons) ## takes a few min
+  winters_stats_cauchit_dTa5 <- summarise_info_winter.stars.all("../NC/stars_winter_cauchit_dTa5",
+                                                                mask = lands_polygons) ## takes a few min
+  winters_stats_cauchit_dTa0 <- summarise_info_winter.stars.all("../NC/stars_winter_cauchit_dTa0",
+                                                                mask = lands_polygons) ## takes a few min
+  winters_stats_probit_dTa5 <- summarise_info_winter.stars.all("../NC/stars_winter_probit_dTa5",
+                                                               mask = lands_polygons) ## takes a few min
+  winters_stats_probit_dTa0 <- summarise_info_winter.stars.all("../NC/stars_winter_probit_dTa0",
+                                                               mask = lands_polygons) ## takes a few min
+
+ winters_stats <-  winters_stats_cauchit_dTa5 ## we use this combination as default
+
+### Step check
+winters_stats |>
+  dplyr::summarise(proportion_outside_modelled_range = mean(Duration_winter_below_min_temp/Duration_winter),
+  .by = c("Forcing", "Scenario"))
 
 ## Step 9: computing change in potential hibernation area
 
@@ -682,10 +705,10 @@ if (run) {
  # Rowwise:
  #   Scenario `gfdl-esm4` `ipsl-cm6a-lr` `mpi-esm1-2-hr` `mri-esm2-0` `ukesm1-0-ll`   mean mean_without_ukesm
  #   <chr>          <dbl>          <dbl>           <dbl>        <dbl>         <dbl>  <dbl>              <dbl>
- # 1 SSP126          5.62          -8.34            2.28         6.05         -12.8  -1.43                1.4
- # 2 SSP245        -11.3          -17.5            -7.29        -5.46         -37.4 -15.8               -10.4
- # 3 SSP370        -23.0          -35.7           -27.4        -16.3          -62.3 -32.9               -25.6
- # 4 SSP585        -29.7          -49.9           -35.4        -19.4          -70.1 -40.9               -33.6
+ # 1 SSP126          5.64          -8.36            2.29         6.07         -12.8  -1.43                1.41
+ # 2 SSP245        -11.4          -17.5            -7.29        -5.47         -37.5 -15.8               -10.4
+ # 3 SSP370        -23.1          -35.8           -27.4        -16.4          -62.5 -33.0               -25.7
+ # 4 SSP585        -29.9          -50.1           -35.5        -19.5          -70.4 -41.1               -33.7
 
  ### Example of data summary: range of change in smoothed median latitude:
  summary_time_trend(winters_stats, varname = "Latitude_median_smooth_move_since1901") |>

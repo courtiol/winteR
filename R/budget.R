@@ -125,8 +125,8 @@ compute_budget_summarystats <- function(vec_Temp, vec_Dates,
 
     winter <- extract_winter_stats(d2, temp_threshold = temp_threshold, split_summer = split_summer,
                                    min_days_trigger_winter = min_days_trigger_winter,
-                                   min_temp = 2 + roost_insulation_dTa,
-                                   max_temp = 12 + roost_insulation_dTa)
+                                   min_temp = 2 - roost_insulation_dTa, # below 2 degrees in roost correspond to below 2 - dTa outside
+                                   max_temp = 12 - roost_insulation_dTa) # above 12 degrees in roost correspond to above 12 - dTa outside
 
     ## compute cumulative energy budget
     budg$Date <- d2$Date

@@ -244,6 +244,9 @@ summarise_info_winter.stars <- function(stars_object, mask = NULL) {
                             Start_winter = numeric(),
                             Stop_winter = numeric(),
                             Duration_winter = numeric(),
+                            Duration_winter_below_min_temp = numeric(),
+                            Duration_winter_above_max_temp = numeric(),
+                            Duration_winter_outside_range_temp = numeric(),
                             Temp_winter_mean = numeric(),
                             Temp_winter_sd = numeric(),
                             Temp_winter_median = numeric(),
@@ -268,24 +271,27 @@ summarise_info_winter.stars <- function(stars_object, mask = NULL) {
       sum() -> suitable_area
 
     year <- stars::st_get_dimension_values(stars_object_masked[, , , i], "year")
-    suitability[i, "Year"]                 <- year
-    suitability[i, "Suitable_cells"]       <- as.numeric(cells_prop)
-    suitability[i, "Suitable_area_km2"]    <- suitable_area
-    suitability[i, "Latitude_mean"]        <- extract_stars_latitude(starts_object_suitable, fn = "mean")
-    suitability[i, "Latitude_median"]      <- extract_stars_latitude(starts_object_suitable, fn = "median")
-    suitability[i, "Latitude_min"]         <- extract_stars_latitude(starts_object_suitable, fn = "min")
-    suitability[i, "Latitude_max"]         <- extract_stars_latitude(starts_object_suitable, fn = "max")
-    suitability[i, "Start_winter"]         <- round(mean(as.numeric(stars_object_masked[["Start_winter"]][, , i]), na.rm = TRUE))
-    suitability[i, "Stop_winter"]          <- round(mean(as.numeric(stars_object_masked[["Stop_winter"]][, , i]), na.rm = TRUE))
-    suitability[i, "Duration_winter"]      <- mean(as.numeric(stars_object_masked[["Duration_winter"]][, , i]), na.rm = TRUE)
-    suitability[i, "No_winter"]            <- mean(as.numeric(stars_object_masked[["Duration_winter"]][, , i]) == 0, na.rm = TRUE)
-    suitability[i, "Temp_winter_mean"]     <- mean(as.numeric(stars_object_masked[["Temp_winter_mean"]][, , i]), na.rm = TRUE)
-    suitability[i, "Temp_winter_sd"]       <- mean(as.numeric(stars_object_masked[["Temp_winter_sd"]][, , i]), na.rm = TRUE)
-    suitability[i, "Temp_winter_median"]   <- mean(as.numeric(stars_object_masked[["Temp_winter_median"]][, , i]), na.rm = TRUE)
-    suitability[i, "Temp_winter_min"]      <- mean(as.numeric(stars_object_masked[["Temp_winter_min"]][, , i]), na.rm = TRUE)
-    suitability[i, "Temp_winter_max"]      <- mean(as.numeric(stars_object_masked[["Temp_winter_max"]][, , i]), na.rm = TRUE)
-    suitability[i, "Temp_winter_autocorr"] <- mean(as.numeric(stars_object_masked[["Temp_winter_autocorr"]][, , i]), na.rm = TRUE)
-    suitability[i, "Budget_winter"]        <- mean(as.numeric(stars_object_masked[["Budget_winter"]][, , i]), na.rm = TRUE)
+    suitability[i, "Year"]                               <- year
+    suitability[i, "Suitable_cells"]                     <- as.numeric(cells_prop)
+    suitability[i, "Suitable_area_km2"]                  <- suitable_area
+    suitability[i, "Latitude_mean"]                      <- extract_stars_latitude(starts_object_suitable, fn = "mean")
+    suitability[i, "Latitude_median"]                    <- extract_stars_latitude(starts_object_suitable, fn = "median")
+    suitability[i, "Latitude_min"]                       <- extract_stars_latitude(starts_object_suitable, fn = "min")
+    suitability[i, "Latitude_max"]                       <- extract_stars_latitude(starts_object_suitable, fn = "max")
+    suitability[i, "Start_winter"]                       <- round(mean(as.numeric(stars_object_masked[["Start_winter"]][, , i]), na.rm = TRUE))
+    suitability[i, "Stop_winter"]                        <- round(mean(as.numeric(stars_object_masked[["Stop_winter"]][, , i]), na.rm = TRUE))
+    suitability[i, "Duration_winter"]                    <- mean(as.numeric(stars_object_masked[["Duration_winter"]][, , i]), na.rm = TRUE)
+    suitability[i, "Duration_winter_below_min_temp"]     <- mean(as.numeric(stars_object_masked[["Duration_winter_below_min_temp"]][, , i]), na.rm = TRUE)
+    suitability[i, "Duration_winter_above_max_temp"]     <- mean(as.numeric(stars_object_masked[["Duration_winter_above_max_temp"]][, , i]), na.rm = TRUE)
+    suitability[i, "Duration_winter_outside_range_temp"] <- mean(as.numeric(stars_object_masked[["Duration_winter_outside_range_temp"]][, , i]), na.rm = TRUE)
+    suitability[i, "No_winter"]                          <- mean(as.numeric(stars_object_masked[["Duration_winter"]][, , i]) == 0, na.rm = TRUE)
+    suitability[i, "Temp_winter_mean"]                   <- mean(as.numeric(stars_object_masked[["Temp_winter_mean"]][, , i]), na.rm = TRUE)
+    suitability[i, "Temp_winter_sd"]                     <- mean(as.numeric(stars_object_masked[["Temp_winter_sd"]][, , i]), na.rm = TRUE)
+    suitability[i, "Temp_winter_median"]                 <- mean(as.numeric(stars_object_masked[["Temp_winter_median"]][, , i]), na.rm = TRUE)
+    suitability[i, "Temp_winter_min"]                    <- mean(as.numeric(stars_object_masked[["Temp_winter_min"]][, , i]), na.rm = TRUE)
+    suitability[i, "Temp_winter_max"]                    <- mean(as.numeric(stars_object_masked[["Temp_winter_max"]][, , i]), na.rm = TRUE)
+    suitability[i, "Temp_winter_autocorr"]               <- mean(as.numeric(stars_object_masked[["Temp_winter_autocorr"]][, , i]), na.rm = TRUE)
+    suitability[i, "Budget_winter"]                      <- mean(as.numeric(stars_object_masked[["Budget_winter"]][, , i]), na.rm = TRUE)
   }
 
   suitability[, "Start_winter"] <- as.Date(suitability[, "Start_winter"], origin = "1970-01-01")
@@ -322,7 +328,7 @@ summarise_info_winter.stars.all <- function(directory_stars, mask = NULL) {
     cbind(summarise_info_winter.stars(stars_object = stars_focal, mask = mask), Forcing = forcing, Scenario = scenario)
   })
 
-  do.call("rbind", list_info_all_winter_stars)
+  tibble::as_tibble(do.call("rbind", list_info_all_winter_stars))
 }
 
 
