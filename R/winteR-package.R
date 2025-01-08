@@ -28,7 +28,7 @@
 #'
 #' ### Step 0C: set the plotting resolution
 #' if(alldeps) showtext::showtext_opts(dpi = 300)
-#' 
+#'
 #' ### Step 0D: create a repository to store the figures
 #' if (!dir.exists("figures")) dir.create("figures")
 #'
@@ -233,9 +233,9 @@
 #' pS2_B <- plot_MR_fit(fit_torpor, data_MR, base_size = 9)
 #' if (alldeps){
 #'   pS2_AB <- cowplot::plot_grid(pS2_A, pS2_B, ncol = 2, labels = "AUTO", align = "hv")
-#'   ggplot2::ggsave(filename = "figures/fig1.pdf", plot = pS2_AB,
+#'   ggplot2::ggsave(filename = "figures/fig1new.pdf", plot = pS2_AB,
 #'                   width = 18, height = 6.5, units = "cm")
-#'   ggplot2::ggsave(filename = "figures/fig1.png", plot = pS2_AB,
+#'   ggplot2::ggsave(filename = "figures/fig1new.png", plot = pS2_AB,
 #'                   width = 18, height = 6.5, units = "cm")
 #' }
 #'
@@ -279,11 +279,22 @@
 #' signif(budget_minus5degrees[, c("Budget_fat")], digit = 3)
 #' # 0.958
 #'
-#' ### Step 3F: daily fat consumption with insulation + huddling effect
+#' ### Step 3F: daily fat consumption with insulation only
+#' signif(compute_budget_df(data.frame(Temp = -5),
+#'                          fit_state = fit_normo_cauchit, fit_MR = fit_torpor,
+#'                          huddling_factor = 1)[, "Budget_fat"], 3)
+#' # 0.473
+#'
+#' ### Step 3G: daily fat consumption with huddling effect only
+#' signif(compute_budget_df(data.frame(Temp = -5),
+#'                          fit_state = fit_normo_cauchit, fit_MR = fit_torpor,
+#'                          roost_insulation_dTa = 0)[, "Budget_fat"], 3)
+#' # 0.479
+#'
+#' ### Step 3H: daily fat consumption with insulation + huddling effect
 #' signif(compute_budget_df(data.frame(Temp = -5),
 #'                          fit_state = fit_normo_cauchit, fit_MR = fit_torpor)[, "Budget_fat"], 3)
 #' # 0.237
-#'
 #'
 #' ## Step 4: illustration of winter and budget for Kharkiv
 #'
@@ -341,9 +352,9 @@
 #'
 #' ## Step 6: creating stars objects with winter summary statistics for each year
 #'
-#' ### Step 6A: standard setup: cauchit model and 5 degree insulation
+#' ### Step 6A: standard setup: cauchit model and 5 degree insulation with huddling factor at 0.5
 #' folder_winter_stars <- "stars_winter_cauchit_dTa5"
-#' 
+#'
 #' if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
 #' if (run) {
 #'   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
@@ -355,6 +366,7 @@
 #'     stars_winter <- compute_budget_stars(stars_to_do,
 #'                                          fit_state = fit_normo_cauchit,
 #'                                          roost_insulation_dTa = 5,
+#'                                          huddling_factor = 0.5,
 #'                                          fit_MR = fit_torpor, nb_cores = 30)
 #'     if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
 #'                                                   ## and future predictions
@@ -368,9 +380,9 @@
 #' }
 #'
 #'
-#' ### Step 6B: alternative setup: cauchit model and 0 degree insulation
+#' ### Step 6B: alternative setup: cauchit model and 0 degree insulation with huddling factor at 0.5
 #' folder_winter_stars <- "stars_winter_cauchit_dTa0"
-#' 
+#'
 #' if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
 #' if (run) {
 #'   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
@@ -382,6 +394,7 @@
 #'     stars_winter <- compute_budget_stars(stars_to_do,
 #'                                          fit_state = fit_normo_cauchit,
 #'                                          roost_insulation_dTa = 0,
+#'                                          huddling_factor = 0.5,
 #'                                          fit_MR = fit_torpor, nb_cores = 30)
 #'     if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
 #'                                                   ## and future predictions
@@ -395,9 +408,9 @@
 #' }
 #'
 #'
-#' ### Step 6C: alternative setup: probit model and 5 degree insulation
+#' ### Step 6C: alternative setup: probit model and 5 degree insulation with huddling factor at 0.5
 #' folder_winter_stars <- "stars_winter_probit_dTa5"
-#' 
+#'
 #' if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
 #' if (run) {
 #'   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
@@ -409,6 +422,7 @@
 #'     stars_winter <- compute_budget_stars(stars_to_do,
 #'                                          fit_state = fit_normo_probit,
 #'                                          roost_insulation_dTa = 5,
+#'                                          huddling_factor = 0.5,
 #'                                          fit_MR = fit_torpor, nb_cores = 30)
 #'     if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
 #'                                                   ## and future predictions
@@ -422,9 +436,9 @@
 #' }
 #'
 #'
-#' ### Step 6D: alternative setup: probit model and 0 degree insulation
+#' ### Step 6D: alternative setup: probit model and 0 degree insulation with huddling factor at 0.5
 #' folder_winter_stars <- "stars_winter_probit_dTa0"
-#' 
+#'
 #' if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
 #' if (run) {
 #'   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
@@ -436,6 +450,118 @@
 #'     stars_winter <- compute_budget_stars(stars_to_do,
 #'                                          fit_state = fit_normo_probit,
 #'                                          roost_insulation_dTa = 0,
+#'                                          huddling_factor = 0.5,
+#'                                          fit_MR = fit_torpor, nb_cores = 30)
+#'     if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
+#'                                                   ## and future predictions
+#'       stars_winter |>
+#'         dplyr::filter(year > 2018) -> stars_winter
+#'     }
+#'     saveRDS(stars_winter, file = paste0("../NC/", folder_winter_stars, "/", name_stars, "_winter.rds"),
+#'             compress = FALSE)
+#'     rm(list = "stars_to_do"); gc()
+#'   }
+#' }
+#'
+#' ### Step 6E: alternative setup: cauchit model and 5 degree insulation with huddling factor at 1
+#' folder_winter_stars <- "stars_winter_cauchit_dTa5_huddl1"
+#'
+#' if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
+#' if (run) {
+#'   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
+#'   for (rds_index in seq_along(all_rds_to_do)) {
+#'     rds_to_do <- all_rds_to_do[rds_index]
+#'     stars_to_do <- readRDS(file = rds_to_do)
+#'     name_stars <- strsplit(basename(rds_to_do), split = "\\.rds")[[1]]
+#'     print(paste("processing stars", name_stars, "be patient!"))
+#'     stars_winter <- compute_budget_stars(stars_to_do,
+#'                                          fit_state = fit_normo_cauchit,
+#'                                          roost_insulation_dTa = 5,
+#'                                          huddling_factor = 1,
+#'                                          fit_MR = fit_torpor, nb_cores = 30)
+#'     if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
+#'                                                   ## and future predictions
+#'       stars_winter |>
+#'         dplyr::filter(year > 2018) -> stars_winter
+#'     }
+#'     saveRDS(stars_winter, file = paste0("../NC/", folder_winter_stars, "/", name_stars, "_winter.rds"),
+#'             compress = FALSE)
+#'     rm(list = "stars_to_do"); gc()
+#'   }
+#' }
+#'
+#'
+#' ### Step 6F: alternative setup: cauchit model and 0 degree insulation with huddling factor at 1
+#' folder_winter_stars <- "stars_winter_cauchit_dTa0_huddl1"
+#'
+#' if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
+#' if (run) {
+#'   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
+#'   for (rds_index in seq_along(all_rds_to_do)) {
+#'     rds_to_do <- all_rds_to_do[rds_index]
+#'     stars_to_do <- readRDS(file = rds_to_do)
+#'     name_stars <- strsplit(basename(rds_to_do), split = "\\.rds")[[1]]
+#'     print(paste("processing stars", name_stars, "be patient!"))
+#'     stars_winter <- compute_budget_stars(stars_to_do,
+#'                                          fit_state = fit_normo_cauchit,
+#'                                          roost_insulation_dTa = 0,
+#'                                          huddling_factor = 1,
+#'                                          fit_MR = fit_torpor, nb_cores = 30)
+#'     if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
+#'                                                   ## and future predictions
+#'       stars_winter |>
+#'         dplyr::filter(year > 2018) -> stars_winter
+#'     }
+#'     saveRDS(stars_winter, file = paste0("../NC/", folder_winter_stars, "/", name_stars, "_winter.rds"),
+#'             compress = FALSE)
+#'     rm(list = "stars_to_do"); gc()
+#'   }
+#' }
+#'
+#'
+#' ### Step 6G: alternative setup: probit model and 5 degree insulation with huddling factor at 1
+#' folder_winter_stars <- "stars_winter_probit_dTa5_huddl1"
+#'
+#' if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
+#' if (run) {
+#'   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
+#'   for (rds_index in seq_along(all_rds_to_do)) {
+#'     rds_to_do <- all_rds_to_do[rds_index]
+#'     stars_to_do <- readRDS(file = rds_to_do)
+#'     name_stars <- strsplit(basename(rds_to_do), split = "\\.rds")[[1]]
+#'     print(paste("processing stars", name_stars, "be patient!"))
+#'     stars_winter <- compute_budget_stars(stars_to_do,
+#'                                          fit_state = fit_normo_probit,
+#'                                          roost_insulation_dTa = 5,
+#'                                          huddling_factor = 1,
+#'                                          fit_MR = fit_torpor, nb_cores = 30)
+#'     if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
+#'                                                   ## and future predictions
+#'       stars_winter |>
+#'         dplyr::filter(year > 2018) -> stars_winter
+#'     }
+#'     saveRDS(stars_winter, file = paste0("../NC/", folder_winter_stars, "/", name_stars, "_winter.rds"),
+#'             compress = FALSE)
+#'     rm(list = "stars_to_do"); gc()
+#'   }
+#' }
+#'
+#'
+#' ### Step 6H: alternative setup: probit model and 0 degree insulation with huddling factor at 1
+#' folder_winter_stars <- "stars_winter_probit_dTa0_huddl1"
+#'
+#' if (!dir.exists(paste0("../NC/", folder_winter_stars))) dir.create(paste0("../NC/", folder_winter_stars))
+#' if (run) {
+#'   all_rds_to_do <- list.files(path = "../NC/stars/", full.names = TRUE, pattern =  ".rds")
+#'   for (rds_index in seq_along(all_rds_to_do)) {
+#'     rds_to_do <- all_rds_to_do[rds_index]
+#'     stars_to_do <- readRDS(file = rds_to_do)
+#'     name_stars <- strsplit(basename(rds_to_do), split = "\\.rds")[[1]]
+#'     print(paste("processing stars", name_stars, "be patient!"))
+#'     stars_winter <- compute_budget_stars(stars_to_do,
+#'                                          fit_state = fit_normo_probit,
+#'                                          roost_insulation_dTa = 0,
+#'                                          huddling_factor = 1,
 #'                                          fit_MR = fit_torpor, nb_cores = 30)
 #'     if (!grepl("OBSCLIM", basename(rds_to_do))) { ## remove overlap between OBSCLIM years
 #'                                                   ## and future predictions
@@ -467,9 +593,13 @@
 #' #folder_winter_stars <- "stars_winter_cauchit_dTa0"
 #' #folder_winter_stars <- "stars_winter_probit_dTa5"
 #' #folder_winter_stars <- "stars_winter_probit_dTa0"
-#' 
+#' #folder_winter_stars <- "stars_winter_cauchit_dTa5_huddl1"
+#' #folder_winter_stars <- "stars_winter_cauchit_dTa0_huddl1"
+#' #folder_winter_stars <- "stars_winter_probit_dTa5_huddl1"
+#' #folder_winter_stars <- "stars_winter_probit_dTa0_huddl1"
+#'
 #' if (!dir.exists(paste0("figures/", folder_winter_stars))) dir.create(paste0("figures/", folder_winter_stars))
-#' 
+#'
 #' if (run) {
 #'  pS7_A <- readRDS(paste0("../NC/", folder_winter_stars, "/gswp3-w5e5_OBSCLIM_winter.rds")) |>
 #'    dplyr::select(Budget_winter) |>
@@ -497,16 +627,16 @@
 #'
 #' ### Step 7C: extracting info about stars characteristics
 #' folder_winter_stars <- "stars_winter_cauchit_dTa5"
-#' 
+#'
 #' if (run) {
-#'   stars_example <- readRDS(paste0("../NC/", folder_winter_stars, "/gswp3-w5e5_OBSCLIM_winter.rds")) 
+#'   stars_example <- readRDS(paste0("../NC/", folder_winter_stars, "/gswp3-w5e5_OBSCLIM_winter.rds"))
 #'   ## coordinates
 #'   range(sf::st_coordinates(stars_example)$y) # range of latitude of center of cells
 #'   # [1] 27.25 71.75
-#'  
+#'
 #'   range(sf::st_coordinates(stars_example)$x) # range of longitude of center of cells
 #'   # [1] -12.75  55.75
-#'  
+#'
 #'   ## CRS, projection
 #'   sf::st_crs(stars_example, type = "proj")
 #'   # Coordinate Reference System:
@@ -529,17 +659,19 @@
 #'   #             ORDER[2],
 #'   #             ANGLEUNIT["degree",0.0174532925199433,
 #'   #                 ID["EPSG",9122]]]]
-#'  
+#'
 #'   ## area
 #'   mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
 #'   # 1956.294 [km^2]
-#'  
+#'
 #'   sqrt(mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2)))
 #'   # 44.23001 [km]
-#'  
+#'
 #'   sd(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))
 #'   # 526.7266
 #' }
+#'
+#'
 #' ## Step 8: predicting shift in hibernation niche
 #'
 #' if (run) {
@@ -554,9 +686,17 @@
 #'                                                                mask = lands_polygons) ## takes a few min
 #'   winters_stats_probit_dTa0 <- summarise_info_winter.stars.all("../NC/stars_winter_probit_dTa0",
 #'                                                                mask = lands_polygons) ## takes a few min
-#' 
+#'   winters_stats_cauchit_dTa5_huddl1 <- summarise_info_winter.stars.all("../NC/stars_winter_cauchit_dTa5_huddl1",
+#'                                                                        mask = lands_polygons) ## takes a few min
+#'   winters_stats_cauchit_dTa0_huddl1 <- summarise_info_winter.stars.all("../NC/stars_winter_cauchit_dTa0_huddl1",
+#'                                                                        mask = lands_polygons) ## takes a few min
+#'   winters_stats_probit_dTa5_huddl1 <- summarise_info_winter.stars.all("../NC/stars_winter_probit_dTa5_huddl1",
+#'                                                                       mask = lands_polygons) ## takes a few min
+#'   winters_stats_probit_dTa0_huddl1 <- summarise_info_winter.stars.all("../NC/stars_winter_probit_dTa0_huddl1",
+#'                                                                       mask = lands_polygons) ## takes a few min
+#'
 #'  winters_stats <-  winters_stats_cauchit_dTa5 ## we use this combination as default
-#' 
+#'
 #' ### Step extra: check extrapolation with respect to normothermy model
 #' winters_stats |>
 #'   dplyr::summarise(Proportion_outside_modelled_range = mean(Duration_winter_outside_range_temp/Duration_winter),
@@ -734,8 +874,15 @@
 #' #folder_winter_stars <- "stars_winter_cauchit_dTa0"
 #' #folder_winter_stars <- "stars_winter_probit_dTa5"
 #' #folder_winter_stars <- "stars_winter_probit_dTa0"
-#' 
-#' 
+#' #folder_winter_stars <- "stars_winter_cauchit_dTa5_huddl1"
+#' #folder_winter_stars <- "stars_winter_cauchit_dTa0_huddl1"
+#' #folder_winter_stars <- "stars_winter_probit_dTa5_huddl1"
+#' #folder_winter_stars <- "stars_winter_probit_dTa0_huddl1"
+#'
+#' if (!dir.exists(paste0("figures/", folder_winter_stars))) dir.create(paste0("figures/", folder_winter_stars))
+#'
+#'  winters_stats <- get(gsub(pattern = "stars_winter", replacement = "winters_stats", folder_winter_stars))
+#'
 #'  pS8_A <- plot_time_trends(winters_stats, varname = "Suitable_area_km2_smooth", vartype = "area",
 #'                           y_title = "Potential hibernation area\n (x 1,000,000 km²)")
 #'  pS8_B <- plot_time_trends(winters_stats)
@@ -794,7 +941,7 @@
 #'                                 polygons = list(winter_2015),
 #'                                 years_to_combine = 20,
 #'                                 base_size = 9, legend_position = "none")
-#' 
+#'
 #'  if(alldeps) {
 #'    pS9_legend1 <- cowplot::get_legend(pS9_A)
 #'    pS9_legend2 <- cowplot::get_legend(pS9_C)
