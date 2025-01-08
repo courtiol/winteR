@@ -901,6 +901,29 @@ if (!dir.exists(paste0("figures/", folder_winter_stars))) dir.create(paste0("fig
                    width = 18, height = 16, units = "cm")
 }
 
+### Step 8C: comparing trends
+  var <- "Suitable_area_km2_smooth_delta_pct_since1901"
+  #var <- "Suitable_area_km2_smooth_delta_pct_since2018"
+
+  summary_time_trend(winters_stats_cauchit_dTa5, varname = var) |>
+    dplyr::select("mean", "Scenario") |>
+    dplyr::mutate(what = "cauchit_dTa5") -> cauchit_dTa5
+
+  summary_time_trend(winters_stats_cauchit_dTa0, varname = var) |>
+    dplyr::select("mean", "Scenario") |>
+    dplyr::mutate(what = "cauchit_dTa0") -> cauchit_dTa0
+
+  summary_time_trend(winters_stats_cauchit_dTa5_huddl1, varname = var) |>
+    dplyr::select("mean", "Scenario") |>
+    dplyr::mutate(what = "cauchit_dTa5_huddl1") -> cauchit_dTa5_huddl1
+
+  summary_time_trend(winters_stats_cauchit_dTa0_huddl1, varname = var) |>
+    dplyr::select("mean", "Scenario") |>
+    dplyr::mutate(what = "cauchit_dTa0_huddl1") -> cauchit_dTa0_huddl1
+
+  dplyr::bind_rows(cauchit_dTa5, cauchit_dTa0, cauchit_dTa5_huddl1, cauchit_dTa0_huddl1) |>
+    dplyr::arrange(Scenario, dplyr::desc(mean))
+
 
 ## Step 9: plotting change in suitability maps
 
