@@ -30,6 +30,7 @@ Imports:
     purrr,
     units
 Suggests:
+    Cairo,
     cowplot,
     cubelyr,
     DHARMa,
