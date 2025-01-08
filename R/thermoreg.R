@@ -109,11 +109,11 @@ plot_MR_fit <- function(fit_MR, data_MR, rangeTa = c(-5, 35), base_size = 11) {
                            ggplot2::aes(x = .data$Ta, ymin = .data$lwr_95, ymax = .data$upr_95), fill = "black",
                            alpha = 0.2, col = NA) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Torpor", ],
-                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID), size = 1) +
+                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, shape = .data$ID), colour = "blue", size = 1) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Euthermia", ],
-                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID), size = 3) +
+                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, shape = .data$ID), colour = "red", size = 1) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Mtnz", ],
-                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID, shape = .data$ID), size = 3) +
+                          ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, shape = .data$ID), colour = "red", size = 1) +
       ggplot2::geom_point(data = da_extended[da_extended$assignment == "Undefined", ],
                           ggplot2::aes(x = .data$measured_Ta, y = .data$measured_M, colour = .data$ID), shape = 4) +
       ggplot2::scale_x_continuous(breaks = seq(rangeTa[1], rangeTa[2], by = 5), minor_breaks = NULL,
