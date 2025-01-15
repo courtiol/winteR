@@ -277,22 +277,55 @@ signif(budget_minus5degrees[, c("Budget_MR")], digit = 3)
 signif(budget_minus5degrees[, c("Budget_fat")], digit = 3)
 # 0.958
 
-### Step 3F: daily fat consumption with insulation only
-signif(compute_budget_df(data.frame(Temp = -5),
-                         fit_state = fit_normo_cauchit, fit_MR = fit_torpor,
-                         huddling_factor = 1)[, "Budget_fat"], 3)
+## Step 3bis: example of budget requirements at 0 degrees in roost due to insulation
+
+budget_minus5degrees_insul <- compute_budget_df(data.frame(Temp = -5),
+                                   fit_state = fit_normo_cauchit, fit_MR = fit_torpor,
+                                   huddling_factor = 1)
+
+### Step 3F: time spent in each physiological state
+round(budget_minus5degrees_insul[, c("Daily_duration_normo", "Daily_duration_torpor")], digit = 2)
+  # Daily_duration_normo Daily_duration_torpor
+  # 1                 0.46                 23.54
+
+### Step 3G: metabolic rate in each physiological state
+signif(budget_minus5degrees_insul[, c("MR_normo", "MR_torpor")], digit = 3)
+#   MR_normo   MR_torpor
+#1     5.02     0.659
+
+### Step 3H: daily metabolic rate per state
+signif(budget_minus5degrees_insul[, c("Budget_MR_normo", "Budget_MR_torpor")], digit = 3)
+#   Budget_MR_normo Budget_MR_torpor
+#1            2.33             15.5
+
+### Step 3I: daily metabolic rate
+signif(budget_minus5degrees_insul[, c("Budget_MR")], digit = 3)
+# 17.8
+
+### Step 3J: daily fat consumption
+signif(budget_minus5degrees_insul[, c("Budget_fat")], digit = 3)
 # 0.473
 
-### Step 3G: daily fat consumption with huddling effect only
-signif(compute_budget_df(data.frame(Temp = -5),
-                         fit_state = fit_normo_cauchit, fit_MR = fit_torpor,
-                         roost_insulation_dTa = 0)[, "Budget_fat"], 3)
-# 0.479
+## Step 3ter: example of budget requirements at 0 degrees in roost due to insulation
+## and with huddling factor at 0.5
 
-### Step 3H: daily fat consumption with insulation + huddling effect
-signif(compute_budget_df(data.frame(Temp = -5),
-                         fit_state = fit_normo_cauchit, fit_MR = fit_torpor)[, "Budget_fat"], 3)
+budget_minus5degrees_insul_huddl <- compute_budget_df(data.frame(Temp = -5),
+                                         fit_state = fit_normo_cauchit, fit_MR = fit_torpor,
+                                         huddling_factor = 0.5)
+
+### Step 3K: daily metabolic rate per state
+signif(budget_minus5degrees_insul_huddl[, c("Budget_MR_normo", "Budget_MR_torpor")], digit = 3)
+#   Budget_MR_normo Budget_MR_torpor
+#1            1.16             7.76
+
+### Step 3L: daily metabolic rate
+signif(budget_minus5degrees_insul_huddl[, c("Budget_MR")], digit = 3)
+# 8.92
+
+### Step 3J: daily fat consumption
+signif(budget_minus5degrees_insul_huddl[, c("Budget_fat")], digit = 3)
 # 0.237
+
 
 ## Step 4: illustration of winter and budget for Kharkiv
 
