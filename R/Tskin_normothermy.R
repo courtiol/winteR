@@ -138,7 +138,7 @@ build_Tskin_table <- function(filenames, clean = TRUE) {
 #'
 clean_Tskin_table <- function(data_Tskin) {
 
-  ## we remove completely observations when sensor is detached
+  ## we remove completely observations when sensor is detached (due to death)
   data_Tskin <- data_Tskin[data_Tskin$Status != "notOnBat", ]
   data_Tskin$Included <- TRUE
 
@@ -176,13 +176,31 @@ clean_Tskin_table <- function(data_Tskin) {
 #' data_Tskin <- build_Tskin_table(files_to_do)
 #' plot_Tskin_table(data_Tskin)
 #'
-plot_Tskin_table <- function(data_Tskin) {
-  ggplot2::ggplot(data_Tskin) +
-    ggplot2::aes(y = .data$Tskin, x = .data$Index,
-                 shape = .data$State, colour = .data$Included) +
-    ggplot2::geom_point() +
-    ggplot2::facet_wrap(~ ID) +
-    ggplot2::theme_bw()
+plot_Tskin_table <- function(data_Tskin, base_size = 11) {
+  data_Tskin |>
+    dplyr::mutate(dt = as.POSIXlt(paste(.data$Date, .data$Time), format = c("%m/%d/%Y %H:%M:%S")), .by = "ID") |>
+    dplyr::mutate(step_h = as.numeric(.data$dt - min(.data$dt))/60/24, .by = "ID") |>
+    dplyr::arrange(Ta) |>
+    dplyr::mutate(Ta = paste("Ta = ", .data$Ta)) |>
+    dplyr::mutate(ID2 = as.factor(.data$ID), .by = "Ta") |>
+    dplyr::mutate(State = factor(ifelse(.data$Included, .data$State, "unknown"),
+                                 levels = c("normothermy", "torpor", "unknown")), .by = "Ta") |>
+    ggplot2::ggplot() +
+    ggplot2::aes(y = .data$Tskin, x = .data$step_h,
+                 colour = .data$State) +
+    #ggplot2::geom_line(mapping = ggplot2::aes(y = .data$Tskin, x = .data$step_h), inherit.aes = FALSE) +
+    ggplot2::geom_point(alpha = 0.5, size = 0.4) +
+    ggplot2::scale_y_continuous(limits = c(0, NA)) +
+    ggplot2::scale_color_manual(values = c("red", "blue", "black")) +
+    ggplot2::scale_shape_manual(values = c(21, 20)) +
+    ggplot2::facet_wrap(~ ID2 + Ta, labeller = ggplot2::labeller(ID2 = ~ "", Ta = ggplot2::label_value)) +
+    ggplot2::theme_bw(base_size = base_size) +
+    ggplot2::labs(x = "Hours ellapsed", y = "Skin temperature") +
+    ggplot2::theme(legend.position = "inside",
+                   legend.position.inside = c(0.7, 0.1),
+                   legend.direction = "horizontal",
+                   strip.background = ggplot2::element_blank()
+                   )
   }
 
 

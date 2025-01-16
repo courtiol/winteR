@@ -40,6 +40,14 @@ Tskin_files <- list.files(system.file("extdata/Tskin", package = "winteR"), full
 data_Tskin <- build_Tskin_table(Tskin_files)
 head(data_Tskin)
 plot_Tskin_table(data_Tskin)
+if (alldeps){
+  plot_Tskin_table(data_Tskin, base_size = 8)
+  ggplot2::ggsave(filename = "figures/figSXnew.pdf",
+                  width = 18, height = 18, units = "cm")
+  ggplot2::ggsave(filename = "figures/figSXnew.png",
+                  width = 18, height = 18, units = "cm")
+}
+
 
 ### Step 1B: filtering data to be included, see ?clean_Tskin_table
 data_normothermy <- data_Tskin[data_Tskin$Included, ]

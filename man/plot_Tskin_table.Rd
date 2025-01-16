@@ -4,10 +4,12 @@
 \alias{plot_Tskin_table}
 \title{Plot the physiological data on skin temperature}
 \usage{
-plot_Tskin_table(data_Tskin)
+plot_Tskin_table(data_Tskin, base_size = 11)
 }
 \arguments{
 \item{data_Tskin}{a file produced by \code{\link[=load_Tskin_datafile]{load_Tskin_datafile()}}}
+
+\item{base_size}{base font size, given in pts}
 }
 \value{
 a plot
