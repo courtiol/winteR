@@ -240,7 +240,8 @@
 #' pS2_A <- plot_Tskin_fit(fit_normo_cauchit, base_size = 9)
 #' pS2_B <- plot_MR_fit(fit_torpor, data_MR, base_size = 9)
 #' if (alldeps){
-#'   pS2_AB <- cowplot::plot_grid(pS2_A, pS2_B, ncol = 2, labels = "AUTO", align = "hv")
+#'   pS2_AB <- cowplot::plot_grid(pS2_A, pS2_B, ncol = 2,
+#'                                labels = "AUTO", align = "hv", axis = "trlb")
 #'   ggplot2::ggsave(filename = "figures/fig1new.pdf", plot = pS2_AB,
 #'                   width = 18, height = 6.5, units = "cm")
 #'   ggplot2::ggsave(filename = "figures/fig1new.png", plot = pS2_AB,
@@ -700,6 +701,10 @@
 #'   #             ORDER[2],
 #'   #             ANGLEUNIT["degree",0.0174532925199433,
 #'   #                 ID["EPSG",9122]]]]
+#'
+#'   ## number of cells
+#'   nrow(sf::st_as_sf(stars_example))
+#'   # 12420
 #'
 #'   ## area
 #'   mean(units::set_units(sf::st_area(sf::st_as_sf(stars_example)), km^2))

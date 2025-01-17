@@ -71,9 +71,9 @@ plot_MR_fit <- function(fit_MR, data_MR, rangeTa = c(-5, 35), base_size = 11) {
   ## code adapted from torpor::tor_plot()
 
   xlab <- "Ambient temperature (\u00B0C)"
-  ylab1 <- expression(atop("Metabolic rate"~(k*J*.*h^{-1})))
+  ylab1 <- expression(atop("Metabolic rate"~(k*J*.*h^{-~1})))
   #ylab2 <- expression(atop("Fat consumption"~(g[fat]*h^{-1})))
-  ylab2 <- expression(atop("Fat consumption"~(g*.*h^{-1})))
+  ylab2 <- expression(atop("Fat consumption"~(g*.*h^{-~1})))
 
   da <- torpor::tor_assign(fit_MR)
 

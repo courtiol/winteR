@@ -179,7 +179,7 @@ clean_Tskin_table <- function(data_Tskin) {
 plot_Tskin_table <- function(data_Tskin, base_size = 11) {
   data_Tskin |>
     dplyr::mutate(dt = as.POSIXlt(paste(.data$Date, .data$Time), format = c("%m/%d/%Y %H:%M:%S")), .by = "ID") |>
-    dplyr::mutate(step_h = as.numeric(.data$dt - min(.data$dt))/60/24, .by = "ID") |>
+    dplyr::mutate(step_d = 1+as.numeric(.data$dt - min(.data$dt))/60/60/24, .by = "ID") |>
     dplyr::arrange(.data$Ta, .data$ID) |>
     dplyr::mutate(ID = factor(.data$ID),
                   ## levels in order as in old implementation of forcats::fct_inorder()
@@ -192,16 +192,17 @@ plot_Tskin_table <- function(data_Tskin, base_size = 11) {
     dplyr::arrange(.data$Ta) -> data_Tskin_summary
 
   ggplot2::ggplot(data_Tskin2) +
-    ggplot2::aes(y = .data$Tskin, x = .data$step_h,
+    ggplot2::aes(y = .data$Tskin, x = .data$step_d,
                  colour = .data$State) +
     ggplot2::geom_point(alpha = 0.8, size = 0.4) +
     ggplot2::scale_y_continuous(limits = c(0, NA)) +
+    ggplot2::scale_x_continuous(breaks = c(1, 7, 14, 21, 28), limits = c(0, 28)) +
     ggplot2::scale_color_manual(values = c("red", "blue", "black")) +
     ggplot2::scale_shape_manual(values = c(21, 20)) +
     ggplot2::facet_wrap(~ ID2, labeller = ggplot2::labeller(ID2 = ~ paste("Ta =", data_Tskin_summary$Ta, "\u00B0C"))) +
     ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(size = base_size/3))) +
     ggplot2::theme_bw(base_size = base_size) +
-    ggplot2::labs(x = "Hours ellapsed", y = "Skin temperature (\u00B0C)", colour = NULL) +
+    ggplot2::labs(x = "Days", y = "Skin temperature (\u00B0C)", colour = NULL) +
     ggplot2::theme(legend.position = "top", #"inside",
                    #legend.position.inside = c(0.7, 0.1),
                    legend.direction = "horizontal",
