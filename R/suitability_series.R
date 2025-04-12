@@ -289,7 +289,7 @@ plot_hibernation_niche <- function(stars_list) {
     ggplot2::geom_text(ggplot2::aes(label = .data$n_f), colour = "white", size = 2) +
     ggplot2::scale_fill_viridis_d(option = "H", direction = -1, begin = 0.1, end = 1) +
     ggplot2::theme_bw() +
-    ggplot2::labs(x = "Duration of the hibernation season (days)", y = "Mean temperature during the hibernation season (\u00B0C)", fill = "Suitability") +
+    ggplot2::labs(x = "Duration of the hibernation season (days)", y = "Mean temperature of the hibernation season (\u00B0C)", fill = "Suitability") +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
 }
 

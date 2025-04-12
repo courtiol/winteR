@@ -1032,7 +1032,7 @@
 #'
 #' ## Step 10: plot the hibernation niche
 #'
-#'   stars_list <- lapply(list.files(path = "~/collaborations/kseniia/NC/stars_winter",
+#'   stars_list <- lapply(list.files(path = "../NC/stars_winter_cauchit_dTa5",
 #'                                   pattern = "*.rds", full.names = TRUE), readRDS)
 #'   sum(sapply(stars_list, \(star) length(star$Budget_winter))) ## number of time-series
 #'   # 21585960
